@@ -8,13 +8,13 @@ export default {
   autoReconnect: true,
   reconnectTries: Number.MAX_VALUE,
   reconnectInterval: 2000,
-  entities: [`src/entity/**/*.ts`],
+  entities: [`src/entities/**/*.ts`],
   migrations: [`src/database/migration/**/*.ts`],
   cli: {
-    entitiesDir: 'src/entity',
+    entitiesDir: '/src/entities',
     migrationsDir: 'src/database/migration',
   },
   name: 'default',
   database: process.env.POSTGRES_DB || 'node_project',
-  synchronize: false,
+  synchronize: true,
 };

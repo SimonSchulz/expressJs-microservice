@@ -1,25 +1,18 @@
-/* eslint-disable no-console */
 import { getRepository } from 'typeorm';
 import VerificationEntity from '../entities/verification.entity';
 
 class SecurityService {
-  constructor() {
-    this.getUser = this.getUser.bind(this);
-    this.sendSms = this.sendSms.bind(this);
-  }
-
-  public async getUser(receiver: string) {
-    console.log('Check 2');
-    return getRepository(VerificationEntity).findOne({ mobilePhone: receiver });
-  }
-
-  public async sendSms(body: { receiver: string }) {
+  public async sendSms(receiver: string) {
     const verificationCode = process.env.VERIFICATION_CODE;
-    await getRepository(VerificationEntity).insert({ mobilePhone: body.receiver, verificationCode });
 
-    const { id } = await getRepository(VerificationEntity).findOne();
+    await getRepository(VerificationEntity).insert({ mobilePhone: receiver, verificationCode });
+  }
 
-    console.log('Check 3');
+  public async getId(receiver) {
+    const { id } = await getRepository(VerificationEntity).findOne({
+      where: { mobilePhone: receiver },
+      order: { created_at: 'DESC' },
+    });
 
     return getRepository(VerificationEntity).findOne({ id: id as string });
   }

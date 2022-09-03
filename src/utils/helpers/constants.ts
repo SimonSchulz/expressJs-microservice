@@ -1,0 +1,3 @@
+const CODE_EXPIRATION_TIME = 15;
+
+export default CODE_EXPIRATION_TIME;
