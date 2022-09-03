@@ -12,7 +12,7 @@ class SecurityRoutes {
 
   constructor() {
     this.securityService = new SecurityService();
-    this.securityController = new SecurityController(this.router);
+    this.securityController = new SecurityController(this.securityService);
     this.initRoutes();
   }
 

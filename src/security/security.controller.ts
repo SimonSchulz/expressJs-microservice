@@ -1,21 +1,22 @@
+/* eslint-disable no-empty-function */
+/* eslint-disable no-useless-constructor */
 /* eslint-disable no-console */
 import { IRouter, Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import SecurityService from './security.service';
 
-class SecurityController {
-  private securityService: SecurityService;
-
-  constructor(private router: IRouter) {
-    this.router = router;
-    this.securityService = new SecurityService();
+export default class SecurityController {
+  constructor(private securityService: SecurityService) {
+    console.log(this);
   }
 
-  public async sendVerificationCode(req: Request, res: Response) {
+  public sendVerificationCode = async (req: Request, res: Response) => {
     try {
-      console.log(this.securityService);
+      console.log(this);
+
       const { receiver } = req.query;
       const user = await this.securityService.getUser(String(receiver));
+
       console.log(user);
 
       if (!user) {
@@ -28,7 +29,5 @@ class SecurityController {
     } catch (error) {
       return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: error.message });
     }
-  }
+  };
 }
-
-export default SecurityController;

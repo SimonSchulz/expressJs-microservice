@@ -3,8 +3,13 @@ import { getRepository } from 'typeorm';
 import VerificationEntity from '../entities/verification.entity';
 
 class SecurityService {
+  constructor() {
+    this.getUser = this.getUser.bind(this);
+    this.sendSms = this.sendSms.bind(this);
+  }
+
   public async getUser(receiver: string) {
-    console.log('Hello');
+    console.log('Check 2');
     return getRepository(VerificationEntity).findOne({ mobilePhone: receiver });
   }
 
@@ -14,7 +19,7 @@ class SecurityService {
 
     const { id } = await getRepository(VerificationEntity).findOne();
 
-    console.log('hi3');
+    console.log('Check 3');
 
     return getRepository(VerificationEntity).findOne({ id: id as string });
   }
