@@ -26,34 +26,3 @@ export const requestValidationMiddleware = [
     next();
   },
 ];
-
-export const checkVerivicationCodeMiddleware = [
-  param('mobilePhone')
-    .exists({ checkFalsy: true, checkNull: true })
-    .withMessage('Required')
-    .bail()
-    .matches(/^\d+$/)
-    .withMessage('Can contain only digits')
-    .bail()
-    .isLength({ min: 8 })
-    .withMessage('Must be 8 symbols or more')
-    .isLength({ max: 15 })
-    .withMessage('Must be 15 symbols or less'),
-  param('id')
-    .exists({ checkFalsy: true, checkNull: true })
-    .withMessage('Required')
-    .bail()
-    .matches(/^[a-zA-Zа-яА-Я0-9\!#\$%&‘\*\+-\/\\=\?\^_`{\|}~!»№;%:\?\*\(\)[\]<>,\.]+$/)
-    .withMessage('Can contain only digits and numbers')
-    .bail()
-    .isLength({ min: 36, max: 36 })
-    .withMessage('Must be 36 symbols'),
-  (req: Request, res: Response, next: NextFunction) => {
-    const errors = validationResult(req);
-
-    if (!errors.isEmpty()) {
-      return res.status(StatusCodes.BAD_REQUEST).json({ errors: errors.array() });
-    }
-    next();
-  },
-];
