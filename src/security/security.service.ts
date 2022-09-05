@@ -6,14 +6,9 @@ class SecurityService {
   public async sendCode(receiver: string) {
     const verificationCode = process.env.VERIFICATION_CODE;
 
-    await getRepository(VerificationEntity).insert({ mobilePhone: receiver, verificationCode });
+    const id = await getRepository(VerificationEntity).insert({ mobilePhone: receiver, verificationCode });
 
-    const { id } = await getRepository(VerificationEntity).findOne({
-      where: { mobilePhone: receiver },
-      order: { created_at: 'DESC' },
-    });
-
-    return id;
+    return id.identifiers[0].id;
   }
 }
 export default SecurityService;
