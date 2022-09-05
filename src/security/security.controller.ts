@@ -1,17 +1,22 @@
-/* eslint-disable no-console */
 /* eslint-disable no-empty-function */
 /* eslint-disable no-useless-constructor */
+/* eslint-disable no-console */
 import { Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
+import UserService from '../user/user.service';
 import SecurityService from './security.service';
 
 export default class SecurityController {
-  constructor(private securityService: SecurityService) {}
+  constructor(private securityService: SecurityService, private userService: UserService) {
+    this.securityService = new SecurityService();
+    this.userService = new UserService();
+  }
 
   public sendVerificationCode = async (req: Request, res: Response) => {
     try {
       const { receiver } = req.query;
-      const user = await this.securityService.getUser(String(receiver));
+
+      const user = await this.userService.getUser(String(receiver));
 
       if (!user) {
         return res.status(StatusCodes.CONFLICT).json({ msg: "User with this phone number doesn't exist" });

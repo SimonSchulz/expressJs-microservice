@@ -1,9 +1,7 @@
 /* eslint-disable no-console */
-import express, { Application, Router } from 'express';
+import express, { Router } from 'express';
 import bodyParser from 'body-parser';
 import cors from 'cors';
-import SecurityController from '../security/security.controller';
-import SecurityService from '../security/security.service';
 import SecurityRoutes from '../security/security.routes';
 
 interface Route {
