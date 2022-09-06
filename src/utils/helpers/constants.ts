@@ -1,5 +1,3 @@
-const CODE_EXPIRATION_TIME = 15;
-
 // eslint-disable-next-line no-shadow
 enum ClientStatus {
   ACTIVE = 'active',

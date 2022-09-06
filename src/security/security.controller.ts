@@ -4,6 +4,7 @@
 import { Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import UserService from '../user/user.service';
+import timeDiffInMinutes from '../utils/helpers/timeDiff';
 import SecurityService from './security.service';
 
 export default class SecurityController {
@@ -15,7 +16,6 @@ export default class SecurityController {
   public sendVerificationCode = async (req: Request, res: Response) => {
     try {
       const { receiver } = req.query;
-
       const user = await this.userService.getUser(String(receiver));
 
       if (!user) {
@@ -25,6 +25,25 @@ export default class SecurityController {
       const id = await this.securityService.sendCode(String(receiver));
 
       return res.status(StatusCodes.OK).json({ id });
+    } catch (error) {
+      return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: error.message });
+    }
+  };
+
+  public checkVerificationCode = async (req: Request, res: Response) => {
+    try {
+      const { mobilePhone, verificationCode, id } = req.body;
+      const dataToCheck = await this.securityService.checkCode(mobilePhone);
+
+      if (verificationCode !== dataToCheck.verificationCode || id !== dataToCheck.id) {
+        return res.status(StatusCodes.BAD_REQUEST).json({ msg: 'Verification code is invalid' });
+      }
+
+      if (timeDiffInMinutes(dataToCheck.updatedAt) >= +process.env.CODE_EXPIRATION_TIME) {
+        return res.status(StatusCodes.BAD_REQUEST).json({ msg: 'Verification code expired!' });
+      }
+
+      return res.status(StatusCodes.OK).json({ msg: 'Success!' });
     } catch (error) {
       return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: error.message });
     }
