@@ -6,7 +6,6 @@ enum ClientStatus {
   NOT_ACTIVE = 'notActive',
   NOT_REGISTER = 'notRegister',
   CLOSED = 'closed',
-  NOT_CLIENT = 'notClient',
 }
 
 export default ClientStatus;
