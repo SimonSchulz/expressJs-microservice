@@ -27,6 +27,9 @@ class VerificationEntity {
 
   @Column({ nullable: true, length: 6 })
   verificationCode: string;
+
+  @Column({ nullable: true })
+  blockedTime: Date;
 }
 
 export default VerificationEntity;

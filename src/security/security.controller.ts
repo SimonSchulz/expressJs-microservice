@@ -4,7 +4,6 @@
 import { Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import UserService from '../user/user.service';
-import getExpirationTime from '../utils/helpers/getExpirationTime';
 import timeDiffInMinutes from '../utils/helpers/timeDiff';
 import SecurityService from './security.service';
 
@@ -39,16 +38,18 @@ export default class SecurityController {
       if (verificationCode !== dataToCheck.verificationCode || id !== dataToCheck.id) {
         const newTries = dataToCheck.tries + 1;
         const triesLeft = +process.env.MAX_CODE_TRIES - +newTries;
-        console.log(newTries, triesLeft);
 
         if (triesLeft <= 0) {
-          const now = new Date();
-          const clientBlockageTime = getExpirationTime(+process.env.USER_BLOCK_EXPIRATION);
-          const timeLeft = new Date(Number(clientBlockageTime) - Number(now)).getMinutes().toString();
+          const blockedTime = await this.securityService.updateBlockTime(mobilePhone, id);
+
+          if (timeDiffInMinutes(blockedTime) <= +process.env.USER_BLOCK_EXPIRATION) {
+            console.log(timeDiffInMinutes(blockedTime));
+            return res.status(StatusCodes.BAD_REQUEST).json({ blockSeconds: `You still blocked` });
+          }
 
           return res
             .status(StatusCodes.BAD_REQUEST)
-            .json({ blockSeconds: `You was blocked, you can try again after ${timeLeft} minutes.` });
+            .json({ blockSeconds: `You was blocked, you can try again after 10 minutes.` });
         }
 
         return res.status(StatusCodes.BAD_REQUEST).json({ msg: 'Verification code is invalid' });

@@ -1,3 +1,4 @@
+/* eslint-disable no-return-await */
 /* eslint-disable no-console */
 import { getRepository } from 'typeorm';
 import VerificationEntity from '../entities/verification.entity';
@@ -41,6 +42,21 @@ class SecurityService {
       .where({ mobilePhone: mobilePhone as string, id: id as string })
       .execute();
     return tries;
+  }
+
+  public async updateBlockTime(mobilePhone: string, id: string) {
+    const { blockedTime } = await getRepository(VerificationEntity).findOne({ mobilePhone: mobilePhone as string, id });
+    const timestamp = Date.now();
+    const blockedTimestamp = new Date(timestamp);
+
+    await getRepository(VerificationEntity)
+      .createQueryBuilder()
+      .update(VerificationEntity)
+      .set({ blockedTime: blockedTimestamp })
+      .where({ mobilePhone: mobilePhone as string, id: id as string })
+      .execute();
+
+    return blockedTime;
   }
 }
 
