@@ -28,17 +28,6 @@ export const requestValidationMiddleware = [
 ];
 
 export const checkVerificationCodeMiddleware = [
-  body('mobilePhone')
-    .exists({ checkFalsy: true, checkNull: true })
-    .withMessage('Required')
-    .bail()
-    .matches(/^\d+$/)
-    .withMessage('Can contain only digits')
-    .bail()
-    .isLength({ min: 8 })
-    .withMessage('Must be 8 symbols or more')
-    .isLength({ max: 15 })
-    .withMessage('Must be 15 symbols or less'),
   body('verificationCode')
     .exists({ checkFalsy: true, checkNull: true })
     .withMessage('Required')
