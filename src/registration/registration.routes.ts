@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import { requestValidationMiddleware } from '../utils/helpers/validation';
 import RegistrationController from './registration.controller';
 import RegistrationService from './registration.service';
 
@@ -17,6 +18,7 @@ class RegistrationRoutes {
 
   private initRoutes() {
     this.router.get('/registration', this.registrationController.checkPhoneStatus);
+    this.router.patch('/registration/user-profile', this.registrationController.updateUserProfile);
   }
 }
 
