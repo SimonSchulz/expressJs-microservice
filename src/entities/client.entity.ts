@@ -1,5 +1,5 @@
 import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
-import ClientStatus from '../utils/helpers/constants';
+import { ClientStatus } from '../utils/helpers/constants';
 
 @Entity()
 export default class Client {
@@ -9,7 +9,7 @@ export default class Client {
   @Column({ nullable: false })
   mobilePhone: string;
 
-  @Column({ type: 'enum', enum: ClientStatus, default: ClientStatus.NOT_CLIENT })
+  @Column({ type: 'enum', enum: ClientStatus, default: ClientStatus.NOT_REGISTER })
   clientStatus: ClientStatus;
 
   @Column({ nullable: true })
