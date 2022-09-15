@@ -22,7 +22,7 @@ export default class SecurityController {
         switch (clientStatus) {
           case ClientStatus.ACTIVE:
           case ClientStatus.NOT_ACTIVE:
-            return res.status(StatusCodes.CONFLICT).json({ msg: ErrorMessages.IS_CLIENT });
+            return res.status(StatusCodes.CONFLICT).json({ msg: ClientStatus.IS_CLIENT });
 
           case ClientStatus.NOT_REGISTER:
             return res

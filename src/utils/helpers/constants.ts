@@ -6,11 +6,11 @@ export enum ClientStatus {
   NOT_ACTIVE = 'notActive',
   NOT_REGISTER = 'notRegister',
   CLOSED = 'closed',
+  IS_CLIENT = 'isClient',
 }
 
 export enum ErrorMessages {
   NOT_CLIENT = 'User is not a client',
-  IS_CLIENT = 'User is a client',
   NOT_FOUND = 'User not found',
   SUCCESS = 'Succesfully',
 }
