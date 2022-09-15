@@ -16,7 +16,6 @@ export default class SecurityController {
       const phoneNumber = req.query.mobilePhone;
 
       const user = await this.userService.getUser(String(phoneNumber));
-      console.log(user);
       if (user) {
         const clientStatus = user.clientStatus;
 

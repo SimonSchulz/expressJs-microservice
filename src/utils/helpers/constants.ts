@@ -9,6 +9,8 @@ export enum ClientStatus {
 }
 
 export enum ErrorMessages {
-  NOT_CLIENT = 'notClient',
-  IS_CLIENT = 'isClient',
+  NOT_CLIENT = 'User is not a client',
+  IS_CLIENT = 'User is a client',
+  NOT_FOUND = 'User not found',
+  SUCCESS = 'Succesfully',
 }
