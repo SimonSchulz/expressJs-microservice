@@ -15,3 +15,11 @@ export enum ErrorMessages {
   NOT_FOUND = 'notFound',
   SUCCESS = 'success',
 }
+export const SecurityQuestions = [
+  { question: `Mother's maiden name` },
+  { question: 'Childhood best friend name' },
+  { question: 'Favorite book' },
+  { question: 'Favourite dish' },
+  { question: 'Choose your favorite color' },
+  { question: 'Write your question' },
+];
