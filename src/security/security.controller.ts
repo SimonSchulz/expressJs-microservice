@@ -4,8 +4,10 @@
 import { Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import UserService from '../user/user.service';
+import ClientVerifStatus from '../utils/helpers/ClientVerifStatus';
 import timeDiffInMinutes from '../utils/helpers/timeDiff';
 import SecurityService from './security.service';
+import messages from '../utils/helpers/messages';
 
 export default class SecurityController {
   constructor(private securityService: SecurityService, private userService: UserService) {
@@ -17,10 +19,16 @@ export default class SecurityController {
     try {
       const { receiver } = req.query;
       const user = await this.userService.getUser(String(receiver));
+      const cooldownTime = await this.securityService.getCooldownTime(String(receiver));
+
+      if (timeDiffInMinutes(cooldownTime.updatedAt) < +process.env.COOLDOWN_TIME) {
+        return res.status(StatusCodes.NOT_ACCEPTABLE).json({ msg: messages.COOLDOWN });
+      }
+
       const codeExpiration = new Date(Date.now());
 
       if (!user) {
-        return res.status(StatusCodes.CONFLICT).json({ msg: "User with this phone number doesn't exist" });
+        return res.status(StatusCodes.CONFLICT).json({ msg: messages.USER_DOESNT_EXIST });
       }
       const id = await this.securityService.sendCode(String(receiver), codeExpiration);
 
@@ -33,47 +41,58 @@ export default class SecurityController {
   public checkVerificationCode = async (req: Request, res: Response) => {
     try {
       const { verificationCode, id } = req.body;
-      const user = await this.securityService.getUser(id);
+      const userVerifData = await this.securityService.getClientDataById(id);
 
       if (
-        user.clientVerifStatus === 'blocked' &&
-        timeDiffInMinutes(user.lastInvalidAttemptTime) < +process.env.USER_BLOCK_EXPIRATION
+        userVerifData.clientVerifStatus === ClientVerifStatus.BLOCKED &&
+        timeDiffInMinutes(userVerifData.lastInvalidAttemptTime) < +process.env.USER_BLOCK_EXPIRATION
       ) {
-        return res.status(StatusCodes.BAD_REQUEST).json({ msg: 'You still blocked, try again later' });
+        return res.status(StatusCodes.BAD_REQUEST).json({ msg: messages.CLIENT_STILL_BLOCKED });
       }
 
-      const newClientStatus = { clientVerifStatus: 'active' };
-      await this.securityService.unblockUser(id, newClientStatus.clientVerifStatus);
+      const newClientData = {
+        clientVerifStatus: ClientVerifStatus.ACTIVE,
+      };
+      await this.securityService.updateByClientId(id, newClientData);
 
-      if (timeDiffInMinutes(user.codeExpiration) >= +process.env.CODE_EXPIRATION_TIME) {
-        return res.status(StatusCodes.BAD_REQUEST).json({ msg: 'Verification code expired!' });
+      if (timeDiffInMinutes(userVerifData.codeExpiration) >= +process.env.CODE_EXPIRATION_TIME) {
+        return res.status(StatusCodes.BAD_REQUEST).json({ msg: messages.CODE_EXPIRED });
       }
 
-      if (verificationCode !== user.verificationCode || id !== user.id) {
-        const triesLeft = +process.env.MAX_CODE_TRIES - user.invalidAttempts + 1;
+      if (verificationCode !== userVerifData.verificationCode) {
+        const triesLeft = +process.env.MAX_CODE_TRIES - userVerifData.invalidAttempts + 1;
         const now = new Date(Date.now());
         const blockedTime = await this.securityService.checkCode(id);
         const lastInvalidAttemptTimeObj = { lastInvalidAttemptTime: now };
 
-        await this.securityService.updateLastInvalidAttemptTime(id, lastInvalidAttemptTimeObj.lastInvalidAttemptTime);
+        const newTriesClientData = {
+          lastInvalidAttemptTime: lastInvalidAttemptTimeObj.lastInvalidAttemptTime,
+        };
+
+        await this.securityService.updateByClientId(id, newTriesClientData);
 
         if (triesLeft <= 0) {
-          const newClientStatusIfNoTriesLeft = { clientVerifStatus: 'blocked' };
+          const newBlockClientData = {
+            clientVerifStatus: ClientVerifStatus.BLOCKED,
+            lastInvalidAttemptTime: lastInvalidAttemptTimeObj.lastInvalidAttemptTime,
+            invalidAttempts: 5,
+          };
 
-          await this.securityService.blockUser(id, newClientStatusIfNoTriesLeft.clientVerifStatus);
-          await this.securityService.resetTries(id);
+          await this.securityService.updateByClientId(id, newBlockClientData);
 
-          return res
-            .status(StatusCodes.BAD_REQUEST)
-            .json({ blockSeconds: `You was blocked, you can try again after 10 minutes.` });
+          return res.status(StatusCodes.BAD_REQUEST).json({ msg: messages.CLIENT_BLOCKED_TRY_AFTER });
         }
 
-        return res.status(StatusCodes.BAD_REQUEST).json({ msg: 'Verification code is invalid' });
+        return res.status(StatusCodes.BAD_REQUEST).json({ msg: messages.CODE_IS_INVALID });
       }
 
-      await this.securityService.resetTries(id);
+      const newActiveClientData = {
+        invalidAttempts: 0,
+      };
 
-      return res.status(StatusCodes.OK).json({ msg: 'Success!' });
+      await this.securityService.updateByClientId(id, newActiveClientData);
+
+      return res.status(StatusCodes.OK).json({ msg: messages.SUCCESS });
     } catch (error) {
       return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: error.message });
     }

@@ -26,16 +26,20 @@ class SecurityService {
     return id;
   }
 
-  public async getUser(id: string) {
+  public async getClientDataById(id: string) {
     return getRepository(VerificationEntity).findOne({ id });
   }
 
-  public async unblockUser(id, newClientStatus) {
-    await getRepository(VerificationEntity).update({ id }, { clientVerifStatus: newClientStatus });
+  public async getCooldownTime(receiver: string) {
+    return getRepository(VerificationEntity).findOne({ mobilePhone: receiver });
   }
 
-  public async blockUser(id, newClientStatus) {
-    return getRepository(VerificationEntity).update({ id }, { clientVerifStatus: newClientStatus });
+  public async updateByClientId(id: string, newClientData) {
+    await getRepository(VerificationEntity).update(
+      { id },
+
+      newClientData
+    );
   }
 
   public async checkCode(smsId: string) {
@@ -45,24 +49,6 @@ class SecurityService {
     await getRepository(VerificationEntity).update({ id: smsId }, { invalidAttempts: invalidAttempts + 1 });
 
     return { id, verificationCode, updatedAt, invalidAttempts, lastInvalidAttemptTime, codeExpiration };
-  }
-
-  public async updateLastInvalidAttemptTime(id: string, lastInvalidAttemptTimeObj) {
-    await getRepository(VerificationEntity).update({ id }, { lastInvalidAttemptTime: lastInvalidAttemptTimeObj });
-  }
-
-  public async resetTries(id: string) {
-    const { invalidAttempts } = await getRepository(VerificationEntity).findOne({
-      id,
-    });
-
-    await getRepository(VerificationEntity)
-      .createQueryBuilder()
-      .update(VerificationEntity)
-      .set({ invalidAttempts: 0 })
-      .where({ id })
-      .execute();
-    return invalidAttempts;
   }
 }
 
