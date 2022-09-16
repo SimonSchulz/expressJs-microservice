@@ -15,6 +15,12 @@ export default class Client {
   @Column({ nullable: true })
   countryOfResidence: string;
 
+  @Column({ nullable: true })
+  accesionDate: string;
+
+  @Column({ nullable: true })
+  registrationDate: string;
+
   @Column({ nullable: true, length: 30 })
   firstName: string;
 

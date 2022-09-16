@@ -1,8 +1,8 @@
-export default class UpdateDataDto {
+export class UpdateDataDto {
   mobilePhone: string;
   id: string;
   password: string;
-  sequrityQuestion: string;
-  sequrityAnswer: string;
+  securityQuestion: string;
+  securityAnswer: string;
   email: string;
 }
