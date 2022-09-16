@@ -19,9 +19,10 @@ export default class SecurityController {
     try {
       const { receiver } = req.query;
       const user = await this.userService.getUser(String(receiver));
-      const cooldownTime = await this.securityService.getCooldownTime(String(receiver));
+      const objToFind = { mobilePhone: receiver };
+      const clientData = await this.securityService.getClientDataByParam(objToFind);
 
-      if (timeDiffInMinutes(cooldownTime.updatedAt) < +process.env.COOLDOWN_TIME) {
+      if (timeDiffInMinutes(clientData.updatedAt) < +process.env.COOLDOWN_TIME) {
         return res.status(StatusCodes.NOT_ACCEPTABLE).json({ msg: messages.COOLDOWN });
       }
 
@@ -41,13 +42,14 @@ export default class SecurityController {
   public checkVerificationCode = async (req: Request, res: Response) => {
     try {
       const { verificationCode, id } = req.body;
-      const userVerifData = await this.securityService.getClientDataById(id);
+      const objToFind = { id };
+      const userVerifData = await this.securityService.getClientDataByParam(objToFind);
 
       if (
         userVerifData.clientVerifStatus === ClientVerifStatus.BLOCKED &&
         timeDiffInMinutes(userVerifData.lastInvalidAttemptTime) < +process.env.USER_BLOCK_EXPIRATION
       ) {
-        return res.status(StatusCodes.BAD_REQUEST).json({ msg: messages.CLIENT_STILL_BLOCKED });
+        return res.status(StatusCodes.NOT_ACCEPTABLE).json({ msg: messages.CLIENT_STILL_BLOCKED });
       }
 
       const newClientData = {
@@ -56,7 +58,7 @@ export default class SecurityController {
       await this.securityService.updateByClientId(id, newClientData);
 
       if (timeDiffInMinutes(userVerifData.codeExpiration) >= +process.env.CODE_EXPIRATION_TIME) {
-        return res.status(StatusCodes.BAD_REQUEST).json({ msg: messages.CODE_EXPIRED });
+        return res.status(StatusCodes.NOT_ACCEPTABLE).json({ msg: messages.CODE_EXPIRED });
       }
 
       if (verificationCode !== userVerifData.verificationCode) {
@@ -80,7 +82,7 @@ export default class SecurityController {
 
           await this.securityService.updateByClientId(id, newBlockClientData);
 
-          return res.status(StatusCodes.BAD_REQUEST).json({ msg: messages.CLIENT_BLOCKED_TRY_AFTER });
+          return res.status(StatusCodes.NOT_ACCEPTABLE).json({ msg: messages.CLIENT_BLOCKED_TRY_AFTER });
         }
 
         return res.status(StatusCodes.BAD_REQUEST).json({ msg: messages.CODE_IS_INVALID });

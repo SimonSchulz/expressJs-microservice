@@ -26,12 +26,8 @@ class SecurityService {
     return id;
   }
 
-  public async getClientDataById(id: string) {
-    return getRepository(VerificationEntity).findOne({ id });
-  }
-
-  public async getCooldownTime(receiver: string) {
-    return getRepository(VerificationEntity).findOne({ mobilePhone: receiver });
+  public async getClientDataByParam(param: object) {
+    return getRepository(VerificationEntity).findOne(param);
   }
 
   public async updateByClientId(id: string, newClientData) {
