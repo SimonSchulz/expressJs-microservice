@@ -7,10 +7,20 @@ export enum ClientStatus {
   NOT_REGISTER = 'notRegister',
   CLOSED = 'closed',
   IS_CLIENT = 'isClient',
+  BLOCKED = 'blocked',
 }
 
 export enum ErrorMessages {
-  NOT_CLIENT = 'User is not a client',
-  NOT_FOUND = 'User not found',
-  SUCCESS = 'Succesfully',
+  NOT_CLIENT = 'notClient',
+  IS_CLIENT = 'isClient',
+  NOT_FOUND = 'notFound',
+  SUCCESS = 'success',
 }
+export const SecurityQuestions = [
+  { question: `Mother's maiden name` },
+  { question: 'Childhood best friend name' },
+  { question: 'Favorite book' },
+  { question: 'Favourite dish' },
+  { question: 'Choose your favorite color' },
+  { question: 'Write your question' },
+];
