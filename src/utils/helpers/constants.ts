@@ -1,3 +1,6 @@
+import { MobilePhoneDto } from '../../registration/dto/mobilePhone.dto';
+import UpdateUserProfileDto from '../../registration/dto/updateData.dto';
+
 const CODE_EXPIRATION_TIME = 15;
 
 // eslint-disable-next-line no-shadow
@@ -16,6 +19,11 @@ export enum ErrorMessages {
   NOT_FOUND = 'notFound',
   SUCCESS = 'success',
 }
+
+export const Endpoints = {
+  '/registration': MobilePhoneDto,
+  '/registration/user-profile': UpdateUserProfileDto,
+};
 export const SecurityQuestions = [
   { question: `Mother's maiden name` },
   { question: 'Childhood best friend name' },

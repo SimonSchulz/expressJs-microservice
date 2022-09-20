@@ -5,7 +5,7 @@ import RegistrationService from './registration.service';
 import { ClientStatus } from '../utils/helpers/constants';
 import { ErrorMessages } from '../utils/helpers/constants';
 import { plainToClass } from 'class-transformer';
-import UpdateDataDto from './dto/updateData.dto';
+import UpdateUserProfileDto from './dto/updateData.dto';
 
 export default class SecurityController {
   constructor(private securityService: RegistrationService, private userService: UserService) {
@@ -39,17 +39,18 @@ export default class SecurityController {
 
   public updateUserProfile = async (req: Request, res: Response) => {
     try {
-      const updateData = plainToClass(UpdateDataDto, req.body);
+      const updateData = plainToClass(UpdateUserProfileDto, req.body);
       const phoneNumber = updateData.mobilePhone;
 
       const user = await this.userService.getUser(String(phoneNumber));
 
       if (!user) return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: ErrorMessages.NOT_FOUND });
 
-      if (user.clientStatus === ClientStatus.BLOCKED)
-        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: ClientStatus.BLOCKED });
-
-      this.userService.updateUser(user, updateData);
+      switch (user.clientStatus) {
+        case ClientStatus.ACTIVE:
+        case ClientStatus.IS_CLIENT:
+          this.userService.updateUser(user, updateData);
+      }
 
       return res.status(StatusCodes.OK).json({ msg: ErrorMessages.SUCCESS });
     } catch (error) {
