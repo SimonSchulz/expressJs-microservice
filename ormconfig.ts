@@ -16,5 +16,5 @@ export default {
   },
   name: 'default',
   database: process.env.POSTGRES_DB || 'node_project',
-  synchronize: true,
+  synchronize: false,
 };

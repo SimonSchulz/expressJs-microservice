@@ -2,7 +2,7 @@
 /* eslint-disable consistent-return */
 /* eslint-disable no-useless-escape */
 import { NextFunction, Request, Response } from 'express';
-import { query, validationResult, param } from 'express-validator';
+import { query, validationResult, body } from 'express-validator';
 import { StatusCodes } from 'http-status-codes';
 
 export const requestValidationMiddleware = [
@@ -25,4 +25,18 @@ export const requestValidationMiddleware = [
     }
     next();
   },
+];
+
+export const loginMiddleware = [
+  body(['login', 'password'])
+    .exists({ checkFalsy: true, checkNull: true })
+    .withMessage('Required')
+    .bail()
+    .matches(/^[a-zA-Zа-яА-Я0-9\!#\$%&‘\*\+-\/\\=\?\^_`{\|}~!»№;%:\?\*\(\)[\]<>,\.]+$/)
+    .withMessage("Can contain letters, numbers, !@#$%^&*()_-=+;'?,<>[]{}|/#!~' symbols")
+    .bail()
+    .isLength({ min: 2 })
+    .withMessage('Must be 2 symbols or more')
+    .isLength({ max: 30 })
+    .withMessage('Must be 30 characters or less'),
 ];

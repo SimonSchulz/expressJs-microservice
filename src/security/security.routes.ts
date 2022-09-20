@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import UserService from '../user/user.service';
 import { requestValidationMiddleware } from '../utils/helpers/validation';
 import SecurityController from './security.controller';
 import SecurityService from './security.service';
@@ -10,9 +11,11 @@ class SecurityRoutes {
 
   private securityService: SecurityService;
 
+  private userService: UserService;
+
   constructor() {
     this.securityService = new SecurityService();
-    this.securityController = new SecurityController(this.securityService);
+    this.securityController = new SecurityController(this.securityService, this.userService);
     this.initRoutes();
   }
 
