@@ -18,11 +18,15 @@ class RegistrationRoutes {
   }
 
   private initRoutes() {
-    this.router.get('/registration', phoneNumberValidator, this.registrationController.checkPhoneStatus);
-    this.router.patch('/registration/user-profile', updateDataValidator, this.registrationController.updateUserProfile);
+    this.router.get('/registration', requestValidationMiddleware, this.registrationController.checkPhoneStatus);
+    this.router.patch(
+      '/registration/user-profile',
+      requestValidationMiddleware,
+      this.registrationController.updateUserProfile
+    );
     this.router.post(
       '/registration/user-profile/new',
-      registrationDataValidator,
+      requestValidationMiddleware,
       this.registrationController.createUserProfile
     );
   }

@@ -1,3 +1,7 @@
+import { MobilePhoneDto } from '../../registration/dto/mobilePhone.dto';
+import { RegistrationDataDto } from '../../registration/dto/registrationData.dto';
+import UpdateUserProfileDto from '../../registration/dto/updateData.dto';
+
 const CODE_EXPIRATION_TIME = 15;
 
 // eslint-disable-next-line no-shadow
@@ -17,6 +21,12 @@ export enum ErrorMessages {
   ALREADY_EXISTS = 'User already exists',
   SUCCESS = 'Success',
 }
+
+export const Endpoints = {
+  '/registration': MobilePhoneDto,
+  '/registration/user-profile': UpdateUserProfileDto,
+  '/registration/user-profile/new': RegistrationDataDto,
+};
 
 export const SecurityQuestions = [
   { question: `Mother's maiden name` },

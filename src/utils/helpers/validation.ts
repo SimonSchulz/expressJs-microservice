@@ -1,28 +1,33 @@
 /* eslint-disable import/prefer-default-export */
 /* eslint-disable consistent-return */
 /* eslint-disable no-useless-escape */
+import { validate } from 'class-validator';
 import { NextFunction, Request, Response } from 'express';
-import { query, validationResult, param } from 'express-validator';
 import { StatusCodes } from 'http-status-codes';
+import { plainToInstance } from 'class-transformer';
+import { Endpoints } from './constants';
+import url from 'url';
 
-export const requestValidationMiddleware = [
-  query('receiver')
-    .exists({ checkFalsy: true, checkNull: true })
-    .withMessage('Required')
-    .bail()
-    .matches(/^\d+$/)
-    .withMessage('Can contain only digits')
-    .bail()
-    .isLength({ min: 8 })
-    .withMessage('Must be 8 symbols or more')
-    .isLength({ max: 15 })
-    .withMessage('Must be 15 symbols or less'),
-  (req: Request, res: Response, next: NextFunction) => {
-    const errors = validationResult(req);
+export const requestValidationMiddleware = (req: Request, res: Response, next: NextFunction) => {
+  let data = formatDataToDto(req);
 
-    if (!errors.isEmpty()) {
-      return res.status(StatusCodes.BAD_REQUEST).json({ errors: errors.array() });
+  validate(data, { skipMissingProperties: true }).then((errors) => {
+    if (errors.length > 0) {
+      let errorTexts = Array();
+      for (const errorItem of errors) {
+        errorTexts = errorTexts.concat(errorItem.constraints);
+      }
+      res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(errorTexts);
+      return;
+    } else {
+      next();
     }
-    next();
-  },
-];
+  });
+};
+
+function formatDataToDto(req: Request) {
+  let clearUrl = url.parse(req.url).pathname;
+  const data = req.method === 'GET' ? req.query : req.body;
+  let formatedData = plainToInstance(Endpoints[clearUrl], data);
+  return formatedData;
+}
