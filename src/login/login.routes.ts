@@ -5,7 +5,7 @@ import { loginMiddleware } from '../utils/helpers/validation';
 import LoginController from './login.controller';
 import LoginService from './login.service';
 
-class SecurityRoutes {
+class LoginRoutes {
   public router = Router();
 
   private loginController: LoginController;
@@ -17,7 +17,7 @@ class SecurityRoutes {
   private tokenController: TokenController;
 
   constructor() {
-    this.loginController = new LoginController(this.loginService, this.userService, this.tokenController);
+    this.loginController = new LoginController(this.userService, this.tokenController);
     this.loginService = new LoginService();
     this.initRoutes();
   }
@@ -27,4 +27,4 @@ class SecurityRoutes {
   }
 }
 
-export default SecurityRoutes;
+export default LoginRoutes;

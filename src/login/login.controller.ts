@@ -1,5 +1,5 @@
 import { StatusCodes } from 'http-status-codes';
-import { Request, Response, NextFunction } from 'express';
+import { Request, Response } from 'express';
 import bcrypt from 'bcrypt';
 import UserService from '../user/user.service';
 import TokenController from '../token/token.controller';
