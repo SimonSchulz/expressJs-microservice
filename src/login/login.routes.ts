@@ -1,4 +1,6 @@
 import { Router } from 'express';
+import TokenController from '../token/token.controller';
+import UserService from '../user/user.service';
 import { loginMiddleware } from '../utils/helpers/validation';
 import LoginController from './login.controller';
 import LoginService from './login.service';
@@ -10,8 +12,12 @@ class SecurityRoutes {
 
   private loginService: LoginService;
 
+  private userService: UserService;
+
+  private tokenController: TokenController;
+
   constructor() {
-    this.loginController = new LoginController(this.loginService);
+    this.loginController = new LoginController(this.loginService, this.userService, this.tokenController);
     this.loginService = new LoginService();
     this.initRoutes();
   }
