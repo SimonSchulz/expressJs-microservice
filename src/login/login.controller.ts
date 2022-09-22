@@ -24,9 +24,7 @@ export default class LoginController {
         return res.send(StatusCodes.BAD_REQUEST).json({ msg: messages.USER_DOESNT_EXIST });
       }
 
-      const hash = bcrypt.hashSync(password, 10);
-
-      const validPassword = bcrypt.compareSync(hash, data.password);
+      const validPassword = bcrypt.compareSync(password, data.password);
 
       if (!validPassword) {
         return res.send(StatusCodes.BAD_REQUEST).json({ msg: messages.PASSWORD_IS_INVALID });
