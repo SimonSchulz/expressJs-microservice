@@ -1,23 +1,50 @@
 /* eslint-disable no-console */
 import { getRepository } from 'typeorm';
 import Client from '../entities/client.entity';
-import { UpdateDataDto } from '../registration/dto/updateData.dto';
-import { ClientStatus } from '../utils/helpers/constants';
+import { ClientStatus, ErrorMessages } from '../utils/helpers/constants';
+import bcrypt from 'bcrypt';
+import { Response } from 'express';
+import { StatusCodes } from 'http-status-codes';
 
-class UserService {
-  async getUser(receiver: string) {
-    return getRepository(Client).findOne({ mobilePhone: receiver });
+export class UserService {
+  async getUser(mobilePhone: string) {
+    return getRepository(Client).findOne({ mobilePhone: mobilePhone });
   }
   async updateUser(user, updateData) {
     await getRepository(Client).save({ ...user, ...updateData });
   }
+  async genHashPassword(password: string) {
+    const saltRounds = 10;
+    const salt = bcrypt.genSaltSync(saltRounds);
+    return bcrypt.hashSync(password, salt);
+  }
+  // async checkUserPassword(password: string, newPassword: string) {
+  //   let check = bcrypt.compareSync(password, newPassword, function (err, res: Response) {
+  //     if (err) {
+  //       res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: ErrorMessages.ERROR });
+  //     }
+  //     if (res) {
+  //       console.log(false);
+  //       return false;
+  //     } else {
+  //       console.log(true);
+  //       return true;
+  //     }
+  //   });
+  //   return check;
+  // }
+  async updateUserPassword(clientId, newPassword) {
+    await getRepository(Client).update({ clientId }, { password: newPassword });
+  }
   async createUser(registrationData) {
     if (registrationData) {
-      const check = await getRepository(Client).findOne({ mobilePhone: registrationData.mobilePhone });
+      const user = await getRepository(Client).findOne({ mobilePhone: registrationData.mobilePhone });
 
-      if (!check) {
+      if (!user) {
         let date = new Date();
         let currentDate = `${date.getDate()}.${date.getMonth()}.${date.getFullYear()}`;
+
+        registrationData.password = await this.genHashPassword(registrationData.password);
 
         await getRepository(Client).insert({
           mobilePhone: registrationData.mobilePhone,
@@ -42,5 +69,3 @@ class UserService {
     }
   }
 }
-
-export default UserService;

@@ -1,6 +1,7 @@
+import { UpdateUserPasswordDto } from '../../login/dto/UpdateUserPassword.dto';
 import { MobilePhoneDto } from '../../registration/dto/mobilePhone.dto';
 import { RegistrationDataDto } from '../../registration/dto/registrationData.dto';
-import UpdateUserProfileDto from '../../registration/dto/updateData.dto';
+import { UpdateUserProfileDto } from '../../registration/dto/updateData.dto';
 
 const CODE_EXPIRATION_TIME = 15;
 
@@ -20,12 +21,14 @@ export enum ErrorMessages {
   EMPTY_REQ_BODY = 'Empty request body',
   ALREADY_EXISTS = 'User already exists',
   SUCCESS = 'Success',
+  SAME_PASSWORD = 'Password is the same as was',
 }
 
 export const Endpoints = {
   '/registration': MobilePhoneDto,
   '/registration/user-profile': UpdateUserProfileDto,
   '/registration/user-profile/new': RegistrationDataDto,
+  '/login/password': UpdateUserPasswordDto,
 };
 
 export const SecurityQuestions = [

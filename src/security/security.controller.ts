@@ -3,7 +3,7 @@
 /* eslint-disable no-console */
 import { Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
-import UserService from '../user/user.service';
+import { UserService } from '../user/user.service';
 import SecurityService from './security.service';
 
 export default class SecurityController {
@@ -14,15 +14,15 @@ export default class SecurityController {
 
   public sendVerificationCode = async (req: Request, res: Response) => {
     try {
-      const { receiver } = req.query;
+      const { mobilePhone } = req.query;
 
-      const user = await this.userService.getUser(String(receiver));
+      const user = await this.userService.getUser(String(mobilePhone));
 
       if (!user) {
         return res.status(StatusCodes.CONFLICT).json({ msg: "User with this phone number doesn't exist" });
       }
 
-      const id = await this.securityService.sendCode(String(receiver));
+      const id = await this.securityService.sendCode(String(mobilePhone));
 
       return res.status(StatusCodes.OK).json({ id });
     } catch (error) {

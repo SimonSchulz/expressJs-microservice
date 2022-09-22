@@ -1,6 +1,6 @@
 import { IsDefined, IsEmail, IsNumberString, IsString, Length, Matches } from 'class-validator';
 
-export default class UpdateUserProfileDto {
+export class UpdateUserProfileDto {
   @Length(11)
   @IsNumberString()
   @IsDefined()
