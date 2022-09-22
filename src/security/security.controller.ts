@@ -26,7 +26,7 @@ export default class SecurityController {
         return res.status(StatusCodes.CONFLICT).json({ msg: messages.USER_DOESNT_EXIST });
       }
 
-      if (timeDiffInMinutes(clientData.updatedAt) < +process.env.COOLDOWN_TIME) {
+      if (timeDiffInMinutes(clientData.codeExpiration) < +process.env.COOLDOWN_TIME) {
         return res.status(StatusCodes.NOT_ACCEPTABLE).json({ msg: messages.COOLDOWN });
       }
 
