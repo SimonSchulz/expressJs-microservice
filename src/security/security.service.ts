@@ -4,7 +4,7 @@ import { getRepository } from 'typeorm';
 import VerificationEntity from '../entities/verification.entity';
 
 class SecurityService {
-  public async sendCode(receiver: string, codeExpiration: Date) {
+  public async sendCode(receiver: string, codeExpiration: Date, lastSentSmsTime: Date) {
     const verificationCode = process.env.VERIFICATION_CODE;
 
     const existedPhone = await getRepository(VerificationEntity).findOne({ mobilePhone: receiver });
@@ -14,12 +14,16 @@ class SecurityService {
         mobilePhone: receiver,
         verificationCode,
         codeExpiration,
+        lastSentSmsTime,
       });
 
       return id.identifiers[0].id;
     }
 
-    await getRepository(VerificationEntity).update({ mobilePhone: receiver }, { verificationCode, codeExpiration });
+    await getRepository(VerificationEntity).update(
+      { mobilePhone: receiver },
+      { verificationCode, codeExpiration, lastSentSmsTime }
+    );
 
     const { id } = await getRepository(VerificationEntity).findOne({ mobilePhone: receiver });
 

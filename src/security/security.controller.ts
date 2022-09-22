@@ -26,13 +26,14 @@ export default class SecurityController {
         return res.status(StatusCodes.CONFLICT).json({ msg: messages.USER_DOESNT_EXIST });
       }
 
-      if (timeDiffInMinutes(clientData.codeExpiration) < +process.env.COOLDOWN_TIME) {
+      if (timeDiffInMinutes(clientData.lastSentSmsTime) < +process.env.COOLDOWN_TIME) {
         return res.status(StatusCodes.NOT_ACCEPTABLE).json({ msg: messages.COOLDOWN });
       }
 
-      const codeExpiration = new Date(Date.now());
+      const lastSentSmsTime = new Date(Date.now());
+      const codeExpirationTime = new Date(Date.now());
 
-      const id = await this.securityService.sendCode(String(receiver), codeExpiration);
+      const id = await this.securityService.sendCode(String(receiver), codeExpirationTime, lastSentSmsTime);
 
       return res.status(StatusCodes.OK).json({ id });
     } catch (error) {

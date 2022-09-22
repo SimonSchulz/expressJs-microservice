@@ -43,6 +43,12 @@ class VerificationEntity {
     nullable: true,
   })
   codeExpiration: Date;
+
+  @Column({
+    type: 'timestamptz',
+    nullable: true,
+  })
+  lastSentSmsTime: Date;
 }
 
 export default VerificationEntity;
