@@ -22,15 +22,16 @@ export default class SecurityController {
       const objToFind = { mobilePhone: receiver };
       const clientData = await this.securityService.getClientDataByParam(objToFind);
 
+      if (!user) {
+        return res.status(StatusCodes.CONFLICT).json({ msg: messages.USER_DOESNT_EXIST });
+      }
+
       if (timeDiffInMinutes(clientData.updatedAt) < +process.env.COOLDOWN_TIME) {
         return res.status(StatusCodes.NOT_ACCEPTABLE).json({ msg: messages.COOLDOWN });
       }
 
       const codeExpiration = new Date(Date.now());
 
-      if (!user) {
-        return res.status(StatusCodes.CONFLICT).json({ msg: messages.USER_DOESNT_EXIST });
-      }
       const id = await this.securityService.sendCode(String(receiver), codeExpiration);
 
       return res.status(StatusCodes.OK).json({ id });
