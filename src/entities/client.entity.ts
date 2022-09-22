@@ -1,9 +1,5 @@
 import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
-<<<<<<< HEAD
 import ClientStatus from '../utils/helpers/ClientStatus';
-=======
-import { ClientStatus } from '../utils/helpers/constants';
->>>>>>> 77b5df50bf688fe373b1315dc8686882f4ef9f62
 
 @Entity()
 export default class Client {

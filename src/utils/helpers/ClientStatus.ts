@@ -1,5 +1,5 @@
-// eslint-disable-next-line no-shadow
-export enum ClientStatus {
+/* eslint-disable no-shadow */
+enum ClientStatus {
   ACTIVE = 'active',
   NOT_ACTIVE = 'notActive',
   NOT_REGISTER = 'notRegister',
@@ -7,8 +7,4 @@ export enum ClientStatus {
   IS_CLIENT = 'isClient',
 }
 
-export enum ErrorMessages {
-  NOT_CLIENT = 'User is not a client',
-  NOT_FOUND = 'User not found',
-  SUCCESS = 'Succesfully',
-}
+export default ClientStatus;

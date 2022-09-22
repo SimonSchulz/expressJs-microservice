@@ -43,11 +43,11 @@ export default class SecurityController {
     try {
       const { verificationCode, id } = req.body;
       const objToFind = { id };
-      const userVerifData = await this.securityService.getClientDataByParam(objToFind);
+      const VerifData = await this.securityService.getClientDataByParam(objToFind);
 
       if (
-        userVerifData.clientVerifStatus === ClientVerifStatus.BLOCKED &&
-        timeDiffInMinutes(userVerifData.lastInvalidAttemptTime) < +process.env.USER_BLOCK_EXPIRATION
+        VerifData.clientVerifStatus === ClientVerifStatus.BLOCKED &&
+        timeDiffInMinutes(VerifData.lastInvalidAttemptTime) < +process.env.USER_BLOCK_EXPIRATION
       ) {
         return res.status(StatusCodes.NOT_ACCEPTABLE).json({ msg: messages.CLIENT_STILL_BLOCKED });
       }
@@ -57,12 +57,12 @@ export default class SecurityController {
       };
       await this.securityService.updateByClientId(id, newClientData);
 
-      if (timeDiffInMinutes(userVerifData.codeExpiration) >= +process.env.CODE_EXPIRATION_TIME) {
+      if (timeDiffInMinutes(VerifData.codeExpiration) >= +process.env.CODE_EXPIRATION_TIME) {
         return res.status(StatusCodes.NOT_ACCEPTABLE).json({ msg: messages.CODE_EXPIRED });
       }
 
-      if (verificationCode !== userVerifData.verificationCode) {
-        const triesLeft = +process.env.MAX_CODE_TRIES - userVerifData.invalidAttempts + 1;
+      if (verificationCode !== VerifData.verificationCode) {
+        const triesLeft = +process.env.MAX_CODE_TRIES - VerifData.invalidAttempts + 1;
         const now = new Date(Date.now());
         const blockedTime = await this.securityService.checkCode(id);
         const lastInvalidAttemptTimeObj = { lastInvalidAttemptTime: now };
