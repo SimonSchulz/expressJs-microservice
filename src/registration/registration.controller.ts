@@ -6,6 +6,8 @@ import { ClientStatus } from '../utils/helpers/constants';
 import { ErrorMessages } from '../utils/helpers/constants';
 import { plainToClass } from 'class-transformer';
 import UpdateUserProfileDto from './dto/updateData.dto';
+import SecurityQuestionEntity from '../entities/seqQuests.entity';
+import { getRepository } from 'typeorm';
 
 export default class SecurityController {
   constructor(private securityService: RegistrationService, private userService: UserService) {
@@ -55,6 +57,21 @@ export default class SecurityController {
       return res.status(StatusCodes.OK).json({ msg: ErrorMessages.SUCCESS });
     } catch (error) {
       return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: error.message });
+    }
+  };
+
+  public sendSecurityQuestions = async (req: Request, res: Response) => {
+    try {
+      const questions = await getRepository(SecurityQuestionEntity).find({
+        order: {
+          id: 'ASC',
+          question: 'DESC',
+        },
+      });
+
+      res.status(StatusCodes.OK).json({ questions: questions });
+    } catch {
+      res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: ErrorMessages.ERROR });
     }
   };
 }

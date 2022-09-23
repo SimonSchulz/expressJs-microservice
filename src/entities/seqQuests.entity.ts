@@ -1,7 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 
 @Entity()
-class SequrityQuestionEntity {
+class SecurityQuestionEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -9,4 +9,4 @@ class SequrityQuestionEntity {
   question: string;
 }
 
-export default SequrityQuestionEntity;
+export default SecurityQuestionEntity;

@@ -23,7 +23,11 @@ class RegistrationRoutes {
 
   private initRoutes() {
     this.router.get('/registration', requestValidationMiddleware, this.registrationController.checkPhoneStatus);
-
+    this.router.get(
+      '/registration/security-questions',
+      requestValidationMiddleware,
+      this.registrationController.sendSecurityQuestions
+    );
     this.router.patch(
       '/registration/user-profile',
       requestValidationMiddleware,

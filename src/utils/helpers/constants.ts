@@ -14,6 +14,7 @@ export enum ClientStatus {
 }
 
 export enum ErrorMessages {
+  ERROR = 'Error',
   NOT_CLIENT = 'notClient',
   IS_CLIENT = 'isClient',
   NOT_FOUND = 'notFound',
