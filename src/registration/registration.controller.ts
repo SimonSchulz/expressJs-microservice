@@ -4,8 +4,8 @@ import UserService from '../user/user.service';
 import RegistrationService from './registration.service';
 import { ClientStatus } from '../utils/helpers/constants';
 import { ErrorMessages } from '../utils/helpers/constants';
-import { plainToClass } from 'class-transformer';
-import { UpdateDataDto } from './dto/updateData.dto';
+import { plainToInstance } from 'class-transformer';
+import UpdateDataDto from './dto/updateData.dto';
 import { RegistrationDataDto } from './dto/registrationData.dto';
 
 export default class SecurityController {
@@ -41,7 +41,7 @@ export default class SecurityController {
 
   public updateUserProfile = async (req: Request, res: Response) => {
     try {
-      const updateData = plainToClass(UpdateDataDto, req.body);
+      const updateData = plainToInstance(UpdateDataDto, req.body);
       const phoneNumber = updateData.mobilePhone;
 
       const user = await this.userService.getUser(String(phoneNumber));
@@ -61,10 +61,9 @@ export default class SecurityController {
 
   public createUserProfile = async (req: Request, res: Response) => {
     try {
-      const registrationData = plainToClass(RegistrationDataDto, req.body);
+      const registrationData = plainToInstance(RegistrationDataDto, req.body);
 
-      const createUser = this.userService.createUser(registrationData);
-
+      const createUser = await this.userService.createUser(registrationData);
       if (createUser) return res.status(StatusCodes.OK).json({ msg: ErrorMessages.SUCCESS });
       else return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: ErrorMessages.ALREADY_EXISTS });
     } catch (error) {
