@@ -14,15 +14,15 @@ export default class SecurityController {
 
   public sendVerificationCode = async (req: Request, res: Response) => {
     try {
-      const { receiver } = req.query;
+      const { mobilePhone } = req.query;
 
-      const user = await this.userService.getUser(String(receiver));
+      const user = await this.userService.getUser({ mobilePhone: mobilePhone as string });
 
       if (!user) {
         return res.status(StatusCodes.CONFLICT).json({ msg: "User with this phone number doesn't exist" });
       }
 
-      const id = await this.securityService.sendCode(String(receiver));
+      const id = await this.securityService.sendCode(String(mobilePhone));
 
       return res.status(StatusCodes.OK).json({ id });
     } catch (error) {

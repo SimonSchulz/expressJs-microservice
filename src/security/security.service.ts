@@ -3,10 +3,10 @@ import { getRepository } from 'typeorm';
 import VerificationEntity from '../entities/verification.entity';
 
 class SecurityService {
-  public async sendCode(receiver: string) {
+  public async sendCode(mobilePhone: string) {
     const verificationCode = process.env.VERIFICATION_CODE;
 
-    const id = await getRepository(VerificationEntity).insert({ mobilePhone: receiver, verificationCode });
+    const id = await getRepository(VerificationEntity).insert({ mobilePhone: mobilePhone as string, verificationCode });
 
     return id.identifiers[0].id;
   }

@@ -3,6 +3,7 @@ import { Request, Response } from 'express';
 import bcrypt from 'bcrypt';
 import UserService from '../user/user.service';
 import TokenController from '../token/token.controller';
+import messages from '../utils/helpers/messages';
 
 export default class LoginController {
   constructor(private userService: UserService, private tokenController: TokenController) {
