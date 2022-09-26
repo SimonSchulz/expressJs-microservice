@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { StatusCodes } from 'http-status-codes';
 import { Request, Response } from 'express';
 import bcrypt from 'bcrypt';
@@ -33,9 +34,23 @@ export default class LoginController {
 
       const token = await this.tokenController.generateTokens(data.clientId);
 
+      await this.tokenController.saveToken(data.clientId, token.refreshToken);
+
       return res
         .send(StatusCodes.OK)
         .json({ msg: `accessToken: ${token.accessToken}, refreshToken: ${token.refreshToken}` });
+    } catch (error) {
+      return res.send(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: error.message });
+    }
+  }
+
+  public async reLogin(req: Request, res: Response) {
+    try {
+      const refreshToken = req.headers;
+
+      console.log(refreshToken);
+
+      return res.send(StatusCodes.OK).json({ msg: `accessToken: ` });
     } catch (error) {
       return res.send(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: error.message });
     }

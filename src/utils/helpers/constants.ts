@@ -7,6 +7,7 @@ export enum ClientStatus {
   NOT_REGISTER = 'notRegister',
   CLOSED = 'closed',
   IS_CLIENT = 'isClient',
+  NOT_CLIENT = 'notClient',
 }
 
 export enum ErrorMessages {

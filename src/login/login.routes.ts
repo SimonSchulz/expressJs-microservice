@@ -23,7 +23,8 @@ class LoginRoutes {
   }
 
   private initRoutes() {
-    this.router.post('/login', loginMiddleware, this.loginController.login);
+    this.router.post('/login/', loginMiddleware, this.loginController.login);
+    this.router.get('/login/token/', this.loginController.reLogin);
   }
 }
 
