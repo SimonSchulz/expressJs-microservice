@@ -2,8 +2,11 @@ import { Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import UserService from '../user/user.service';
 import RegistrationService from './registration.service';
-import ClientStatus from '../utils/helpers/ClientStatus';
-import ErrorMessages from '../utils/helpers/errorMessages';
+import { ClientStatus, ErrorMessages } from '../utils/helpers/constants';
+import { plainToClass } from 'class-transformer';
+import UpdateUserProfileDto from './dto/updateData.dto';
+import SecurityQuestionEntity from '../entities/seqQuests.entity';
+import { getRepository } from 'typeorm';
 
 export default class SecurityController {
   constructor(private securityService: RegistrationService, private userService: UserService) {
@@ -14,12 +17,11 @@ export default class SecurityController {
   public checkPhoneStatus = async (req: Request, res: Response) => {
     try {
       const phoneNumber = req.query.mobilePhone;
+      const objToFind = { mobilePhone: phoneNumber };
 
-      const user = await this.userService.getUser(String(phoneNumber));
+      const user = await this.userService.getUser(objToFind);
       if (user) {
-        const clientStatus = user.clientStatus;
-
-        switch (clientStatus) {
+        switch (user.clientStatus) {
           case ClientStatus.ACTIVE:
           case ClientStatus.NOT_ACTIVE:
             return res.status(StatusCodes.CONFLICT).json({ msg: ClientStatus.IS_CLIENT });
@@ -27,11 +29,51 @@ export default class SecurityController {
           case ClientStatus.NOT_REGISTER:
             return res
               .status(StatusCodes.OK)
-              .json({ mobilePhone: phoneNumber, clientStatus: clientStatus, idCustomer: user.clientId });
+              .json({ mobilePhone: phoneNumber, clientStatus: user.clientStatus, idCustomer: user.clientId });
+
+          default:
+            return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: ErrorMessages.ERROR });
         }
-      } else return res.status(StatusCodes.OK).json({ mobilePhone: phoneNumber, msg: ErrorMessages.NOT_CLIENT });
+      }
+      return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: ErrorMessages.NOT_FOUND });
     } catch (error) {
       return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: error.message });
+    }
+  };
+
+  public updateUserProfile = async (req: Request, res: Response) => {
+    try {
+      const updateData = plainToClass(UpdateUserProfileDto, req.body);
+      const objToFind = { mobilePhone: updateData.mobilePhone };
+
+      const user = await this.userService.getUser(objToFind);
+
+      switch (user.clientStatus) {
+        case ClientStatus.ACTIVE:
+        case ClientStatus.IS_CLIENT:
+          this.userService.updateUser(user, updateData);
+          return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: ErrorMessages.SUCCESS });
+
+        default:
+          return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: ErrorMessages.NOT_FOUND });
+      }
+    } catch (error) {
+      return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: error.message });
+    }
+  };
+
+  public sendSecurityQuestions = async (req: Request, res: Response) => {
+    try {
+      const questions = await getRepository(SecurityQuestionEntity).find({
+        order: {
+          id: 'ASC',
+          question: 'DESC',
+        },
+      });
+
+      res.status(StatusCodes.OK).json({ questions: questions });
+    } catch {
+      res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: ErrorMessages.ERROR });
     }
   };
 }

@@ -1,60 +1,33 @@
-// /* eslint-disable import/prefer-default-export */
-// /* eslint-disable consistent-return */
-// /* eslint-disable no-useless-escape */
-// import { NextFunction, Request, Response } from 'express';
-// import { query, validationResult, body } from 'express-validator';
-// import { StatusCodes } from 'http-status-codes';
+/* eslint-disable import/prefer-default-export */
+/* eslint-disable consistent-return */
+/* eslint-disable no-useless-escape */
+import { validate } from 'class-validator';
+import { NextFunction, Request, Response } from 'express';
+import { StatusCodes } from 'http-status-codes';
+import { plainToInstance } from 'class-transformer';
+import { Endpoints } from './constants';
+import url from 'url';
 
-// export const requestValidationMiddleware = [
-//   query('receiver')
-//     .exists({ checkFalsy: true, checkNull: true })
-//     .withMessage('Required')
-//     .bail()
-//     .matches(/^\d+$/)
-//     .withMessage('Can contain only digits')
-//     .bail()
-//     .isLength({ min: 8 })
-//     .withMessage('Must be 8 symbols or more')
-//     .isLength({ max: 15 })
-//     .withMessage('Must be 15 symbols or less'),
-//   (req: Request, res: Response, next: NextFunction) => {
-//     const errors = validationResult(req);
+export const requestValidationMiddleware = (req: Request, res: Response, next: NextFunction) => {
+  let data = formatDataToDto(req);
 
-//     if (!errors.isEmpty()) {
-//       return res.status(StatusCodes.BAD_REQUEST).json({ errors: errors.array() });
-//     }
-//     next();
-//   },
-// ];
+  validate(data, { skipMissingProperties: true }).then((errors) => {
+    if (errors.length > 0) {
+      let errorTexts = Array();
+      for (const errorItem of errors) {
+        errorTexts = errorTexts.concat(errorItem.constraints);
+      }
+      res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(errorTexts);
+      return;
+    } else {
+      next();
+    }
+  });
+};
 
-// export const checkVerificationCodeMiddleware = [
-//   body('verificationCode')
-//     .exists({ checkFalsy: true, checkNull: true })
-//     .withMessage('Required')
-//     .bail()
-//     .matches(/^\d+$/)
-//     .withMessage('Can contain only digits')
-//     .bail()
-//     .isLength({ min: 6, max: 6 })
-//     .withMessage('Must be 6 symbols'),
-//   body('id')
-//     .exists({ checkFalsy: true, checkNull: true })
-//     .withMessage('Required')
-//     .bail()
-//     .matches(/^[a-zA-Zа-яА-Я0-9\@\!#\$%&‘\*\+-\/\\=\?\^_`{\|}~!»№;%:\?\*\(\)[\]<>,\.]+$/)
-//     .withMessage("Can contain letters, numbers, !@#$%^&*()_-=+;'?,<>[]{}|/#!~' symbols")
-//     .bail()
-//     .isLength({ min: 2 })
-//     .withMessage('Must be 2 symbols or more')
-//     .isLength({ max: 40 })
-//     .withMessage('Must be 40 characters or less'),
-
-//   (req: Request, res: Response, next: NextFunction) => {
-//     const errors = validationResult(req);
-
-//     if (!errors.isEmpty()) {
-//       return res.status(StatusCodes.BAD_REQUEST).json({ errors: errors.array() });
-//     }
-//     next();
-//   },
-// ];
+function formatDataToDto(req: Request) {
+  let clearUrl = url.parse(req.url).pathname;
+  const data = req.method === 'GET' ? req.query : req.body;
+  let formatedData = plainToInstance(Endpoints[clearUrl], data);
+  return formatedData;
+}
