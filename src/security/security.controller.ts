@@ -17,9 +17,9 @@ export default class SecurityController {
 
   public sendVerificationCode = async (req: Request, res: Response) => {
     try {
-      const { receiver } = req.query;
-      const user = await this.userService.getUser(String(receiver));
-      const objToFind = { mobilePhone: receiver };
+      const { mobilePhone } = req.query;
+      const user = await this.userService.getUser({ mobilePhone });
+      const objToFind = { mobilePhone: mobilePhone };
       const clientData = await this.securityService.getClientDataByParam(objToFind);
 
       if (!user) {
@@ -33,7 +33,7 @@ export default class SecurityController {
       const lastSentSmsTime = new Date(Date.now());
       const codeExpirationTime = new Date(Date.now());
 
-      const id = await this.securityService.sendCode(String(receiver), codeExpirationTime, lastSentSmsTime);
+      const id = await this.securityService.sendCode(String(mobilePhone), codeExpirationTime, lastSentSmsTime);
 
       return res.status(StatusCodes.OK).json({ id });
     } catch (error) {

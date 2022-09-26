@@ -1,10 +1,6 @@
-import { plainToClass } from 'class-transformer';
-import { validate } from 'class-validator';
-import { Request, Response, Router } from 'express';
-import { StatusCodes } from 'http-status-codes';
+import { Router } from 'express';
 import { requestValidationMiddleware } from '../utils/helpers/validation';
-import MobilePhoneDto from './dto/mobilePhone.dto';
-import UpdateUserProfileDto from './dto/updateData.dto';
+import UserService from '../user/user.service';
 import RegistrationController from './registration.controller';
 import RegistrationService from './registration.service';
 
@@ -15,9 +11,11 @@ class RegistrationRoutes {
 
   private registrationService: RegistrationService;
 
+  private userService: UserService;
+
   constructor() {
     this.registrationService = new RegistrationService();
-    this.registrationController = new RegistrationController(this.registrationService);
+    this.registrationController = new RegistrationController(this.registrationService, this.userService);
     this.initRoutes();
   }
 

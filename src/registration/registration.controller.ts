@@ -2,8 +2,7 @@ import { Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import UserService from '../user/user.service';
 import RegistrationService from './registration.service';
-import { ClientStatus } from '../utils/helpers/constants';
-import { ErrorMessages } from '../utils/helpers/constants';
+import { ClientStatus, ErrorMessages } from '../utils/helpers/constants';
 import { plainToClass } from 'class-transformer';
 import UpdateUserProfileDto from './dto/updateData.dto';
 import SecurityQuestionEntity from '../entities/seqQuests.entity';
@@ -18,12 +17,11 @@ export default class SecurityController {
   public checkPhoneStatus = async (req: Request, res: Response) => {
     try {
       const phoneNumber = req.query.mobilePhone;
+      const objToFind = { mobilePhone: phoneNumber };
 
-      const user = await this.userService.getUser(String(phoneNumber));
+      const user = await this.userService.getUser(objToFind);
       if (user) {
-        const clientStatus = user.clientStatus;
-
-        switch (clientStatus) {
+        switch (user.clientStatus) {
           case ClientStatus.ACTIVE:
           case ClientStatus.NOT_ACTIVE:
             return res.status(StatusCodes.CONFLICT).json({ msg: ClientStatus.IS_CLIENT });
@@ -31,9 +29,13 @@ export default class SecurityController {
           case ClientStatus.NOT_REGISTER:
             return res
               .status(StatusCodes.OK)
-              .json({ mobilePhone: phoneNumber, clientStatus: clientStatus, idCustomer: user.clientId });
+              .json({ mobilePhone: phoneNumber, clientStatus: user.clientStatus, idCustomer: user.clientId });
+
+          default:
+            return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: ErrorMessages.ERROR });
         }
-      } else return res.status(StatusCodes.OK).json({ mobilePhone: phoneNumber, msg: ErrorMessages.NOT_CLIENT });
+      }
+      return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: ErrorMessages.NOT_FOUND });
     } catch (error) {
       return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: error.message });
     }
@@ -42,19 +44,17 @@ export default class SecurityController {
   public updateUserProfile = async (req: Request, res: Response) => {
     try {
       const updateData = plainToClass(UpdateUserProfileDto, req.body);
-      const phoneNumber = updateData.mobilePhone;
+      const objToFind = { mobilePhone: updateData.mobilePhone };
 
-      const user = await this.userService.getUser(String(phoneNumber));
-
-      if (!user) return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: ErrorMessages.NOT_FOUND });
+      const user = await this.userService.getUser(objToFind);
 
       switch (user.clientStatus) {
         case ClientStatus.ACTIVE:
         case ClientStatus.IS_CLIENT:
           this.userService.updateUser(user, updateData);
+        default:
+          return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: ErrorMessages.NOT_FOUND });
       }
-
-      return res.status(StatusCodes.OK).json({ msg: ErrorMessages.SUCCESS });
     } catch (error) {
       return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: error.message });
     }

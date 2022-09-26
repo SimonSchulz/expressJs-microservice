@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { checkVerificationCodeMiddleware, requestValidationMiddleware } from '../utils/helpers/validation';
+import { requestValidationMiddleware } from '../utils/helpers/validation';
 import SecurityController from './security.controller';
 import SecurityService from './security.service';
 import UserService from '../user/user.service';
@@ -21,11 +21,7 @@ class SecurityRoutes {
 
   private initRoutes() {
     this.router.post('/security/session/', requestValidationMiddleware, this.securityController.sendVerificationCode);
-    this.router.post(
-      '/security/session/verification/',
-      checkVerificationCodeMiddleware,
-      this.securityController.checkVerificationCode
-    );
+    this.router.post('/security/session/verification/', this.securityController.checkVerificationCode);
   }
 }
 
