@@ -52,6 +52,8 @@ export default class SecurityController {
         case ClientStatus.ACTIVE:
         case ClientStatus.IS_CLIENT:
           this.userService.updateUser(user, updateData);
+          return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: ErrorMessages.SUCCESS });
+
         default:
           return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: ErrorMessages.NOT_FOUND });
       }
