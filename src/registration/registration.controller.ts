@@ -4,7 +4,7 @@ import UserService from '../user/user.service';
 import RegistrationService from './registration.service';
 import ErrorMessages from '../utils/helpers/errorMessages';
 import ClientStatus from '../utils/helpers/ClientStatus';
-import { plainToClass } from 'class-transformer';
+import { plainToClass, plainToInstance } from 'class-transformer';
 import UpdateUserProfileDto from './dto/updateData.dto';
 import SecurityQuestionEntity from '../entities/seqQuests.entity';
 import { getRepository } from 'typeorm';
@@ -50,7 +50,7 @@ export default class SecurityController {
 
   public updateUserProfile = async (req: Request, res: Response) => {
     try {
-      const updateData = plainToClass(UpdateUserProfileDto, req.body);
+      const updateData = plainToInstance(UpdateUserProfileDto, req.body);
       const objToFind = { mobilePhone: updateData.mobilePhone };
 
       const user = await this.userService.getUser(objToFind);
@@ -63,8 +63,14 @@ export default class SecurityController {
                 let check = await getRepository(SecurityQuestionEntity).findOne({ id: updateData.securityQuestionId });
 
                 if (check) {
-                  this.userService.updateUser(user, updateData);
-                  return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: ErrorMessages.SUCCESS });
+                  let checkPasswords = await this.userService.checkUserPassword(user, updateData.password);
+                  let newPassword = await this.userService.genHashPassword(updateData.password);
+
+                  if (!checkPasswords) {
+                    updateData.password = newPassword;
+                    this.userService.updateUser(user, updateData);
+                    return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: ErrorMessages.SUCCESS });
+                  } else return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: ErrorMessages.SAME_PASS });
                 } else return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: ErrorMessages.INVALID_ID });
               } else return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: ErrorMessages.NO_ID });
             } else if (updateData.securityQuestionType === SecurityQuestionsTypes.SELF_DEFINED) {

@@ -7,6 +7,7 @@ enum ErrorMessages {
   NO_QUESTION = 'If security question is selfDefined must be a question string',
   INVALID_ID = 'Invalid security question ID',
   PASSED_ID = 'Expected security question string,received an ID',
+  SAME_PASS = 'Received same password',
 }
 
 export default ErrorMessages;

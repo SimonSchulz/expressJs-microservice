@@ -58,7 +58,7 @@ export default class Client {
   @Column({ length: 50, nullable: true })
   securityQuestionId: string;
 
-  @Column({ length: 50, nullable: true })
+  @Column({ length: 100, nullable: true })
   securityAnswer: string;
 
   @Column({ length: 50, nullable: true, default: null })
