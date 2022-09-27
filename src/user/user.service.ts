@@ -7,6 +7,7 @@ class UserService {
   async getUser(param: object) {
     return getRepository(Client).findOne(param);
   }
+
   async updateUser(user, updateData) {
     await getRepository(Client).save({ ...user, ...updateData });
   }

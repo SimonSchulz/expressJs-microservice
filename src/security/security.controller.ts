@@ -19,21 +19,36 @@ export default class SecurityController {
     try {
       const { mobilePhone } = req.query;
       const user = await this.userService.getUser({ mobilePhone });
-      const objToFind = { mobilePhone: mobilePhone };
-      const clientData = await this.securityService.getClientDataByParam(objToFind);
+      const clientData = await this.securityService.getClientDataByParam({ mobilePhone });
 
       if (!user) {
         return res.status(StatusCodes.CONFLICT).json({ msg: messages.USER_DOESNT_EXIST });
       }
 
-      if (timeDiffInMinutes(clientData.lastSentSmsTime) < +process.env.COOLDOWN_TIME) {
-        return res.status(StatusCodes.NOT_ACCEPTABLE).json({ msg: messages.COOLDOWN });
+      if (!clientData) {
+        const timeObj = await this.securityService.generateTime();
+        const id = await this.securityService.sendCode(
+          mobilePhone as string,
+          timeObj.codeExpirationTime,
+          timeObj.lastSentSmsTime
+        );
+
+        return id;
       }
 
-      const lastSentSmsTime = new Date(Date.now());
-      const codeExpirationTime = new Date(Date.now());
+      if (timeDiffInMinutes(clientData.lastSentSmsTime) < +process.env.COOLDOWN_TIME) {
+        const blockSeconds = Math.round(60 - (new Date().getTime() - clientData.lastSentSmsTime.getTime()) / 1000);
 
-      const id = await this.securityService.sendCode(String(mobilePhone), codeExpirationTime, lastSentSmsTime);
+        return res.status(StatusCodes.NOT_ACCEPTABLE).json({ blockSeconds: blockSeconds as number });
+      }
+
+      const timeObj = await this.securityService.generateTime();
+
+      const id = await this.securityService.sendCode(
+        String(mobilePhone),
+        timeObj.codeExpirationTime,
+        timeObj.lastSentSmsTime
+      );
 
       return res.status(StatusCodes.OK).json({ id });
     } catch (error) {
