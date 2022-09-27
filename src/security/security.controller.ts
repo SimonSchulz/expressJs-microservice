@@ -1,3 +1,4 @@
+/* eslint-disable no-else-return */
 /* eslint-disable no-empty-function */
 /* eslint-disable no-useless-constructor */
 /* eslint-disable no-console */
@@ -8,6 +9,7 @@ import ClientVerifStatus from '../utils/helpers/ClientVerifStatus';
 import timeDiffInMinutes from '../utils/helpers/timeDiff';
 import SecurityService from './security.service';
 import messages from '../utils/helpers/messages';
+import generateTime from '../utils/helpers/generateTime';
 
 export default class SecurityController {
   constructor(private securityService: SecurityService, private userService: UserService) {
@@ -26,31 +28,36 @@ export default class SecurityController {
       }
 
       if (!clientData) {
-        const timeObj = await this.securityService.generateTime();
-        const id = await this.securityService.sendCode(
-          mobilePhone as string,
+        const timeObj = generateTime();
+
+        const smsId = await this.securityService.sendCode(
+          mobilePhone,
+          timeObj.codeExpirationTime,
+          timeObj.lastSentSmsTime
+        );
+        const blockSecondsLeft = Math.round(60 - (new Date().getTime() - timeObj.lastSentSmsTime.getTime()) / 1000);
+
+        return res.status(StatusCodes.OK).json({ smsId, blockSeconds: blockSecondsLeft });
+      } else {
+        const clientVerifData = await this.securityService.getClientDataByParam({ mobilePhone });
+        if (timeDiffInMinutes(clientVerifData.lastSentSmsTime) < +process.env.COOLDOWN_TIME) {
+          const blockSecondsLeft = Math.round(
+            60 - (new Date().getTime() - clientVerifData.lastSentSmsTime.getTime()) / 1000
+          );
+
+          return res.status(StatusCodes.NOT_ACCEPTABLE).json({ blockSeconds: blockSecondsLeft });
+        }
+
+        const timeObj = generateTime();
+
+        const smsId = await this.securityService.sendCode(
+          mobilePhone,
           timeObj.codeExpirationTime,
           timeObj.lastSentSmsTime
         );
 
-        return id;
+        return res.status(StatusCodes.OK).json({ smsId });
       }
-
-      if (timeDiffInMinutes(clientData.lastSentSmsTime) < +process.env.COOLDOWN_TIME) {
-        const blockSeconds = Math.round(60 - (new Date().getTime() - clientData.lastSentSmsTime.getTime()) / 1000);
-
-        return res.status(StatusCodes.NOT_ACCEPTABLE).json({ blockSeconds: blockSeconds as number });
-      }
-
-      const timeObj = await this.securityService.generateTime();
-
-      const id = await this.securityService.sendCode(
-        String(mobilePhone),
-        timeObj.codeExpirationTime,
-        timeObj.lastSentSmsTime
-      );
-
-      return res.status(StatusCodes.OK).json({ id });
     } catch (error) {
       return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: error.message });
     }
