@@ -59,7 +59,7 @@ export default class SecurityController {
         return res.status(StatusCodes.OK).json({ smsId });
       }
     } catch (error) {
-      return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: error.message });
+      return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: messages.INTERNAL_SERVER_ERROR });
     }
   };
 
@@ -120,7 +120,7 @@ export default class SecurityController {
 
       return res.status(StatusCodes.OK).json({ msg: messages.SUCCESS });
     } catch (error) {
-      return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: error.message });
+      return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: messages.INTERNAL_SERVER_ERROR });
     }
   };
 }

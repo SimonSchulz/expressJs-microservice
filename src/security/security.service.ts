@@ -7,7 +7,7 @@ class SecurityService {
   public async sendCode(mobilePhone, codeExpiration: Date, lastSentSmsTime: Date) {
     const verificationCode = process.env.VERIFICATION_CODE;
 
-    const existedPhone = await getRepository(VerificationEntity).findOne({ mobilePhone: mobilePhone as string });
+    const existedPhone = await getRepository(VerificationEntity).findOne({ mobilePhone });
 
     if (!existedPhone) {
       const id = await getRepository(VerificationEntity).insert({
@@ -21,11 +21,11 @@ class SecurityService {
     }
 
     await getRepository(VerificationEntity).update(
-      { mobilePhone: mobilePhone as string },
+      { mobilePhone },
       { verificationCode, codeExpiration, lastSentSmsTime }
     );
 
-    const { id } = await getRepository(VerificationEntity).findOne({ mobilePhone: mobilePhone as string });
+    const { id } = await getRepository(VerificationEntity).findOne({ mobilePhone });
 
     return id;
   }
@@ -34,7 +34,7 @@ class SecurityService {
     return await getRepository(VerificationEntity).findOne(param);
   }
 
-  public async updateByClientId(id: string, newClientData) {
+  public async updateByClientId(id: string, newClientData: object) {
     await getRepository(VerificationEntity).update(
       { id },
 
