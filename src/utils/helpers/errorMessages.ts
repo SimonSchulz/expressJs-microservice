@@ -8,6 +8,7 @@ enum ErrorMessages {
   INVALID_ID = 'Invalid security question ID',
   PASSED_ID = 'Expected security question string,received an ID',
   SAME_PASS = 'Received same password',
+  NOT_VERIFIED = 'User not verified',
 }
 
 export default ErrorMessages;

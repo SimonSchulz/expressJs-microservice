@@ -64,19 +64,31 @@ export default class SecurityController {
 
                 if (check) {
                   let checkPasswords = await this.userService.checkUserPassword(user, updateData.password);
+                  let checkVerifStatus = await this.userService.checkUserVerification(user);
                   let newPassword = await this.userService.genHashPassword(updateData.password);
 
                   if (!checkPasswords) {
-                    updateData.password = newPassword;
-                    this.userService.updateUser(user, updateData);
-                    return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: ErrorMessages.SUCCESS });
+                    if (checkVerifStatus) {
+                      updateData.password = newPassword;
+                      this.userService.updateUser(user, updateData);
+                      return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: ErrorMessages.SUCCESS });
+                    } else
+                      return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: ErrorMessages.NOT_VERIFIED });
                   } else return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: ErrorMessages.SAME_PASS });
                 } else return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: ErrorMessages.INVALID_ID });
               } else return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: ErrorMessages.NO_ID });
             } else if (updateData.securityQuestionType === SecurityQuestionsTypes.SELF_DEFINED) {
               if (updateData.securityQuestion) {
-                this.userService.updateUser(user, updateData);
-                return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: ErrorMessages.SUCCESS });
+                let checkPasswords = await this.userService.checkUserPassword(user, updateData.password);
+                let checkVerifStatus = await this.userService.checkUserVerification(user);
+                let newPassword = await this.userService.genHashPassword(updateData.password);
+                if (!checkPasswords) {
+                  if (checkVerifStatus) {
+                    updateData.password = newPassword;
+                    this.userService.updateUser(user, updateData);
+                    return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: ErrorMessages.SUCCESS });
+                  } else return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: ErrorMessages.NOT_VERIFIED });
+                } else return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: ErrorMessages.SAME_PASS });
               } else return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: ErrorMessages.NO_QUESTION });
             }
 
