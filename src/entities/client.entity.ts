@@ -59,7 +59,7 @@ export default class Client {
   securityQuestionId: string;
 
   @Column({ length: 100, nullable: true })
-  securityAnswer: string;
+  securityQuestionAnswer: string;
 
   @Column({ length: 50, nullable: true, default: null })
   email: string;

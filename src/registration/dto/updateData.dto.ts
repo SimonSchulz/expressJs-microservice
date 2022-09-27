@@ -27,7 +27,7 @@ export default class UpdateUserProfileDto {
 
   @IsDefined()
   @IsString()
-  securityAnswer: string;
+  securityQuestionAnswer: string;
 
   @IsEmail()
   email: string;

@@ -23,28 +23,29 @@ export default class SecurityController {
       const objToFind = { mobilePhone: phoneNumber };
 
       const user = await this.userService.getUser(objToFind);
-      if (user) {
-        switch (user.clientStatus) {
-          case ClientStatus.ACTIVE:
-          case ClientStatus.NOT_ACTIVE:
-            return res
-              .status(StatusCodes.OK)
-              .json({ mobilePhone: objToFind.mobilePhone, clientStatus: ClientStatus.IS_CLIENT });
-
-          case ClientStatus.NOT_REGISTER:
-            return res
-              .status(StatusCodes.OK)
-              .json({ mobilePhone: phoneNumber, clientStatus: user.clientStatus, idCustomer: user.clientId });
-
-          default:
-            return res.status(StatusCodes.NOT_FOUND).json({ clientStatus: user.clientStatus });
-        }
+      if (!user) {
+        return res
+          .status(StatusCodes.NOT_FOUND)
+          .json({ mobilePhone: objToFind.mobilePhone, msg: ErrorMessages.NOT_FOUND });
       }
-      return res
-        .status(StatusCodes.NOT_FOUND)
-        .json({ mobilePhone: objToFind.mobilePhone, msg: ErrorMessages.NOT_FOUND });
+
+      switch (user.clientStatus) {
+        case ClientStatus.ACTIVE:
+        case ClientStatus.NOT_ACTIVE:
+          return res
+            .status(StatusCodes.OK)
+            .json({ mobilePhone: objToFind.mobilePhone, clientStatus: ClientStatus.IS_CLIENT });
+
+        case ClientStatus.NOT_REGISTER:
+          return res
+            .status(StatusCodes.OK)
+            .json({ mobilePhone: phoneNumber, clientStatus: user.clientStatus, clientId: user.clientId });
+
+        default:
+          return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ clientStatus: user.clientStatus });
+      }
     } catch (error) {
-      return res.status(StatusCodes.NOT_FOUND).json({ msg: error.message });
+      return res.status(StatusCodes.NOT_FOUND).json({ msg: ErrorMessages.ERROR });
     }
   };
 
@@ -55,46 +56,17 @@ export default class SecurityController {
 
       const user = await this.userService.getUser(objToFind);
       if (user) {
-        switch (user.clientStatus) {
-          case ClientStatus.ACTIVE:
-          case ClientStatus.IS_CLIENT:
-            if (updateData.securityQuestionType === SecurityQuestionsTypes.PREDEFINED) {
-              if (updateData.securityQuestionId) {
-                let check = await getRepository(SecurityQuestionEntity).findOne({ id: updateData.securityQuestionId });
+        if (user.clientStatus === ClientStatus.ACTIVE || user.clientStatus === ClientStatus.IS_CLIENT) {
+          let allCheck = await this.userService.checkAllParams(user, updateData);
+          let errorMessage = await this.userService.handleError(allCheck);
 
-                if (check) {
-                  let checkPasswords = await this.userService.checkUserPassword(user, updateData.password);
-                  let checkVerifStatus = await this.userService.checkUserVerification(user);
-                  let newPassword = await this.userService.genHashPassword(updateData.password);
-
-                  if (!checkPasswords) {
-                    if (checkVerifStatus) {
-                      updateData.password = newPassword;
-                      this.userService.updateUser(user, updateData);
-                      return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: ErrorMessages.SUCCESS });
-                    } else
-                      return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: ErrorMessages.NOT_VERIFIED });
-                  } else return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: ErrorMessages.SAME_PASS });
-                } else return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: ErrorMessages.INVALID_ID });
-              } else return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: ErrorMessages.NO_ID });
-            } else if (updateData.securityQuestionType === SecurityQuestionsTypes.SELF_DEFINED) {
-              if (updateData.securityQuestion) {
-                let checkPasswords = await this.userService.checkUserPassword(user, updateData.password);
-                let checkVerifStatus = await this.userService.checkUserVerification(user);
-                let newPassword = await this.userService.genHashPassword(updateData.password);
-                if (!checkPasswords) {
-                  if (checkVerifStatus) {
-                    updateData.password = newPassword;
-                    this.userService.updateUser(user, updateData);
-                    return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: ErrorMessages.SUCCESS });
-                  } else return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: ErrorMessages.NOT_VERIFIED });
-                } else return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: ErrorMessages.SAME_PASS });
-              } else return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: ErrorMessages.NO_QUESTION });
-            }
-
-          default:
-            return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ clientStatus: user.clientStatus });
+          if (allCheck.checks) {
+            updateData.password = allCheck.newPassword;
+            this.userService.updateUser(user, updateData);
+            return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: ErrorMessages.SUCCESS });
+          } else return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: errorMessage });
         }
+        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: user.clientStatus });
       } else {
         return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: ErrorMessages.NOT_FOUND });
       }
