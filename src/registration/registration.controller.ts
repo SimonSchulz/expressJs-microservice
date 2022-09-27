@@ -1,12 +1,15 @@
-import { Request, Response } from 'express';
+import e, { Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import UserService from '../user/user.service';
 import RegistrationService from './registration.service';
-import { ClientStatus, ErrorMessages } from '../utils/helpers/constants';
+import ErrorMessages from '../utils/helpers/errorMessages';
+import ClientStatus from '../utils/helpers/ClientStatus';
 import { plainToClass } from 'class-transformer';
 import UpdateUserProfileDto from './dto/updateData.dto';
 import SecurityQuestionEntity from '../entities/seqQuests.entity';
 import { getRepository } from 'typeorm';
+import SecurityQuestionsTypes from '../utils/helpers/securityQuestionsTypes';
+import { error } from 'console';
 
 export default class SecurityController {
   constructor(private securityService: RegistrationService, private userService: UserService) {
@@ -24,7 +27,9 @@ export default class SecurityController {
         switch (user.clientStatus) {
           case ClientStatus.ACTIVE:
           case ClientStatus.NOT_ACTIVE:
-            return res.status(StatusCodes.CONFLICT).json({ msg: ClientStatus.IS_CLIENT });
+            return res
+              .status(StatusCodes.OK)
+              .json({ mobilePhone: objToFind.mobilePhone, clientStatus: ClientStatus.IS_CLIENT });
 
           case ClientStatus.NOT_REGISTER:
             return res
@@ -32,12 +37,14 @@ export default class SecurityController {
               .json({ mobilePhone: phoneNumber, clientStatus: user.clientStatus, idCustomer: user.clientId });
 
           default:
-            return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: ErrorMessages.ERROR });
+            return res.status(StatusCodes.NOT_FOUND).json({ clientStatus: user.clientStatus });
         }
       }
-      return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: ErrorMessages.NOT_FOUND });
+      return res
+        .status(StatusCodes.NOT_FOUND)
+        .json({ mobilePhone: objToFind.mobilePhone, msg: ErrorMessages.NOT_FOUND });
     } catch (error) {
-      return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: error.message });
+      return res.status(StatusCodes.NOT_FOUND).json({ msg: error.message });
     }
   };
 
@@ -47,15 +54,31 @@ export default class SecurityController {
       const objToFind = { mobilePhone: updateData.mobilePhone };
 
       const user = await this.userService.getUser(objToFind);
+      if (user) {
+        switch (user.clientStatus) {
+          case ClientStatus.ACTIVE:
+          case ClientStatus.IS_CLIENT:
+            if (updateData.securityQuestionType === SecurityQuestionsTypes.PREDEFINED) {
+              if (updateData.securityQuestionId) {
+                let check = await getRepository(SecurityQuestionEntity).findOne({ id: updateData.securityQuestionId });
 
-      switch (user.clientStatus) {
-        case ClientStatus.ACTIVE:
-        case ClientStatus.IS_CLIENT:
-          this.userService.updateUser(user, updateData);
-          return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: ErrorMessages.SUCCESS });
+                if (check) {
+                  this.userService.updateUser(user, updateData);
+                  return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: ErrorMessages.SUCCESS });
+                } else return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: ErrorMessages.INVALID_ID });
+              } else return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: ErrorMessages.NO_ID });
+            } else if (updateData.securityQuestionType === SecurityQuestionsTypes.SELF_DEFINED) {
+              if (updateData.securityQuestion) {
+                this.userService.updateUser(user, updateData);
+                return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: ErrorMessages.SUCCESS });
+              } else return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: ErrorMessages.NO_QUESTION });
+            }
 
-        default:
-          return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: ErrorMessages.NOT_FOUND });
+          default:
+            return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ clientStatus: user.clientStatus });
+        }
+      } else {
+        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: ErrorMessages.NOT_FOUND });
       }
     } catch (error) {
       return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: error.message });
@@ -73,7 +96,7 @@ export default class SecurityController {
 
       res.status(StatusCodes.OK).json({ questions: questions });
     } catch {
-      res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: ErrorMessages.ERROR });
+      res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: error });
     }
   };
 }

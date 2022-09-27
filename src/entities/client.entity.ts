@@ -1,5 +1,6 @@
 import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 import ClientStatus from '../utils/helpers/ClientStatus';
+import SecurityQuestionsTypes from '../utils/helpers/securityQuestionsTypes';
 
 @Entity()
 export default class Client {
@@ -50,6 +51,12 @@ export default class Client {
 
   @Column({ length: 50, nullable: true })
   securityQuestion: string;
+
+  @Column({ type: 'enum', enum: SecurityQuestionsTypes, nullable: true })
+  securityQuestionType: string;
+
+  @Column({ length: 50, nullable: true })
+  securityQuestionId: string;
 
   @Column({ length: 50, nullable: true })
   securityAnswer: string;
