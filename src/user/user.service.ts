@@ -35,7 +35,7 @@ class UserService {
       secQuestTypes: secQuestTypes,
     };
   }
-  async handleError(allCheck) {
+  handleError(allCheck) {
     if (allCheck.passwordCheck) {
       return ErrorMessages.SAME_PASS;
     }

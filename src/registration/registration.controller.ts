@@ -1,14 +1,13 @@
-import e, { Request, Response } from 'express';
+import { Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import UserService from '../user/user.service';
 import RegistrationService from './registration.service';
 import ErrorMessages from '../utils/helpers/errorMessages';
 import ClientStatus from '../utils/helpers/ClientStatus';
-import { plainToClass, plainToInstance } from 'class-transformer';
+import { plainToInstance } from 'class-transformer';
 import UpdateUserProfileDto from './dto/updateData.dto';
 import SecurityQuestionEntity from '../entities/seqQuests.entity';
 import { getRepository } from 'typeorm';
-import SecurityQuestionsTypes from '../utils/helpers/securityQuestionsTypes';
 import { error } from 'console';
 
 export default class SecurityController {
@@ -55,21 +54,22 @@ export default class SecurityController {
       const objToFind = { mobilePhone: updateData.mobilePhone };
 
       const user = await this.userService.getUser(objToFind);
-      if (user) {
-        if (user.clientStatus === ClientStatus.ACTIVE || user.clientStatus === ClientStatus.IS_CLIENT) {
-          let allCheck = await this.userService.checkAllParams(user, updateData);
-          let errorMessage = await this.userService.handleError(allCheck);
-
-          if (allCheck.checks) {
-            updateData.password = allCheck.newPassword;
-            this.userService.updateUser(user, updateData);
-            return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: ErrorMessages.SUCCESS });
-          } else return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: errorMessage });
-        }
-        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: user.clientStatus });
-      } else {
+      if (!user) {
         return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: ErrorMessages.NOT_FOUND });
       }
+      if (user.clientStatus === ClientStatus.ACTIVE || user.clientStatus === ClientStatus.IS_CLIENT) {
+        let allCheck = await this.userService.checkAllParams(user, updateData);
+        let errorMessage = await this.userService.handleError(allCheck);
+
+        if (allCheck.checks) {
+          updateData.password = allCheck.newPassword;
+          this.userService.updateUser(user, updateData);
+          return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: ErrorMessages.SUCCESS });
+        } else {
+          return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: errorMessage });
+        }
+      }
+      return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: user.clientStatus });
     } catch (error) {
       return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: error.message });
     }
