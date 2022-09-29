@@ -1,7 +1,8 @@
-import { IsDefined, IsNumberString, Length } from 'class-validator';
+import { IsDefined, IsNumberString, MaxLength, MinLength } from 'class-validator';
 
 export class MobilePhoneDto {
-  @Length(11)
+  @MinLength(11)
+  @MaxLength(11)
   @IsNumberString()
   @IsDefined()
   mobilePhone: string;
