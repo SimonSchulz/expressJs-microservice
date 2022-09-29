@@ -4,6 +4,7 @@ import bodyParser from 'body-parser';
 import cors from 'cors';
 import SecurityRoutes from '../security/security.routes';
 import RegistrationRoutes from '../registration/registration.routes';
+import AuthRoutes from '../auth/auth.routes';
 
 interface Route {
   router: Router;
@@ -32,4 +33,4 @@ class App {
   }
 }
 
-export default new App([new SecurityRoutes(), new RegistrationRoutes()]).app;
+export default new App([new SecurityRoutes(), new RegistrationRoutes(), new AuthRoutes()]).app;

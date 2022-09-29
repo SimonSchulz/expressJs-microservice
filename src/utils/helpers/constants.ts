@@ -1,3 +1,4 @@
+import { sendNotificationSettingsDto } from '../../auth/dto/sendNotification.dto';
 import { MobilePhoneDto } from '../../registration/dto/mobilePhone.dto';
 import UpdateUserProfileDto from '../../registration/dto/updateData.dto';
 
@@ -16,6 +17,7 @@ export enum ErrorMessages {
 export const Endpoints = {
   '/registration': MobilePhoneDto,
   '/registration/user-profile': UpdateUserProfileDto,
+  '/auth/user/settings/notifications/all': sendNotificationSettingsDto,
 };
 export const SecurityQuestions = [
   { question: `Mother's maiden name` },
