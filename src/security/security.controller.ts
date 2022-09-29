@@ -1,6 +1,9 @@
+/* eslint-disable consistent-return */
+/* eslint-disable no-else-return */
 /* eslint-disable no-empty-function */
 /* eslint-disable no-useless-constructor */
 /* eslint-disable no-console */
+import { plainToInstance } from 'class-transformer';
 import { Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import UserService from '../user/user.service';
@@ -8,6 +11,8 @@ import ClientVerifStatus from '../utils/helpers/ClientVerifStatus';
 import timeDiffInMinutes from '../utils/helpers/timeDiff';
 import SecurityService from './security.service';
 import messages from '../utils/helpers/messages';
+import generateTime from '../utils/helpers/generateTime';
+import { MobilePhoneDto } from '../registration/dto/mobilePhone.dto';
 
 export default class SecurityController {
   constructor(private securityService: SecurityService, private userService: UserService) {
@@ -17,39 +22,57 @@ export default class SecurityController {
 
   public sendVerificationCode = async (req: Request, res: Response) => {
     try {
-      const { mobilePhone } = req.query;
+      const { mobilePhone } = plainToInstance(MobilePhoneDto, req.body);
       const user = await this.userService.getUser({ mobilePhone });
-      const objToFind = { mobilePhone: mobilePhone };
-      const clientData = await this.securityService.getClientDataByParam(objToFind);
+      const clientData = await this.securityService.getClientDataByParam({ mobilePhone });
 
       if (!user) {
         return res.status(StatusCodes.CONFLICT).json({ msg: messages.USER_DOESNT_EXIST });
       }
 
-      if (timeDiffInMinutes(clientData.lastSentSmsTime) < +process.env.COOLDOWN_TIME) {
-        return res.status(StatusCodes.NOT_ACCEPTABLE).json({ msg: messages.COOLDOWN });
+      if (!clientData) {
+        const timeObj = generateTime();
+
+        const smsId = await this.securityService.sendCode(
+          mobilePhone,
+          timeObj.codeExpirationTime,
+          timeObj.lastSentSmsTime
+        );
+        const blockSecondsLeft = Math.round(60 - (new Date().getTime() - timeObj.lastSentSmsTime.getTime()) / 1000);
+
+        return res.status(StatusCodes.OK).json({ smsId, blockSeconds: blockSecondsLeft });
+      } else {
+        if (timeDiffInMinutes(clientData.lastSentSmsTime) < +process.env.COOLDOWN_TIME) {
+          const blockSecondsLeft = Math.round(
+            60 - (new Date().getTime() - clientData.lastSentSmsTime.getTime()) / 1000
+          );
+
+          return res.status(StatusCodes.NOT_ACCEPTABLE).json({ blockSeconds: blockSecondsLeft });
+        }
+
+        const timeObj = generateTime();
+
+        const smsId = await this.securityService.sendCode(
+          mobilePhone,
+          timeObj.codeExpirationTime,
+          timeObj.lastSentSmsTime
+        );
+
+        return res.status(StatusCodes.OK).json({ smsId });
       }
-
-      const lastSentSmsTime = new Date(Date.now());
-      const codeExpirationTime = new Date(Date.now());
-
-      const id = await this.securityService.sendCode(String(mobilePhone), codeExpirationTime, lastSentSmsTime);
-
-      return res.status(StatusCodes.OK).json({ id });
     } catch (error) {
-      return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: error.message });
+      return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: messages.INTERNAL_SERVER_ERROR });
     }
   };
 
   public checkVerificationCode = async (req: Request, res: Response) => {
     try {
       const { verificationCode, id } = req.body;
-      const objToFind = { id };
-      const VerifData = await this.securityService.getClientDataByParam(objToFind);
+      const verifData = await this.securityService.getClientDataByParam({ id });
 
       if (
-        VerifData.clientVerifStatus === ClientVerifStatus.BLOCKED &&
-        timeDiffInMinutes(VerifData.lastInvalidAttemptTime) < +process.env.USER_BLOCK_EXPIRATION
+        verifData.clientVerifStatus === ClientVerifStatus.BLOCKED &&
+        timeDiffInMinutes(verifData.lastInvalidAttemptTime) < +process.env.USER_BLOCK_EXPIRATION
       ) {
         return res.status(StatusCodes.NOT_ACCEPTABLE).json({ msg: messages.CLIENT_STILL_BLOCKED });
       }
@@ -59,12 +82,12 @@ export default class SecurityController {
       };
       await this.securityService.updateByClientId(id, newClientData);
 
-      if (timeDiffInMinutes(VerifData.codeExpiration) >= +process.env.CODE_EXPIRATION_TIME) {
+      if (timeDiffInMinutes(verifData.codeExpiration) >= +process.env.CODE_EXPIRATION_TIME) {
         return res.status(StatusCodes.NOT_ACCEPTABLE).json({ msg: messages.CODE_EXPIRED });
       }
 
-      if (verificationCode !== VerifData.verificationCode) {
-        const triesLeft = +process.env.MAX_CODE_TRIES - VerifData.invalidAttempts + 1;
+      if (verificationCode !== verifData.verificationCode) {
+        const triesLeft = +process.env.MAX_CODE_TRIES - verifData.invalidAttempts + 1;
         const now = new Date(Date.now());
         const blockedTime = await this.securityService.checkCode(id);
         const lastInvalidAttemptTimeObj = { lastInvalidAttemptTime: now };
@@ -79,7 +102,7 @@ export default class SecurityController {
           const newBlockClientData = {
             clientVerifStatus: ClientVerifStatus.BLOCKED,
             lastInvalidAttemptTime: lastInvalidAttemptTimeObj.lastInvalidAttemptTime,
-            invalidAttempts: 5,
+            invalidAttempts: 0,
           };
 
           await this.securityService.updateByClientId(id, newBlockClientData);

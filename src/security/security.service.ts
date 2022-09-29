@@ -4,14 +4,14 @@ import { getRepository } from 'typeorm';
 import VerificationEntity from '../entities/verification.entity';
 
 class SecurityService {
-  public async sendCode(receiver: string, codeExpiration: Date, lastSentSmsTime: Date) {
+  public async sendCode(mobilePhone, codeExpiration: Date, lastSentSmsTime: Date) {
     const verificationCode = process.env.VERIFICATION_CODE;
 
-    const existedPhone = await getRepository(VerificationEntity).findOne({ mobilePhone: receiver });
+    const existedPhone = await getRepository(VerificationEntity).findOne({ mobilePhone });
 
     if (!existedPhone) {
       const id = await getRepository(VerificationEntity).insert({
-        mobilePhone: receiver,
+        mobilePhone,
         verificationCode,
         codeExpiration,
         lastSentSmsTime,
@@ -21,20 +21,20 @@ class SecurityService {
     }
 
     await getRepository(VerificationEntity).update(
-      { mobilePhone: receiver },
+      { mobilePhone },
       { verificationCode, codeExpiration, lastSentSmsTime }
     );
 
-    const { id } = await getRepository(VerificationEntity).findOne({ mobilePhone: receiver });
+    const { id } = await getRepository(VerificationEntity).findOne({ mobilePhone });
 
     return id;
   }
 
   public async getClientDataByParam(param: object) {
-    return getRepository(VerificationEntity).findOne(param);
+    return await getRepository(VerificationEntity).findOne(param);
   }
 
-  public async updateByClientId(id: string, newClientData) {
+  public async updateByClientId(id: string, newClientData: object) {
     await getRepository(VerificationEntity).update(
       { id },
 

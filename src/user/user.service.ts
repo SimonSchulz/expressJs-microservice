@@ -12,6 +12,7 @@ class UserService {
   async getUser(param: object) {
     return await getRepository(Client).findOne(param);
   }
+
   async updateUser(user, updateData) {
     updateData.securityQuestionAnswer = await this.genHashPassword(updateData.securityQuestionAnswer);
     if (updateData.securityQuestionType === SecurityQuestionsTypes.PREDEFINED) {
