@@ -21,7 +21,11 @@ class SecurityRoutes {
 
   private initRoutes() {
     this.router.post('/security/session/', requestValidationMiddleware, this.securityController.sendVerificationCode);
-    this.router.post('/security/session/verification/', this.securityController.checkVerificationCode);
+    this.router.post(
+      '/security/session/verification/',
+      requestValidationMiddleware,
+      this.securityController.checkVerificationCode
+    );
   }
 }
 

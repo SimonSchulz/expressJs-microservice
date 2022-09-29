@@ -1,3 +1,4 @@
+import { VerificationDto } from './../../security/dto/verificationDto';
 import { MobilePhoneDto } from '../../registration/dto/mobilePhone.dto';
 import UpdateUserProfileDto from '../../registration/dto/updateData.dto';
 
@@ -24,6 +25,8 @@ export enum ErrorMessages {
 export const Endpoints = {
   '/registration': MobilePhoneDto,
   '/registration/user-profile': UpdateUserProfileDto,
+  '/security/session': MobilePhoneDto,
+  '/security/session/verification': VerificationDto,
 };
 export const SecurityQuestions = [
   { question: `Mother's maiden name` },
