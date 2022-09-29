@@ -6,6 +6,7 @@ enum ClientStatus {
   CLOSED = 'closed',
   IS_CLIENT = 'isClient',
   NOT_CLIENT = 'notClient',
+  BLOCKED = 'blocked',
 }
 
 export default ClientStatus;

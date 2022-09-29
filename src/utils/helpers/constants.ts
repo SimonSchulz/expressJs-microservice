@@ -1,18 +1,10 @@
-import { VerificationDto } from './../../security/dto/verificationDto';
+import { VerificationDto } from '../../security/dto/verificationDto';
 import { MobilePhoneDto } from '../../registration/dto/mobilePhone.dto';
 import UpdateUserProfileDto from '../../registration/dto/updateData.dto';
 
 const CODE_EXPIRATION_TIME = 15;
 
 // eslint-disable-next-line no-shadow
-export enum ClientStatus {
-  ACTIVE = 'active',
-  NOT_ACTIVE = 'notActive',
-  NOT_REGISTER = 'notRegister',
-  CLOSED = 'closed',
-  IS_CLIENT = 'isClient',
-  BLOCKED = 'blocked',
-}
 
 export enum ErrorMessages {
   ERROR = 'Error',

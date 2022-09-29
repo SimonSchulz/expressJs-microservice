@@ -7,6 +7,7 @@ class SecurityQuestionEntity {
 
   @Column({ nullable: false })
   question: string;
+  static PREDEFINED: string;
 }
 
 export default SecurityQuestionEntity;
