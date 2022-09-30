@@ -13,6 +13,19 @@ class UserService {
     return await getRepository(Client).findOne(param);
   }
 
+  public async updateUserData(clientId: number, objData: object) {
+    await getRepository(Client).update({ clientId }, objData);
+  }
+
+  public async createRefreshToken(id: number, refreshToken: string) {
+    await getRepository(Client)
+      .createQueryBuilder()
+      .update(Client)
+      .set({ refreshToken: refreshToken as string })
+      .where({ id: id as number })
+      .execute();
+  }
+
   async updateUser(user, updateData) {
     updateData.securityQuestionAnswer = await this.genHashPassword(updateData.securityQuestionAnswer);
     if (updateData.securityQuestionType === SecurityQuestionsTypes.PREDEFINED) {
@@ -22,6 +35,7 @@ class UserService {
     }
     await getRepository(Client).save({ ...user, ...updateData });
   }
+
   async checkAllParams(user, updateData) {
     let checkPasswords = await this.checkUserPassword(user, updateData.password);
     let checkVerifStatus = await this.checkUserVerification(user);

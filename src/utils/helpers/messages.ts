@@ -6,12 +6,9 @@ const messages = {
   SUCCESS: 'Success!',
   USER_DOESNT_EXIST: "User with this phone number doesn't exist",
   COOLDOWN: 'You just sended code, try again later',
-<<<<<<< HEAD
-  PASSWORD_IS_INVALID: 'Password is invalid',
-=======
   INTERNAL_SERVER_ERROR: 'Internal server error',
   INVALID_MOBILE_PHONE: 'Invalid mobile phone',
->>>>>>> fb7e0da814887616526b11f7a8dc3e22b4b531d5
+  PASSWORD_IS_INVALID: 'Password is invalid'
 };
 
 export default messages;

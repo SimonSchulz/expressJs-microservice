@@ -26,7 +26,7 @@ export default class TokenController {
     const tokenData = await this.userService.getUser(IdObj);
 
     if (tokenData) {
-      return this.userService.updateUser(clientId, refreshTokenObj);
+      return this.userService.updateUserData(clientId, refreshTokenObj);
     }
 
     return this.userService.createRefreshToken(IdObj.clientId, refreshTokenObj.refreshToken);

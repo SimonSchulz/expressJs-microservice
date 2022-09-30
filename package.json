@@ -46,10 +46,7 @@
   },
   "dependencies": {
     "bcrypt": "^5.0.1",
-<<<<<<< HEAD
-=======
     "bcryptjs": "^2.4.3",
->>>>>>> fb7e0da814887616526b11f7a8dc3e22b4b531d5
     "body-parser": "^1.20.0",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.13.2",

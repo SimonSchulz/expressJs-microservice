@@ -22,15 +22,9 @@ export default class SecurityController {
 
   public sendVerificationCode = async (req: Request, res: Response) => {
     try {
-<<<<<<< HEAD
-      const { mobilePhone } = req.query;
-
-      const user = await this.userService.getUser({ mobilePhone: mobilePhone as string });
-=======
       const { mobilePhone } = plainToInstance(MobilePhoneDto, req.body);
       const user = await this.userService.getUser({ mobilePhone });
       const clientData = await this.securityService.getClientDataByParam({ mobilePhone });
->>>>>>> fb7e0da814887616526b11f7a8dc3e22b4b531d5
 
       if (!user) {
         return res.status(StatusCodes.CONFLICT).json({ msg: messages.USER_DOESNT_EXIST });
@@ -119,15 +113,11 @@ export default class SecurityController {
         return res.status(StatusCodes.BAD_REQUEST).json({ msg: messages.CODE_IS_INVALID });
       }
 
-<<<<<<< HEAD
-      const id = await this.securityService.sendCode(String(mobilePhone));
-=======
       const newActiveClientData = {
         invalidAttempts: 0,
       };
 
       await this.securityService.updateByClientId(id, newActiveClientData);
->>>>>>> fb7e0da814887616526b11f7a8dc3e22b4b531d5
 
       return res.status(StatusCodes.OK).json({ msg: messages.SUCCESS });
     } catch (error) {
