@@ -10,6 +10,8 @@ export default {
   reconnectInterval: 2000,
   entities: [`src/entities/**/*.ts`],
   migrations: [`src/database/migration/**/*.ts`],
+  seeds: [`src/database/seeds/**/*.ts`],
+  factories: [`src/sequrityQuestions/**/*.ts`],
   cli: {
     entitiesDir: '/src/entities',
     migrationsDir: 'src/database/migration',

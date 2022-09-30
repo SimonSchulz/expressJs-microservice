@@ -3,6 +3,7 @@ import UserService from '../user/user.service';
 import { requestValidationMiddleware } from '../utils/helpers/validation';
 import SecurityController from './security.controller';
 import SecurityService from './security.service';
+import UserService from '../user/user.service';
 
 class SecurityRoutes {
   public router = Router();
@@ -21,6 +22,11 @@ class SecurityRoutes {
 
   private initRoutes() {
     this.router.post('/security/session/', requestValidationMiddleware, this.securityController.sendVerificationCode);
+    this.router.post(
+      '/security/session/verification/',
+      requestValidationMiddleware,
+      this.securityController.checkVerificationCode
+    );
   }
 }
 
