@@ -51,7 +51,7 @@ export default class LoginController {
 
       const refreshToken = authorization.split(' ')[1];
 
-      const tokenData = await this.tokenController.validateRefreshToken(refreshToken);
+      const tokenData = await this.tokenController.validateRefreshToken(refreshToken, res);
 
       if (!refreshToken || !tokenData) {
         return res.status(StatusCodes.UNAUTHORIZED).json({ msg: messages.USER_NOT_AUTHORIZED });

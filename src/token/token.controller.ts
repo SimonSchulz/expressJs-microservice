@@ -1,6 +1,7 @@
 import jwt from 'jsonwebtoken';
 import UserService from '../user/user.service';
 import { Response } from 'express';
+import { StatusCodes } from 'http-status-codes';
 
 export default class TokenController {
   constructor(private userService: UserService) {
@@ -43,13 +44,23 @@ export default class TokenController {
     }
   }
 
-  public async validateAccessToken(token) {
-    const userData = jwt.verify(token, process.env.JWT_ACCESS_SECRET);
-    return !!userData;
+  public async validateAccessToken(token, res: Response) {
+    try {
+      const userData = jwt.verify(token, process.env.JWT_ACCESS_SECRET);
+
+      return userData;
+    } catch (e) {
+      res.status(StatusCodes.UNAUTHORIZED);
+    }
   }
 
-  public async validateRefreshToken(token) {
-    const userData = jwt.verify(token, process.env.JWT_REFRESH_SECRET);
-    return userData;
+  public async validateRefreshToken(token, res: Response) {
+    try {
+      const userData = jwt.verify(token, process.env.JWT_REFRESH_SECRET);
+
+      return userData;
+    } catch (e) {
+      res.status(StatusCodes.UNAUTHORIZED);
+    }
   }
 }
