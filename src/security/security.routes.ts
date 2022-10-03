@@ -1,5 +1,4 @@
 import { Router } from 'express';
-import UserService from '../user/user.service';
 import { requestValidationMiddleware } from '../utils/helpers/validation';
 import SecurityController from './security.controller';
 import SecurityService from './security.service';

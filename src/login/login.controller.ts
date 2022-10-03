@@ -5,6 +5,7 @@ import bcrypt from 'bcrypt';
 import UserService from '../user/user.service';
 import TokenController from '../token/token.controller';
 import messages from '../utils/helpers/messages';
+import { loginTypes } from '../utils/helpers/constants';
 
 export default class LoginController {
   constructor(private userService: UserService, private tokenController: TokenController) {
@@ -12,47 +13,56 @@ export default class LoginController {
     this.tokenController = new TokenController(this.userService);
   }
 
-  public async login(req: Request, res: Response) {
+  public login = async (req: Request, res: Response) => {
     try {
       const { type, login, password } = req.body;
-      const passportObj = { passportId: login };
-      const mobilePhoneObj = { mobilePhone: login };
+
       const data =
-        type === 'PASSPORT_NUMBER'
-          ? await this.userService.getUser(passportObj)
-          : await this.userService.getUser(mobilePhoneObj);
+        type === loginTypes.mobilePhone
+          ? await this.userService.getUser({ mobilePhone: login })
+          : await this.userService.getUser({ passportId: login });
 
       if (!data) {
-        return res.send(StatusCodes.BAD_REQUEST).json({ msg: messages.USER_DOESNT_EXIST });
+        return res.status(StatusCodes.BAD_REQUEST).json({ msg: messages.USER_DOESNT_EXIST });
       }
 
-      const validPassword = bcrypt.compareSync(password, data.password);
+      const isValidPassword = bcrypt.compareSync(password, data.password);
 
-      if (!validPassword) {
-        return res.send(StatusCodes.BAD_REQUEST).json({ msg: messages.PASSWORD_IS_INVALID });
+      if (!isValidPassword) {
+        return res.status(StatusCodes.BAD_REQUEST).json({ msg: messages.PASSWORD_IS_INVALID });
       }
 
-      const token = await this.tokenController.generateTokens(data.clientId);
+      const accessToken = await this.tokenController.generateAccessToken(data.clientId);
+      const refreshToken = await this.tokenController.generateRefreshToken(data.clientId);
 
-      await this.tokenController.saveToken(data.clientId, token.refreshToken);
+      this.tokenController.setToken(res, accessToken);
 
-      return res
-        .send(StatusCodes.OK)
-        .json({ msg: `accessToken: ${token.accessToken}, refreshToken: ${token.refreshToken}` });
+      await this.tokenController.saveToken(data.clientId, refreshToken);
+
+      return res.status(StatusCodes.OK).json({ msg: `accessToken: ${accessToken}, refreshToken: ${refreshToken}` });
     } catch (error) {
-      return res.send(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: error.message });
+      return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: error.message });
     }
-  }
+  };
 
-  public async reLogin(req: Request, res: Response) {
+  public reLogin = async (req: Request, res: Response) => {
     try {
-      const refreshToken = req.headers;
+      const { authorization } = req.headers;
 
-      console.log(refreshToken);
+      const refreshToken = authorization.split(' ')[1];
 
-      return res.send(StatusCodes.OK).json({ msg: `accessToken: ` });
+      const tokenData = await this.tokenController.validateRefreshToken(refreshToken);
+
+      if (!refreshToken || !tokenData) {
+        return res.status(StatusCodes.UNAUTHORIZED).json({ msg: messages.USER_NOT_AUTHORIZED });
+      }
+
+      const accessToken = await this.tokenController.generateAccessToken(tokenData.userId);
+      this.tokenController.setToken(res, accessToken);
+
+      return res.status(StatusCodes.OK).json({ msg: `accessToken: ${accessToken} ` });
     } catch (error) {
-      return res.send(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: error.message });
+      return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: error.message });
     }
-  }
+  };
 }
