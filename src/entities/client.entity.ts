@@ -66,4 +66,7 @@ export default class Client {
 
   @Column({ length: 255, nullable: true })
   password: string;
+
+  @Column({ nullable: true })
+  refreshToken: string;
 }

@@ -4,8 +4,9 @@ const messages = {
   CODE_EXPIRED: 'Verification code expired!',
   CODE_IS_INVALID: 'Verification code is invalid!',
   SUCCESS: 'Success!',
-  USER_DOESNT_EXIST: "User with this phone number doesn't exist",
+  USER_DOESNT_EXIST: "User doesn't exist",
   COOLDOWN: 'You just sended code, try again later',
+  USER_NOT_AUTHORIZED: 'Not authorized',
 };
 
 export default messages;
