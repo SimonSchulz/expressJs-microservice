@@ -16,7 +16,6 @@ export default class LoginController {
   public updateUserPassword = async (req: Request, res: Response) => {
     try {
       let { mobilePhone, newPassword, oldPassword } = plainToClass(UpdateUserPasswordDto, req.body);
-
       const user = await this.userService.getUser({ mobilePhone });
       if (!user) {
         res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: ErrorMessages.NOT_FOUND });
@@ -29,7 +28,7 @@ export default class LoginController {
           res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: messages.SAME_PASSWORD });
         } else {
           newPassword = await this.userService.genHashPassword(newPassword);
-          await this.userService.updateUserPassword(user.clientId, newPassword);
+          await this.userService.updateUserData(user.clientId, { password: newPassword });
           res.status(StatusCodes.OK).json({ msg: ErrorMessages.SUCCESS });
         }
       } else {
