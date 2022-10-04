@@ -8,6 +8,7 @@ const messages = {
   COOLDOWN: 'You just sended code, try again later',
   INTERNAL_SERVER_ERROR: 'Internal server error',
   INVALID_MOBILE_PHONE: 'Invalid mobile phone',
+  SAME_PASSWORD: 'Same password or old password doesnt match',
 };
 
 export default messages;

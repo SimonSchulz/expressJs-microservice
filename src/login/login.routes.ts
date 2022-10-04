@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import TokenController from '../token/token.controller';
 import UserService from '../user/user.service';
-import { loginMiddleware, requestValidationMiddleware } from '../utils/helpers/validation';
+import { requestValidationMiddleware } from '../utils/helpers/validation';
 import LoginController from './login.controller';
 import LoginService from './login.service';
 

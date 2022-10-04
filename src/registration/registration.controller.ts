@@ -10,6 +10,7 @@ import SecurityQuestionEntity from '../entities/seqQuests.entity';
 import { getRepository } from 'typeorm';
 import { error } from 'console';
 import messages from '../utils/helpers/messages';
+import { RegistrationDataDto } from './dto/registrationData.dto';
 
 export default class SecurityController {
   constructor(private registration: RegistrationService, private userService: UserService) {
@@ -64,7 +65,8 @@ export default class SecurityController {
 
         if (allCheck.checks) {
           updateData.password = allCheck.newPassword;
-          this.userService.updateUser(user, updateData);
+          await this.userService.updateUserData(user.clientId, updateData);
+          await this.userService.changeUserQuestionType(user, updateData);
           return res.status(StatusCodes.OK).json({ msg: messages.SUCCESS });
         } else {
           return res.status(StatusCodes.BAD_REQUEST).json({ msg: errorMessage });
@@ -93,11 +95,11 @@ export default class SecurityController {
 
   public createUserProfile = async (req: Request, res: Response) => {
     try {
-      const registrationData = plainToClass(RegistrationDataDto, req.body);
+      const registrationData = plainToInstance(RegistrationDataDto, req.body);
 
       const createUser = await this.userService.createUser(registrationData);
-      if (createUser) return res.status(StatusCodes.OK).json({ msg: ErrorMessages.SUCCESS });
-      else return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: ErrorMessages.ALREADY_EXISTS });
+      if (createUser) return res.status(StatusCodes.OK).json({ msg: messages.SUCCESS });
+      else return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: messages.USER_DOESNT_EXIST });
     } catch (error) {
       return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: error.message });
     }

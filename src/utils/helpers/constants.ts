@@ -1,6 +1,8 @@
 import { VerificationDto } from '../../security/dto/verificationDto';
 import { MobilePhoneDto } from '../../registration/dto/mobilePhone.dto';
 import UpdateUserProfileDto from '../../registration/dto/updateData.dto';
+import { RegistrationDataDto } from '../../registration/dto/registrationData.dto';
+import { UpdateUserPasswordDto } from '../../login/dto/UpdateUserPassword.dto';
 
 const CODE_EXPIRATION_TIME = 15;
 
@@ -20,11 +22,6 @@ export const Endpoints = {
   '/registration/user-profile': UpdateUserProfileDto,
   '/security/session': MobilePhoneDto,
   '/security/session/verification': VerificationDto,
-};
-
-export const Endpoints = {
-  '/registration': MobilePhoneDto,
-  '/registration/user-profile': UpdateUserProfileDto,
   '/registration/user-profile/new': RegistrationDataDto,
   '/login/password': UpdateUserPasswordDto,
 };

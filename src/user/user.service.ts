@@ -7,20 +7,26 @@ import VerificationEntity from '../entities/verification.entity';
 import ClientVerifStatus from '../utils/helpers/ClientVerifStatus';
 import ErrorMessages from '../utils/helpers/errorMessages';
 import SecurityQuestionEntity from '../entities/seqQuests.entity';
+import ClientStatus from '../utils/helpers/ClientStatus';
 
 class UserService {
   async getUser(param: object) {
     return await getRepository(Client).findOne(param);
   }
-
-  async updateUser(user, updateData) {
+  async changeUserQuestionType(user, updateData) {
+    const clientId = user.clientId;
     updateData.securityQuestionAnswer = await this.genHashPassword(updateData.securityQuestionAnswer);
     if (updateData.securityQuestionType === SecurityQuestionsTypes.PREDEFINED) {
       updateData.securityQuestion = null;
+      await getRepository(Client).update({ clientId }, { securityQuestion: updateData.securityQuestion });
     } else {
       updateData.securityQuestionId = null;
+      await getRepository(Client).update({ clientId }, { securityQuestionId: updateData.securityQuestionId });
     }
-    await getRepository(Client).save({ ...user, ...updateData });
+  }
+
+  public async updateUserData(clientId: number, objData: object) {
+    await getRepository(Client).update({ clientId }, objData);
   }
   async checkAllParams(user, updateData) {
     let checkPasswords = await this.checkUserPassword(user, updateData.password);
@@ -87,12 +93,6 @@ class UserService {
     const salt = bcrypt.genSaltSync(saltRounds);
     return bcrypt.hashSync(password, salt);
   }
-  async genHashPassword(password: string) {
-    const saltRounds = 10;
-    const salt = bcrypt.genSaltSync(saltRounds);
-    return bcrypt.hashSync(password, salt);
-  }
-
   async updateUserPassword(clientId, newPassword) {
     await getRepository(Client).update({ clientId }, { password: newPassword });
   }
@@ -110,7 +110,7 @@ class UserService {
           mobilePhone: registrationData.mobilePhone,
           password: registrationData.password,
           securityQuestion: registrationData.securityQuestion,
-          securityAnswer: registrationData.securityQuestionAnswer,
+          securityQuestionAnswer: registrationData.securityQuestionAnswer,
           clientStatus: ClientStatus.ACTIVE,
           email: registrationData.email,
           firstName: registrationData.firstName,
