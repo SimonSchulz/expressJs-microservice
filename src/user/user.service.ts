@@ -6,7 +6,7 @@ import bcrypt from 'bcrypt';
 import { Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 
-export class UserService {
+class UserService {
   async getUser(mobilePhone: string) {
     return getRepository(Client).findOne({ mobilePhone: mobilePhone });
   }
@@ -18,21 +18,7 @@ export class UserService {
     const salt = bcrypt.genSaltSync(saltRounds);
     return bcrypt.hashSync(password, salt);
   }
-  // async checkUserPassword(password: string, newPassword: string) {
-  //   let check = bcrypt.compareSync(password, newPassword, function (err, res: Response) {
-  //     if (err) {
-  //       res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: ErrorMessages.ERROR });
-  //     }
-  //     if (res) {
-  //       console.log(false);
-  //       return false;
-  //     } else {
-  //       console.log(true);
-  //       return true;
-  //     }
-  //   });
-  //   return check;
-  // }
+
   async updateUserPassword(clientId, newPassword) {
     await getRepository(Client).update({ clientId }, { password: newPassword });
   }
@@ -50,7 +36,7 @@ export class UserService {
           mobilePhone: registrationData.mobilePhone,
           password: registrationData.password,
           securityQuestion: registrationData.securityQuestion,
-          securityAnswer: registrationData.securityAnswer,
+          securityAnswer: registrationData.securityQuestionAnswer,
           clientStatus: ClientStatus.ACTIVE,
           email: registrationData.email,
           firstName: registrationData.firstName,
@@ -69,3 +55,5 @@ export class UserService {
     }
   }
 }
+
+export default UserService;

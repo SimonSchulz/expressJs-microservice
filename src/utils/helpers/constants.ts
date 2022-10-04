@@ -21,7 +21,7 @@ export enum ErrorMessages {
   EMPTY_REQ_BODY = 'Empty request body',
   ALREADY_EXISTS = 'User already exists',
   SUCCESS = 'Success',
-  SAME_PASSWORD = 'Password is the same as was',
+  SAME_PASSWORD = 'Password is the same as was or old password is different',
 }
 
 export const Endpoints = {

@@ -1,6 +1,6 @@
 import { StatusCodes } from 'http-status-codes';
 import { Request, Response } from 'express';
-import { UserService } from '../user/user.service';
+import UserService from '../user/user.service';
 import { UpdateUserPasswordDto } from './dto/UpdateUserPassword.dto';
 import { plainToClass } from 'class-transformer';
 import { ClientStatus, ErrorMessages } from '../utils/helpers/constants';
@@ -13,7 +13,7 @@ export default class LoginController {
 
   public updateUserPassword = async (req: Request, res: Response) => {
     try {
-      let { mobilePhone, newPassword } = plainToClass(UpdateUserPasswordDto, req.body);
+      let { mobilePhone, newPassword, oldPassword } = plainToClass(UpdateUserPasswordDto, req.body);
 
       const user = await this.userService.getUser(String(mobilePhone));
       if (!user) {
@@ -22,9 +22,9 @@ export default class LoginController {
       switch (user.clientStatus) {
         case ClientStatus.IS_CLIENT:
         case ClientStatus.ACTIVE: {
-          let check = await bcrypt.compareSync(newPassword, user.password);
-
-          if (check) {
+          const checkNewPassword = await bcrypt.compareSync(newPassword, user.password);
+          const checkOldPassword = await bcrypt.compareSync(oldPassword, user.password);
+          if (checkNewPassword || !checkOldPassword) {
             res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: ErrorMessages.SAME_PASSWORD });
           } else {
             newPassword = await this.userService.genHashPassword(newPassword);

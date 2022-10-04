@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
-import { UserService } from '../user/user.service';
+import UserService from '../user/user.service';
 import RegistrationService from './registration.service';
 import { ClientStatus } from '../utils/helpers/constants';
 import { ErrorMessages } from '../utils/helpers/constants';
