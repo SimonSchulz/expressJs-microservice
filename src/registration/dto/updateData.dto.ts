@@ -1,7 +1,8 @@
-import { IsDefined, IsEmail, IsNumberString, IsString, Length, Matches } from 'class-validator';
+import { IsDefined, IsEmail, IsNumberString, IsString, IsUUID, Matches, MaxLength, MinLength } from 'class-validator';
 
-export class UpdateUserProfileDto {
-  @Length(11)
+export default class UpdateUserProfileDto {
+  @MinLength(11)
+  @MaxLength(11)
   @IsNumberString()
   @IsDefined()
   mobilePhone: string;
@@ -15,11 +16,18 @@ export class UpdateUserProfileDto {
 
   @IsDefined()
   @IsString()
+  securityQuestionType: string;
+
+  @IsString()
+  @IsUUID()
+  securityQuestionId: string;
+
+  @IsString()
   securityQuestion: string;
 
   @IsDefined()
   @IsString()
-  securityAnswer: string;
+  securityQuestionAnswer: string;
 
   @IsEmail()
   email: string;
