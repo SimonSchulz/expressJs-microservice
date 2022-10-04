@@ -9,6 +9,7 @@ import UpdateUserProfileDto from './dto/updateData.dto';
 import SecurityQuestionEntity from '../entities/seqQuests.entity';
 import { getRepository } from 'typeorm';
 import { error } from 'console';
+import messages from '../utils/helpers/messages';
 
 export default class SecurityController {
   constructor(private securityService: RegistrationService, private userService: UserService) {
@@ -63,8 +64,8 @@ export default class SecurityController {
 
         if (allCheck.checks) {
           updateData.password = allCheck.newPassword;
-          this.userService.updateUser(user, updateData);
-          return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: ErrorMessages.SUCCESS });
+          this.userService.updateUserData(user.clientId, updateData);
+          return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: messages.SUCCESS });
         } else {
           return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: errorMessage });
         }

@@ -12,15 +12,22 @@ class UserService {
   async getUser(param: object) {
     return await getRepository(Client).findOne(param);
   }
-  async updateUser(user, updateData) {
+  async changeUserQuestionType(user, updateData) {
+    const clientId = user.clientId;
     updateData.securityQuestionAnswer = await this.genHashPassword(updateData.securityQuestionAnswer);
     if (updateData.securityQuestionType === SecurityQuestionsTypes.PREDEFINED) {
       updateData.securityQuestion = null;
+      await getRepository(Client).update({ clientId }, { securityQuestion: updateData.securityQuestion });
     } else {
       updateData.securityQuestionId = null;
+      await getRepository(Client).update({ clientId }, { securityQuestionId: updateData.securityQuestionId });
     }
-    await getRepository(Client).save({ ...user, ...updateData });
   }
+
+  public async updateUserData(clientId: number, objData: object) {
+    await getRepository(Client).update({ clientId }, objData);
+  }
+
   async checkAllParams(user, updateData) {
     let checkPasswords = await this.checkUserPassword(user, updateData.password);
     let checkVerifStatus = await this.checkUserVerification(user);
