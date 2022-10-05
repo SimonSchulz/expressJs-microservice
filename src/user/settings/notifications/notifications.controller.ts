@@ -22,9 +22,10 @@ class NotificationsController {
         return res.status(StatusCodes.BAD_REQUEST).json({ msg: messages.USER_DOESNT_EXIST });
       } else if (!userData) {
         return res.status(StatusCodes.UNAUTHORIZED).json({ msg: messages.USER_NOT_AUTHORIZED });
-      } else {
-        await this.userService.updateUser(clientId, { smsNotification: notificationStatus });
       }
+
+      await this.userService.updateUserData(clientId, { smsNotification: notificationStatus });
+      return res.status(StatusCodes.OK).json({ msg: messages.SUCCESS });
     } catch (error) {
       return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: messages.INTERNAL_SERVER_ERROR });
     }

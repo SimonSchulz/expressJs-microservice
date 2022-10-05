@@ -21,16 +21,6 @@ class UserService {
     await getRepository(Client).save({ refreshToken });
   }
 
-  async updateUser(user, updateData) {
-    updateData.securityQuestionAnswer = await this.genHashPassword(updateData.securityQuestionAnswer);
-    if (updateData.securityQuestionType === SecurityQuestionsTypes.PREDEFINED) {
-      updateData.securityQuestion = null;
-    } else {
-      updateData.securityQuestionId = null;
-    }
-    await getRepository(Client).save({ ...user, ...updateData });
-  }
-
   async checkAllParams(user, updateData) {
     let checkPasswords = await this.checkUserPassword(user, updateData.password);
     let checkVerifStatus = await this.checkUserVerification(user);

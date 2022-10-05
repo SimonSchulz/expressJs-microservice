@@ -1,6 +1,7 @@
 import { VerificationDto } from '../../security/dto/verificationDto';
 import { MobilePhoneDto } from '../../registration/dto/mobilePhone.dto';
 import UpdateUserProfileDto from '../../registration/dto/updateData.dto';
+import { smsNotificationDto } from '../../user/settings/notifications/dto/notifications.dto';
 
 const CODE_EXPIRATION_TIME = 15;
 
@@ -19,6 +20,7 @@ export const Endpoints = {
   '/registration/user-profile': UpdateUserProfileDto,
   '/security/session': MobilePhoneDto,
   '/security/session/verification': VerificationDto,
+  '/auth/user/settings/notifications/sms': smsNotificationDto,
 };
 export const SecurityQuestions = [
   { question: `Mother's maiden name` },

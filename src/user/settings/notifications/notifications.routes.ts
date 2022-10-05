@@ -1,3 +1,4 @@
+import { requestValidationMiddleware } from './../../../utils/helpers/validation';
 import { Router } from 'express';
 import TokenController from '../../../token/token.controller';
 import UserService from '../../user.service';
@@ -18,7 +19,11 @@ class NotificationsRoutes {
   }
 
   private initRoutes() {
-    this.router.patch('/auth/user/settings/notifications/sms/', this.notificationsController.patchSmsNotifications);
+    this.router.patch(
+      '/auth/user/settings/notifications/sms/',
+      requestValidationMiddleware,
+      this.notificationsController.patchSmsNotifications
+    );
   }
 }
 
