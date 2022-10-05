@@ -7,6 +7,7 @@ const messages = {
   USER_DOESNT_EXIST: "User doesn't exist",
   COOLDOWN: 'You just sended code, try again later',
   USER_NOT_AUTHORIZED: 'Not authorized',
+  ERROR: 'Error',
 };
 
 export default messages;

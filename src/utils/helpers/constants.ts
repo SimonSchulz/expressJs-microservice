@@ -1,4 +1,4 @@
-import { sendNotificationSettingsDto } from '../../auth/dto/sendNotification.dto';
+import sendNotificationSettingsDto from '../../user/settings/notifications/dto/sendNotification.dto';
 import { MobilePhoneDto } from '../../registration/dto/mobilePhone.dto';
 import UpdateUserProfileDto from '../../registration/dto/updateData.dto';
 

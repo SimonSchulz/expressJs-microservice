@@ -1,6 +1,6 @@
 import { IsDefined, IsUUID } from 'class-validator';
 
-export class sendNotificationSettingsDto {
+export default class sendNotificationSettingsDto {
   @IsDefined()
   @IsUUID()
   clientId: string;
