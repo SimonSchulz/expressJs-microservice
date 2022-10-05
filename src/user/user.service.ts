@@ -93,9 +93,6 @@ class UserService {
     const salt = bcrypt.genSaltSync(saltRounds);
     return bcrypt.hashSync(password, salt);
   }
-  async updateUserPassword(clientId, newPassword) {
-    await getRepository(Client).update({ clientId }, { password: newPassword });
-  }
   async createUser(registrationData) {
     if (registrationData) {
       const user = await getRepository(Client).findOne({ mobilePhone: registrationData.mobilePhone });

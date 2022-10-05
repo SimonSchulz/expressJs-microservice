@@ -15,16 +15,15 @@ export default class LoginController {
 
   public updateUserPassword = async (req: Request, res: Response) => {
     try {
-      let { mobilePhone, newPassword, oldPassword } = plainToClass(UpdateUserPasswordDto, req.body);
+      let { mobilePhone, newPassword } = plainToClass(UpdateUserPasswordDto, req.body);
       const user = await this.userService.getUser({ mobilePhone });
       if (!user) {
         res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: ErrorMessages.NOT_FOUND });
       }
       if (user.clientStatus === ClientStatus.ACTIVE || user.clientStatus === ClientStatus.IS_CLIENT) {
         const checkNewPassword = await bcrypt.compareSync(newPassword, user.password);
-        const checkOldPassword = await bcrypt.compareSync(oldPassword, user.password);
 
-        if (checkNewPassword || !checkOldPassword) {
+        if (checkNewPassword) {
           res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: messages.SAME_PASSWORD });
         } else {
           newPassword = await this.userService.genHashPassword(newPassword);
