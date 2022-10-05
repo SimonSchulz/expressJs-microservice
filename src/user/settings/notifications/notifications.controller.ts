@@ -24,11 +24,18 @@ class NotificationsController {
         return res.status(StatusCodes.UNAUTHORIZED).json({ msg: messages.USER_NOT_AUTHORIZED });
       }
 
-      await this.userService.updateUserData(clientId, {
-        smsNotification: smsNotification,
-        pushNotification: pushNotification,
-        emailSubscription: emailSubscription,
-      });
+      if (user.email === null) {
+        await this.userService.updateUserData(clientId, {
+          smsNotification: smsNotification,
+          pushNotification: pushNotification,
+        });
+      } else {
+        await this.userService.updateUserData(clientId, {
+          smsNotification: smsNotification,
+          pushNotification: pushNotification,
+          emailSubscription: emailSubscription,
+        });
+      }
       return res.status(StatusCodes.OK).json({ msg: messages.SUCCESS });
     } catch (error) {
       return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: messages.INTERNAL_SERVER_ERROR });
