@@ -7,5 +7,13 @@ export class smsNotificationDto {
 
   @IsDefined()
   @IsBoolean()
-  notificationStatus: boolean;
+  smsNotification: boolean;
+
+  @IsDefined()
+  @IsBoolean()
+  pushNotification: boolean;
+
+  @IsDefined()
+  @IsBoolean()
+  emailSubscription: boolean;
 }

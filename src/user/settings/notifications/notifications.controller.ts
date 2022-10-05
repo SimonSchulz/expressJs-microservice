@@ -12,7 +12,7 @@ class NotificationsController {
 
   public patchSmsNotifications = async (req: Request, res: Response) => {
     try {
-      const { clientId, notificationStatus } = req.body;
+      const { clientId, smsNotification, pushNotification, emailSubscription } = req.body;
       const { authorization } = req.headers;
       const user = await this.userService.getUser({ clientId });
       const token = authorization.split(' ')[1];
@@ -24,7 +24,11 @@ class NotificationsController {
         return res.status(StatusCodes.UNAUTHORIZED).json({ msg: messages.USER_NOT_AUTHORIZED });
       }
 
-      await this.userService.updateUserData(clientId, { smsNotification: notificationStatus });
+      await this.userService.updateUserData(clientId, {
+        smsNotification: smsNotification,
+        pushNotification: pushNotification,
+        emailSubscription: emailSubscription,
+      });
       return res.status(StatusCodes.OK).json({ msg: messages.SUCCESS });
     } catch (error) {
       return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: messages.INTERNAL_SERVER_ERROR });
