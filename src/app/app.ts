@@ -4,7 +4,6 @@ import bodyParser from 'body-parser';
 import cors from 'cors';
 import SecurityRoutes from '../security/security.routes';
 import RegistrationRoutes from '../registration/registration.routes';
-import NotificationsRoutes from '../user/settings/notifications/notifications.route';
 import UserSettingsRoutes from '../user/settings/userSetting.routes';
 import LoginRoutes from '../login/login.routes';
 
