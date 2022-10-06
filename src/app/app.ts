@@ -5,6 +5,7 @@ import cors from 'cors';
 import SecurityRoutes from '../security/security.routes';
 import RegistrationRoutes from '../registration/registration.routes';
 import NotificationsRoutes from '../user/settings/notifications/notifications.route';
+import UserSettingsRoutes from '../user/settings/userSetting.routes';
 
 interface Route {
   router: Router;
@@ -33,4 +34,4 @@ class App {
   }
 }
 
-export default new App([new SecurityRoutes(), new RegistrationRoutes(), new NotificationsRoutes()]).app;
+export default new App([new SecurityRoutes(), new RegistrationRoutes(), new UserSettingsRoutes()]).app;

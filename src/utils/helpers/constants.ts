@@ -1,6 +1,7 @@
 import sendNotificationSettingsDto from '../../user/settings/notifications/dto/sendNotification.dto';
 import { MobilePhoneDto } from '../../registration/dto/mobilePhone.dto';
 import UpdateUserProfileDto from '../../registration/dto/updateData.dto';
+import ChangeUserSettingsDto from '../../user/settings/dto/userSettings.dto';
 
 const CODE_EXPIRATION_TIME = 15;
 
@@ -17,7 +18,7 @@ export enum ErrorMessages {
 export const Endpoints = {
   '/registration': MobilePhoneDto,
   '/registration/user-profile': UpdateUserProfileDto,
-  '/auth/user/settings/notifications/all': sendNotificationSettingsDto,
+  '/auth/user/settings/all': ChangeUserSettingsDto,
 };
 export const SecurityQuestions = [
   { question: `Mother's maiden name` },
