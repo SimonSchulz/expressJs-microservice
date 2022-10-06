@@ -28,3 +28,8 @@ export const SecurityQuestions = [
   { question: 'Choose your favorite color' },
   { question: 'Write your question' },
 ];
+
+export enum loginTypes {
+  mobilePhone = 'MOBILE_PHONE',
+  passport = 'PASSPORT_NUMBER',
+}

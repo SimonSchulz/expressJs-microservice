@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 import { getRepository } from 'typeorm';
-import Client from '../entities/client.entity';
 import bcrypt from 'bcryptjs';
+import Client from '../entities/client.entity';
 import SecurityQuestionsTypes from '../utils/helpers/securityQuestionsTypes';
 import VerificationEntity from '../entities/verification.entity';
 import ClientVerifStatus from '../utils/helpers/ClientVerifStatus';
@@ -13,6 +13,14 @@ class UserService {
     return await getRepository(Client).findOne(param);
   }
 
+  public async updateUserData(clientId: number, objData: object) {
+    await getRepository(Client).update({ clientId }, objData);
+  }
+
+  public async insertRefreshToken(id: number, refreshToken: string) {
+    await getRepository(Client).save({ refreshToken });
+  }
+
   async updateUser(user, updateData) {
     updateData.securityQuestionAnswer = await this.genHashPassword(updateData.securityQuestionAnswer);
     if (updateData.securityQuestionType === SecurityQuestionsTypes.PREDEFINED) {
@@ -22,6 +30,7 @@ class UserService {
     }
     await getRepository(Client).save({ ...user, ...updateData });
   }
+
   async checkAllParams(user, updateData) {
     let checkPasswords = await this.checkUserPassword(user, updateData.password);
     let checkVerifStatus = await this.checkUserVerification(user);
@@ -84,8 +93,8 @@ class UserService {
   }
   async genHashPassword(password: string) {
     const saltRounds = 10;
-    const salt = bcrypt.genSaltSync(saltRounds);
-    return bcrypt.hashSync(password, salt);
+    const salt = await bcrypt.genSalt(saltRounds);
+    return bcrypt.hash(password, salt);
   }
 }
 
