@@ -1,4 +1,4 @@
-import sendNotificationSettingsDto from '../../user/settings/notifications/dto/sendNotification.dto';
+import { VerificationDto } from '../../security/dto/verificationDto';
 import { MobilePhoneDto } from '../../registration/dto/mobilePhone.dto';
 import UpdateUserProfileDto from '../../registration/dto/updateData.dto';
 import ChangeUserSettingsDto from '../../user/settings/dto/userSettings.dto';
@@ -19,6 +19,8 @@ export const Endpoints = {
   '/registration': MobilePhoneDto,
   '/registration/user-profile': UpdateUserProfileDto,
   '/auth/user/settings/all': ChangeUserSettingsDto,
+  '/security/session': MobilePhoneDto,
+  '/security/session/verification': VerificationDto,
 };
 export const SecurityQuestions = [
   { question: `Mother's maiden name` },
@@ -28,3 +30,8 @@ export const SecurityQuestions = [
   { question: 'Choose your favorite color' },
   { question: 'Write your question' },
 ];
+
+export enum loginTypes {
+  mobilePhone = 'MOBILE_PHONE',
+  passport = 'PASSPORT_NUMBER',
+}

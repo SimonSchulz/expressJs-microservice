@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 import { getRepository } from 'typeorm';
-import Client from '../entities/client.entity';
 import bcrypt from 'bcryptjs';
+import Client from '../entities/client.entity';
 import SecurityQuestionsTypes from '../utils/helpers/securityQuestionsTypes';
 import VerificationEntity from '../entities/verification.entity';
 import ClientVerifStatus from '../utils/helpers/ClientVerifStatus';
@@ -12,20 +12,25 @@ class UserService {
   async getUser(param: object) {
     return await getRepository(Client).findOne(param);
   }
-  async changeUserQuestionType(user, updateData) {
-    const clientId = user.clientId;
-    updateData.securityQuestionAnswer = await this.genHashPassword(updateData.securityQuestionAnswer);
-    if (updateData.securityQuestionType === SecurityQuestionsTypes.PREDEFINED) {
-      updateData.securityQuestion = null;
-      await getRepository(Client).update({ clientId }, { securityQuestion: updateData.securityQuestion });
-    } else {
-      updateData.securityQuestionId = null;
-      await getRepository(Client).update({ clientId }, { securityQuestionId: updateData.securityQuestionId });
-    }
-  }
 
   public async updateUserData(clientId: number, objData: object) {
     await getRepository(Client).update({ clientId }, objData);
+  }
+
+  public async insertRefreshToken(id: number, refreshToken: string) {
+    await getRepository(Client).save({ refreshToken });
+  }
+
+  async updateUser(user, updateData) {
+    updateData.securityQuestionAnswer = await this.genHashPassword(updateData.securityQuestionAnswer);
+    if (updateData.securityQuestionType === SecurityQuestionsTypes.PREDEFINED) {
+      updateData.securityQuestion = null;
+    } else {
+      updateData.securityQuestionId = null;
+    }
+
+  public async insertRefreshToken(id: number, refreshToken: string) {
+    await getRepository(Client).save({ refreshToken });
   }
 
   async checkAllParams(user, updateData) {
@@ -90,8 +95,8 @@ class UserService {
   }
   async genHashPassword(password: string) {
     const saltRounds = 10;
-    const salt = bcrypt.genSaltSync(saltRounds);
-    return bcrypt.hashSync(password, salt);
+    const salt = await bcrypt.genSalt(saltRounds);
+    return bcrypt.hash(password, salt);
   }
 }
 

@@ -12,6 +12,9 @@ const messages = {
   SAME_PHONE: 'same phone number',
   INVALID_PASSWORD: 'Received same password or old password doesnt match',
   INVALID_SECURITY_DATA: 'Invalid security question data',
+  INTERNAL_SERVER_ERROR: 'Internal server error',
+  INVALID_MOBILE_PHONE: 'Invalid mobile phone',
+  PASSWORD_IS_INVALID: 'Password is invalid',
 };
 
 export default messages;

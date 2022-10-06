@@ -42,7 +42,7 @@ export default class SecurityController {
             .json({ mobilePhone: phoneNumber, clientStatus: user.clientStatus, clientId: user.clientId });
 
         default:
-          return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ clientStatus: user.clientStatus });
+          return res.status(StatusCodes.BAD_REQUEST).json({ clientStatus: user.clientStatus });
       }
     } catch (error) {
       return res.status(StatusCodes.NOT_FOUND).json({ msg: ErrorMessages.ERROR });
@@ -56,7 +56,7 @@ export default class SecurityController {
 
       const user = await this.userService.getUser(objToFind);
       if (!user) {
-        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: ErrorMessages.NOT_FOUND });
+        return res.status(StatusCodes.NOT_FOUND).json({ msg: ErrorMessages.NOT_FOUND });
       }
       if (user.clientStatus === ClientStatus.ACTIVE || user.clientStatus === ClientStatus.IS_CLIENT) {
         let allCheck = await this.userService.checkAllParams(user, updateData);
@@ -67,10 +67,10 @@ export default class SecurityController {
           this.userService.updateUserData(user.clientId, updateData);
           return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: messages.SUCCESS });
         } else {
-          return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: errorMessage });
+          return res.status(StatusCodes.BAD_REQUEST).json({ msg: errorMessage });
         }
       }
-      return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: user.clientStatus });
+      return res.status(StatusCodes.BAD_REQUEST).json({ msg: user.clientStatus });
     } catch (error) {
       return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: error.message });
     }
