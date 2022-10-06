@@ -13,15 +13,10 @@ class NotificationsController {
   public patchSmsNotifications = async (req: Request, res: Response) => {
     try {
       const { clientId, smsNotification, pushNotification, emailSubscription } = req.body;
-      const { authorization } = req.headers;
       const user = await this.userService.getUser({ clientId });
-      const token = authorization.split(' ')[1];
-      const userData = await this.tokenController.validateAccessToken(token, res);
 
       if (!user) {
         return res.status(StatusCodes.BAD_REQUEST).json({ msg: messages.USER_DOESNT_EXIST });
-      } else if (!userData) {
-        return res.status(StatusCodes.UNAUTHORIZED).json({ msg: messages.USER_NOT_AUTHORIZED });
       }
 
       if (user.email === null) {

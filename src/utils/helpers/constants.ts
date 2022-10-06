@@ -3,10 +3,6 @@ import { MobilePhoneDto } from '../../registration/dto/mobilePhone.dto';
 import UpdateUserProfileDto from '../../registration/dto/updateData.dto';
 import { smsNotificationDto } from '../../user/settings/notifications/dto/notifications.dto';
 
-const CODE_EXPIRATION_TIME = 15;
-
-// eslint-disable-next-line no-shadow
-
 export enum ErrorMessages {
   ERROR = 'Error',
   NOT_CLIENT = 'notClient',
@@ -30,3 +26,8 @@ export const SecurityQuestions = [
   { question: 'Choose your favorite color' },
   { question: 'Write your question' },
 ];
+
+export enum loginTypes {
+  mobilePhone = 'MOBILE_PHONE',
+  passport = 'PASSPORT_NUMBER',
+}

@@ -8,6 +8,7 @@ const messages = {
   COOLDOWN: 'You just sended code, try again later',
   INTERNAL_SERVER_ERROR: 'Internal server error',
   INVALID_MOBILE_PHONE: 'Invalid mobile phone',
+  PASSWORD_IS_INVALID: 'Password is invalid',
   USER_NOT_AUTHORIZED: 'Not authorized',
 };
 
