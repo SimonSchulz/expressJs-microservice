@@ -16,19 +16,8 @@ class UserService {
   public async updateUserData(clientId: number, objData: object) {
     await getRepository(Client).update({ clientId }, objData);
   }
-
   public async insertRefreshToken(id: number, refreshToken: string) {
     await getRepository(Client).save({ refreshToken });
-  }
-
-  async updateUser(user, updateData) {
-    updateData.securityQuestionAnswer = await this.genHashPassword(updateData.securityQuestionAnswer);
-    if (updateData.securityQuestionType === SecurityQuestionsTypes.PREDEFINED) {
-      updateData.securityQuestion = null;
-    } else {
-      updateData.securityQuestionId = null;
-    }
-    await getRepository(Client).save({ ...user, ...updateData });
   }
 
   async checkAllParams(user, updateData) {

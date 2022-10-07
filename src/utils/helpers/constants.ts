@@ -2,6 +2,7 @@ import { VerificationDto } from '../../security/dto/verificationDto';
 import { MobilePhoneDto } from '../../registration/dto/mobilePhone.dto';
 import UpdateUserProfileDto from '../../registration/dto/updateData.dto';
 import { smsNotificationDto } from '../../user/settings/notifications/dto/notifications.dto';
+import ChangeUserSettingsDto from '../../user/settings/dto/userSettings.dto';
 
 export enum ErrorMessages {
   ERROR = 'Error',
@@ -14,6 +15,7 @@ export enum ErrorMessages {
 export const Endpoints = {
   '/registration': MobilePhoneDto,
   '/registration/user-profile': UpdateUserProfileDto,
+  '/auth/user/settings/all': ChangeUserSettingsDto,
   '/security/session': MobilePhoneDto,
   '/security/session/verification': VerificationDto,
   '/auth/user/settings/notifications/sms': smsNotificationDto,
