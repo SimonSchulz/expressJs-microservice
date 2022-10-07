@@ -1,6 +1,7 @@
 import { VerificationDto } from '../../security/dto/verificationDto';
 import { MobilePhoneDto } from '../../registration/dto/mobilePhone.dto';
 import UpdateUserProfileDto from '../../registration/dto/updateData.dto';
+import ChangeUserSettingsDto from '../../user/settings/dto/userSettings.dto';
 
 const CODE_EXPIRATION_TIME = 15;
 
@@ -17,6 +18,7 @@ export enum ErrorMessages {
 export const Endpoints = {
   '/registration': MobilePhoneDto,
   '/registration/user-profile': UpdateUserProfileDto,
+  '/auth/user/settings/all': ChangeUserSettingsDto,
   '/security/session': MobilePhoneDto,
   '/security/session/verification': VerificationDto,
 };

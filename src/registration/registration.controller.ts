@@ -64,8 +64,8 @@ export default class SecurityController {
 
         if (allCheck.checks) {
           updateData.password = allCheck.newPassword;
-          this.userService.updateUser(user, updateData);
-          return res.status(StatusCodes.OK).json({ msg: messages.SUCCESS });
+          this.userService.updateUserData(user.clientId, updateData);
+          return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: messages.SUCCESS });
         } else {
           return res.status(StatusCodes.BAD_REQUEST).json({ msg: errorMessage });
         }
