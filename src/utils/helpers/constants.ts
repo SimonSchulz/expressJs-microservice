@@ -3,6 +3,7 @@ import { MobilePhoneDto } from '../../registration/dto/mobilePhone.dto';
 import UpdateUserProfileDto from '../../registration/dto/updateData.dto';
 import { smsNotificationDto } from '../../user/settings/notifications/dto/notifications.dto';
 import ChangeUserSettingsDto from '../../user/settings/dto/userSettings.dto';
+import sendNotificationSettingsDto from '../../user/settings/notifications/dto/sendNotificationDto';
 
 export enum ErrorMessages {
   ERROR = 'Error',
@@ -18,7 +19,8 @@ export const Endpoints = {
   '/auth/user/settings/all': ChangeUserSettingsDto,
   '/security/session': MobilePhoneDto,
   '/security/session/verification': VerificationDto,
-  '/auth/user/settings/notifications/sms': smsNotificationDto,
+  '/auth/user/settings/notifications/all': sendNotificationSettingsDto,
+  '/auth/user/settings/notifications/patch': smsNotificationDto,
 };
 export const SecurityQuestions = [
   { question: `Mother's maiden name` },
