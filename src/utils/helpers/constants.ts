@@ -2,6 +2,7 @@ import { VerificationDto } from '../../security/dto/verificationDto';
 import { MobilePhoneDto } from '../../registration/dto/mobilePhone.dto';
 import UpdateUserProfileDto from '../../registration/dto/updateData.dto';
 import ChangeUserSettingsDto from '../../user/settings/dto/userSettings.dto';
+import SendUserDataDto from '../../user/information/dto/getUserInformation.dto';
 
 const CODE_EXPIRATION_TIME = 15;
 
@@ -21,6 +22,7 @@ export const Endpoints = {
   '/auth/user/settings/all': ChangeUserSettingsDto,
   '/security/session': MobilePhoneDto,
   '/security/session/verification': VerificationDto,
+  '/auth/information': SendUserDataDto,
 };
 export const SecurityQuestions = [
   { question: `Mother's maiden name` },
