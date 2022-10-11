@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { requestValidationMiddleware } from '../utils/helpers/validation';
+import UserService from '../user/user.service';
 import RegistrationController from './registration.controller';
 import RegistrationService from './registration.service';
 import UserService from '../user/user.service';
@@ -21,6 +22,11 @@ class RegistrationRoutes {
 
   private initRoutes() {
     this.router.get('/registration', requestValidationMiddleware, this.registrationController.checkPhoneStatus);
+    this.router.get(
+      '/registration/security-questions',
+      requestValidationMiddleware,
+      this.registrationController.sendSecurityQuestions
+    );
     this.router.patch(
       '/registration/user-profile',
       requestValidationMiddleware,
@@ -33,5 +39,4 @@ class RegistrationRoutes {
     );
   }
 }
-
 export default RegistrationRoutes;

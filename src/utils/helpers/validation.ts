@@ -10,7 +10,6 @@ import url from 'url';
 
 export const requestValidationMiddleware = (req: Request, res: Response, next: NextFunction) => {
   let data = formatDataToDto(req);
-
   validate(data, { skipMissingProperties: true }).then((errors) => {
     if (errors.length > 0) {
       let errorTexts = Array();

@@ -1,20 +1,23 @@
 import { IsDefined, IsEmail, IsNumberString, IsString, IsUUID, Matches, MaxLength, MinLength } from 'class-validator';
 
-export default class UpdateUserProfileDto {
+export default class ChangeUserSettingsDto {
   @MinLength(11)
   @MaxLength(11)
   @IsNumberString()
-  @IsDefined()
   mobilePhone: string;
 
-  id: string;
-
   @IsDefined()
+  @IsUUID()
+  clientId: string;
+
   @IsString()
   @Matches(RegExp(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{8,}$/))
   password: string;
 
-  @IsDefined()
+  @IsString()
+  @Matches(RegExp(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{8,}$/))
+  newPassword: string;
+
   @IsString()
   securityQuestionType: string;
 
@@ -25,7 +28,6 @@ export default class UpdateUserProfileDto {
   @IsString()
   securityQuestion: string;
 
-  @IsDefined()
   @IsString()
   securityQuestionAnswer: string;
 
