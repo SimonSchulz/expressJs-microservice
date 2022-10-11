@@ -20,7 +20,7 @@ export const Endpoints = {
   '/security/session': MobilePhoneDto,
   '/security/session/verification': VerificationDto,
   '/auth/user/settings/notifications/all': sendNotificationSettingsDto,
-  '/auth/user/settings/notifications/patch': smsNotificationDto,
+  '/auth/user/settings/notifications': smsNotificationDto,
 };
 export const SecurityQuestions = [
   { question: `Mother's maiden name` },
