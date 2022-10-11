@@ -19,8 +19,13 @@ class NotificationsRoutes {
   }
 
   private initRoutes() {
+    this.router.get(
+      '/auth/user/settings/notifications/all/',
+      requestValidationMiddleware,
+      this.notificationsController.sendNotificationSettings
+    );
     this.router.patch(
-      '/auth/user/settings/notifications/patch/',
+      '/auth/user/settings/notifications/',
       requestValidationMiddleware,
       this.notificationsController.patchSmsNotifications
     );
