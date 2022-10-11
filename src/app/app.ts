@@ -7,6 +7,7 @@ import RegistrationRoutes from '../registration/registration.routes';
 import UserSettingsRoutes from '../user/settings/userSetting.routes';
 import LoginRoutes from '../login/login.routes';
 import UserInformationRoutes from '../user/information/userInformation.routes';
+import NotificationsRoutes from '../user/settings/notifications/notifications.routes';
 
 interface Route {
   router: Router;
@@ -38,7 +39,8 @@ class App {
 export default new App([
   new SecurityRoutes(),
   new RegistrationRoutes(),
-  new UserSettingsRoutes(),
   new LoginRoutes(),
+  new NotificationsRoutes(),
+  new UserSettingsRoutes(),
   new UserInformationRoutes(),
 ]).app;
