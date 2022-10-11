@@ -1,2 +1,4 @@
-class RegistrationService {}
+class RegistrationService {
+  checkRequest() {}
+}
 export default RegistrationService;

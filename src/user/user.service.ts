@@ -2,11 +2,11 @@
 import { getRepository } from 'typeorm';
 import bcrypt from 'bcryptjs';
 import Client from '../entities/client.entity';
+import { ClientStatus, ErrorMessages } from '../utils/helpers/constants';
 import SecurityQuestionsTypes from '../utils/helpers/securityQuestionsTypes';
+import SecurityQuestionEntity from '../entities/seqQuests.entity';
 import VerificationEntity from '../entities/verification.entity';
 import ClientVerifStatus from '../utils/helpers/ClientVerifStatus';
-import ErrorMessages from '../utils/helpers/errorMessages';
-import SecurityQuestionEntity from '../entities/seqQuests.entity';
 
 class UserService {
   async getUser(param: object) {
@@ -84,6 +84,35 @@ class UserService {
     const saltRounds = 10;
     const salt = await bcrypt.genSalt(saltRounds);
     return bcrypt.hash(password, salt);
+  }
+  async createUser(registrationData) {
+    if (registrationData) {
+      const check = await getRepository(Client).findOne({ mobilePhone: registrationData.mobilePhone });
+
+      if (!check) {
+        let date = new Date(Date.now());
+
+        await getRepository(Client).insert({
+          mobilePhone: registrationData.mobilePhone,
+          password: registrationData.password,
+          securityQuestion: registrationData.securityQuestion,
+          securityQuestionAnswer: registrationData.securityQuestionAnswer,
+          clientStatus: ClientStatus.ACTIVE,
+          email: registrationData.email,
+          firstName: registrationData.firstName,
+          middleName: registrationData.middleName,
+          lastName: registrationData.lastName,
+          passportId: registrationData.passportNumber,
+          countryOfResidence: registrationData.countryOfResidence,
+          accesionDate: date,
+          registrationDate: date,
+        });
+
+        return true;
+      } else {
+        return false;
+      }
+    }
   }
 }
 
