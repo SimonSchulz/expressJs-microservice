@@ -15,6 +15,7 @@ const messages = {
   INTERNAL_SERVER_ERROR: 'Internal server error',
   INVALID_MOBILE_PHONE: 'Invalid mobile phone',
   PASSWORD_IS_INVALID: 'Password is invalid',
+  USER_ALREADY_EXIST: 'User already exists',
 };
 
 export default messages;

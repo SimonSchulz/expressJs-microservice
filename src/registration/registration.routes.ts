@@ -1,6 +1,5 @@
 import { Router } from 'express';
 import { requestValidationMiddleware } from '../utils/helpers/validation';
-import UserService from '../user/user.service';
 import RegistrationController from './registration.controller';
 import RegistrationService from './registration.service';
 import UserService from '../user/user.service';
