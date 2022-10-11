@@ -3,7 +3,12 @@ import { MobilePhoneDto } from '../../registration/dto/mobilePhone.dto';
 import UpdateUserProfileDto from '../../registration/dto/updateData.dto';
 import { smsNotificationDto } from '../../user/settings/notifications/dto/notifications.dto';
 import ChangeUserSettingsDto from '../../user/settings/dto/userSettings.dto';
+import SendUserDataDto from '../../user/information/dto/getUserInformation.dto';
 import sendNotificationSettingsDto from '../../user/settings/notifications/dto/sendNotificationDto';
+
+const CODE_EXPIRATION_TIME = 15;
+
+// eslint-disable-next-line no-shadow
 
 export enum ErrorMessages {
   ERROR = 'Error',
@@ -19,6 +24,7 @@ export const Endpoints = {
   '/auth/user/settings/all': ChangeUserSettingsDto,
   '/security/session': MobilePhoneDto,
   '/security/session/verification': VerificationDto,
+  '/auth/information': SendUserDataDto,
   '/auth/user/settings/notifications/all': sendNotificationSettingsDto,
   '/auth/user/settings/notifications': smsNotificationDto,
 };
