@@ -1,3 +1,4 @@
+import { UpdateUserPasswordDto } from '../../login/dto/UpdateUserPassword.dto';
 import { MobilePhoneDto } from '../../registration/dto/mobilePhone.dto';
 import { RegistrationDataDto } from '../../registration/dto/registrationData.dto';
 import UpdateUserProfileDto from '../../registration/dto/updateData.dto';
@@ -39,6 +40,7 @@ export const Endpoints = {
   '/auth/user/settings/all': ChangeUserSettingsDto,
   '/security/session': MobilePhoneDto,
   '/security/session/verification': VerificationDto,
+  '/login/password': UpdateUserPasswordDto,
   '/auth/information': SendUserDataDto,
   '/auth/user/settings/notifications/all': sendNotificationSettingsDto,
   '/auth/user/settings/notifications': smsNotificationDto,

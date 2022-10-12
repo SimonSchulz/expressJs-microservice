@@ -2,15 +2,27 @@
 import { getRepository } from 'typeorm';
 import bcrypt from 'bcryptjs';
 import Client from '../entities/client.entity';
-import { ClientStatus, ErrorMessages } from '../utils/helpers/constants';
 import SecurityQuestionsTypes from '../utils/helpers/securityQuestionsTypes';
 import SecurityQuestionEntity from '../entities/seqQuests.entity';
 import VerificationEntity from '../entities/verification.entity';
 import ClientVerifStatus from '../utils/helpers/ClientVerifStatus';
+import messages from '../utils/helpers/messages';
+import { ClientStatus, ErrorMessages } from '../utils/helpers/constants';
 
 class UserService {
   async getUser(param: object) {
     return await getRepository(Client).findOne(param);
+  }
+  async changeUserQuestionType(user, updateData) {
+    const clientId = user.clientId;
+    updateData.securityQuestionAnswer = await this.genHashPassword(updateData.securityQuestionAnswer);
+    if (updateData.securityQuestionType === SecurityQuestionsTypes.PREDEFINED) {
+      updateData.securityQuestion = null;
+      await getRepository(Client).update({ clientId }, { securityQuestion: updateData.securityQuestion });
+    } else {
+      updateData.securityQuestionId = null;
+      await getRepository(Client).update({ clientId }, { securityQuestionId: updateData.securityQuestionId });
+    }
   }
 
   public async updateUserData(clientId: number, objData: object) {
@@ -87,13 +99,13 @@ class UserService {
   }
   async createUser(registrationData) {
     if (registrationData) {
-      const check = await getRepository(Client).findOne({ mobilePhone: registrationData.mobilePhone });
+      const user = await getRepository(Client).findOne({ mobilePhone: registrationData.mobilePhone });
 
-      registrationData.password = await this.genHashPassword(registrationData.password);
-      registrationData.securityQuestionAnswer = await this.genHashPassword(registrationData.securityQuestionAnswer);
-
-      if (!check) {
+      if (!user) {
         let date = new Date(Date.now());
+
+        registrationData.password = await this.genHashPassword(registrationData.password);
+        registrationData.securityQuestionAnswer = await this.genHashPassword(registrationData.securityQuestionAnswer);
 
         await getRepository(Client).insert({
           mobilePhone: registrationData.mobilePhone,

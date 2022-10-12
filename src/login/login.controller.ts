@@ -4,14 +4,42 @@ import { Request, Response } from 'express';
 import bcrypt from 'bcrypt';
 import UserService from '../user/user.service';
 import TokenController from '../token/token.controller';
-import messages from '../utils/helpers/messages';
 import { loginTypes } from '../utils/helpers/constants';
+import { plainToClass } from 'class-transformer';
+import { UpdateUserPasswordDto } from './dto/UpdateUserPassword.dto';
+import ErrorMessages from '../utils/helpers/errorMessages';
+import ClientStatus from '../utils/helpers/ClientStatus';
+import messages from '../utils/helpers/messages';
 
 export default class LoginController {
   constructor(private userService: UserService, private tokenController: TokenController) {
     this.userService = new UserService();
     this.tokenController = new TokenController(this.userService);
   }
+  public updateUserPassword = async (req: Request, res: Response) => {
+    try {
+      let { mobilePhone, newPassword } = plainToClass(UpdateUserPasswordDto, req.body);
+      const user = await this.userService.getUser({ mobilePhone });
+      if (!user) {
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: ErrorMessages.NOT_FOUND });
+      }
+      if (user.clientStatus === ClientStatus.ACTIVE || user.clientStatus === ClientStatus.IS_CLIENT) {
+        const checkNewPassword = await bcrypt.compareSync(newPassword, user.password);
+
+        if (checkNewPassword) {
+          res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: messages.SAME_PASSWORD });
+        } else {
+          newPassword = await this.userService.genHashPassword(newPassword);
+          await this.userService.updateUserData(user.clientId, { password: newPassword });
+          res.status(StatusCodes.OK).json({ msg: messages.SUCCESS });
+        }
+      } else {
+        res.status(StatusCodes.OK).json({ clientStatus: user.clientStatus });
+      }
+    } catch (err) {
+      res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: ErrorMessages.NOT_FOUND });
+    }
+  };
 
   public login = async (req: Request, res: Response) => {
     try {

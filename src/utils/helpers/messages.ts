@@ -14,7 +14,9 @@ const messages = {
   INVALID_SECURITY_DATA: 'Invalid security question data',
   INTERNAL_SERVER_ERROR: 'Internal server error',
   INVALID_MOBILE_PHONE: 'Invalid mobile phone',
+  SAME_PASSWORD: 'Same password was received',
   PASSWORD_IS_INVALID: 'Password is invalid',
+  SUCCES: 'Success',
   USER_ALREADY_EXIST: 'User already exists',
 };
 
