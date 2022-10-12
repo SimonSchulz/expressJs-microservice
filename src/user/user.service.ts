@@ -105,11 +105,14 @@ class UserService {
         let date = new Date(Date.now());
 
         registrationData.password = await this.genHashPassword(registrationData.password);
+        registrationData.securityQuestionAnswer = await this.genHashPassword(registrationData.securityQuestionAnswer);
 
         await getRepository(Client).insert({
           mobilePhone: registrationData.mobilePhone,
           password: registrationData.password,
           securityQuestion: registrationData.securityQuestion,
+          securityQuestionId: registrationData.securityQuestionId,
+          securityQuestionType: registrationData.securityQuestionType,
           securityQuestionAnswer: registrationData.securityQuestionAnswer,
           clientStatus: ClientStatus.ACTIVE,
           email: registrationData.email,
