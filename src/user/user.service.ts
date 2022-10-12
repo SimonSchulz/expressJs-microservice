@@ -3,11 +3,11 @@ import { getRepository } from 'typeorm';
 import bcrypt from 'bcryptjs';
 import Client from '../entities/client.entity';
 import SecurityQuestionsTypes from '../utils/helpers/securityQuestionsTypes';
+import SecurityQuestionEntity from '../entities/seqQuests.entity';
 import VerificationEntity from '../entities/verification.entity';
 import ClientVerifStatus from '../utils/helpers/ClientVerifStatus';
-import ErrorMessages from '../utils/helpers/errorMessages';
-import SecurityQuestionEntity from '../entities/seqQuests.entity';
-import ClientStatus from '../utils/helpers/ClientStatus';
+import messages from '../utils/helpers/messages';
+import { ClientStatus, ErrorMessages } from '../utils/helpers/constants';
 
 class UserService {
   async getUser(param: object) {
@@ -102,8 +102,7 @@ class UserService {
       const user = await getRepository(Client).findOne({ mobilePhone: registrationData.mobilePhone });
 
       if (!user) {
-        let date = new Date();
-        let currentDate = `${date.getDate()}.${date.getMonth()}.${date.getFullYear()}`;
+        let date = new Date(Date.now());
 
         registrationData.password = await this.genHashPassword(registrationData.password);
 
@@ -119,8 +118,8 @@ class UserService {
           lastName: registrationData.lastName,
           passportId: registrationData.passportNumber,
           countryOfResidence: registrationData.countryOfResidence,
-          accesionDate: currentDate,
-          registrationDate: currentDate,
+          accesionDate: date,
+          registrationDate: date,
         });
 
         return true;

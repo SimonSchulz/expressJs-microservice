@@ -36,7 +36,6 @@ export default class SecurityController {
           return res
             .status(StatusCodes.OK)
             .json({ mobilePhone: objToFind.mobilePhone, clientStatus: ClientStatus.IS_CLIENT });
-
         case ClientStatus.NOT_REGISTER:
           return res
             .status(StatusCodes.OK)
@@ -78,6 +77,17 @@ export default class SecurityController {
     }
   };
 
+  public createUserProfile = async (req: Request, res: Response) => {
+    try {
+      const registrationData = plainToInstance(RegistrationDataDto, req.body);
+
+      const createUser = await this.userService.createUser(registrationData);
+      if (createUser) return res.status(StatusCodes.OK).json({ msg: messages.SUCCESS });
+      else return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: messages.USER_ALREADY_EXIST });
+    } catch (error) {
+      return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: error.message });
+    }
+  };
   public sendSecurityQuestions = async (req: Request, res: Response) => {
     try {
       const questions = await getRepository(SecurityQuestionEntity).find({
@@ -90,18 +100,6 @@ export default class SecurityController {
       res.status(StatusCodes.OK).json({ questions: questions });
     } catch {
       res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: error });
-    }
-  };
-
-  public createUserProfile = async (req: Request, res: Response) => {
-    try {
-      const registrationData = plainToInstance(RegistrationDataDto, req.body);
-
-      const createUser = await this.userService.createUser(registrationData);
-      if (createUser) return res.status(StatusCodes.OK).json({ msg: messages.SUCCESS });
-      else return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: messages.USER_DOESNT_EXIST });
-    } catch (error) {
-      return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: error.message });
     }
   };
 }

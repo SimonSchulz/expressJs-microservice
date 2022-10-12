@@ -17,10 +17,10 @@ export default class Client {
   countryOfResidence: string;
 
   @Column({ nullable: true })
-  accesionDate: string;
+  accesionDate: Date;
 
   @Column({ nullable: true })
-  registrationDate: string;
+  registrationDate: Date;
 
   @Column({ nullable: true, length: 30 })
   firstName: string;

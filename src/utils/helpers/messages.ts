@@ -17,6 +17,7 @@ const messages = {
   SAME_PASSWORD: 'Same password was received',
   PASSWORD_IS_INVALID: 'Password is invalid',
   SUCCES: 'Success',
+  USER_ALREADY_EXIST: 'User already exists',
 };
 
 export default messages;
