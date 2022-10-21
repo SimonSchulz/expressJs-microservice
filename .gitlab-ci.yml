@@ -1,0 +1,115 @@
+---
+stages:
+  - test
+  - image
+  - deploy
+
+variables:
+  PROJECT: $CI_PROJECT_NAME
+  DOCKER_BUILDKIT: 1
+  TRANSFER_METER_FREQUENCY: "2s"
+  GIT_DEPTH: 0
+
+#TEMPLATES
+
+.image-template:
+  stage: image 
+  before_script:
+    - echo "$AND_DOCKER_REGISTRY_RW_PASS" | docker login -u nexus "$AND_DOCKER_REGISTRY_NAME" --password-stdin
+  script:
+    - docker build --tag $AND_DOCKER_REGISTRY_NAME/$PROJECT:$CI_COMMIT_BRANCH -f Dockerfile --compress --build-arg BUILDKIT_INLINE_CACHE=1 .
+    - docker push $AND_DOCKER_REGISTRY_NAME/$PROJECT:$CI_COMMIT_BRANCH
+    - docker system prune -f --filter "label!=keep"
+
+.deploy-template:
+  stage: deploy
+  before_script:
+    - echo "$AND_DOCKER_REGISTRY_RO_PASS" | docker login -u nexus-ro "$AND_DOCKER_REGISTRY_NAME" --password-stdin
+    - cp $AND_ENV .env
+  script:
+    - docker compose -f docker-compose.yml stop || true
+    - docker system prune -f --filter "label!=keep"
+    - docker compose -f docker-compose.yml pull || true
+    - docker compose -f docker-compose.yml up --force-recreate -d
+
+.test-template:
+  stage: test
+  image: sonarsource/sonar-scanner-cli:latest
+  variables:
+    SONAR_PROJECT_BASE_DIR: "$CI_PROJECT_DIR"
+    SONAR_USER_HOME: "${CI_PROJECT_DIR}/.sonar" # Defines the location of the analysis task cache
+    GIT_DEPTH: 0 # Tells git to fetch all the branches of the project, required by the analysis task
+  cache:
+    key: $CI_COMMIT_REF_SLUG
+    paths:
+      - .sonar/cache/
+      - coverage/
+  before_script:
+    - npm install
+  script:
+    - CI=true && npm run test -- --coverage || true
+    - /usr/bin/entrypoint.sh sonar-scanner -Dproject.settings=sonar-project.properties
+      -Dsonar.projectKey=$PROJECT-$CI_COMMIT_BRANCH
+      -Dsonar.projectName=$PROJECT-$CI_COMMIT_BRANCH
+      -Dsonar.projectVersion=1.0
+      -Dsonar.links.ci=$CI_PIPELINE_URL
+      -Dsonar.login=$SONAR_LOGIN
+      -Dsonar.host.url=$SONAR_HOST_URL
+  coverage: /All\sfiles.*?\s+(\d+.\d+)/
+  artifacts:
+    when: always
+    paths:
+      - coverage
+  allow_failure: true
+  
+#JOBS
+
+test:dev:
+  extends: .test-template
+  tags: [docker-dev]
+  rules:
+    - if: $CI_COMMIT_BRANCH == "dev"
+
+test:prod:
+  extends: .test-template
+  tags: [docker-dev]
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
+
+test:mr:
+  extends: .test-template
+  tags:
+    - dev
+    - prod
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      variables:
+        CI_COMMIT_BRANCH: mr
+
+
+image:dev:
+  extends: .image-template
+  tags: [dev]
+  rules:
+    - if: $CI_COMMIT_BRANCH == "dev"
+
+
+image:prod:
+  extends: .image-template
+  tags: [prod]
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
+
+
+deploy:dev:
+  extends: .deploy-template
+  tags: [dev]
+  rules:
+    - if: $CI_COMMIT_BRANCH == "dev"
+
+deploy:prod:
+  extends: .deploy-template
+  tags: [prod]
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
+
