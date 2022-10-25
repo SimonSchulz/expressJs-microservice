@@ -1,7 +1,6 @@
 import { Router } from 'express';
 import TokenController from '../token/token.controller';
 import UserService from '../user/user.service';
-import { requestValidationMiddleware } from '../utils/helpers/validation';
 import LoginController from './login.controller';
 import LoginService from './login.service';
 
@@ -26,8 +25,8 @@ class LoginRoutes {
 
   private initRoutes() {
     this.router.post('/login/', this.loginController.login);
+    this.router.patch('/login/password', this.loginController.updateUserPassword);
     this.router.get('/login/token/', this.loginController.reLogin);
-    this.router.patch('/login/password', requestValidationMiddleware, this.loginController.updateUserPassword);
   }
 }
 
