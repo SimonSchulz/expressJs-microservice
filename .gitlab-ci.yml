@@ -66,21 +66,21 @@ variables:
 
 test:dev:
   extends: .test-template
-  tags: [docker-dev]
+  tags: [shell-test]
   rules:
     - if: $CI_COMMIT_BRANCH == "dev"
 
 test:prod:
   extends: .test-template
-  tags: [docker-dev]
+  tags: [shell-test]
   rules:
     - if: $CI_COMMIT_BRANCH == "main"
 
 test:mr:
   extends: .test-template
   tags:
-    - dev
-    - prod
+    - shell-dev
+    - shell-main #prod = main
   rules:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
       variables:
@@ -89,27 +89,27 @@ test:mr:
 
 image:dev:
   extends: .image-template
-  tags: [dev]
+  tags: [shell-dev]
   rules:
     - if: $CI_COMMIT_BRANCH == "dev"
 
 
 image:prod:
   extends: .image-template
-  tags: [dev]
+  tags: [shell-main]
   rules:
     - if: $CI_COMMIT_BRANCH == "main"
 
 
 deploy:dev:
   extends: .deploy-template
-  tags: [dev]
+  tags: [shell-dev]
   rules:
     - if: $CI_COMMIT_BRANCH == "dev"
 
 deploy:prod:
   extends: .deploy-template
-  tags: [dev]
+  tags: [shell-main]
   rules:
     - if: $CI_COMMIT_BRANCH == "main"
 
