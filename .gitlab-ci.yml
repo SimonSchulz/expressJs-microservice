@@ -32,35 +32,35 @@ variables:
     - docker compose -f docker-compose.yml pull || true
     - docker compose -f docker-compose.yml up --force-recreate -d
 
-.test-template:
-  stage: test
-  image: sonarsource/sonar-scanner-cli:latest
-  variables:
-    SONAR_PROJECT_BASE_DIR: "$CI_PROJECT_DIR"
-    SONAR_USER_HOME: "${CI_PROJECT_DIR}/.sonar" # Defines the location of the analysis task cache
-    GIT_DEPTH: 0 # Tells git to fetch all the branches of the project, required by the analysis task
-  cache:
-    key: $CI_COMMIT_REF_SLUG
-    paths:
-      - .sonar/cache/
-      - coverage/
-  before_script:
-    - npm install
-  script:
-    - CI=true && npm run test -- --coverage || true
-    - /usr/bin/entrypoint.sh sonar-scanner -Dproject.settings=sonar-project.properties
-      -Dsonar.projectKey=$PROJECT-$CI_COMMIT_BRANCH
-      -Dsonar.projectName=$PROJECT-$CI_COMMIT_BRANCH
-      -Dsonar.projectVersion=1.0
-      -Dsonar.links.ci=$CI_PIPELINE_URL
-      -Dsonar.login=$SONAR_LOGIN
-      -Dsonar.host.url=$SONAR_HOST_URL
-  coverage: /All\sfiles.*?\s+(\d+.\d+)/
-  artifacts:
-    when: always
-    paths:
-      - coverage
-  allow_failure: true
+# .test-template:
+#   stage: test
+#   image: sonarsource/sonar-scanner-cli:latest
+#   variables:
+#     SONAR_PROJECT_BASE_DIR: "$CI_PROJECT_DIR"
+#     SONAR_USER_HOME: "${CI_PROJECT_DIR}/.sonar" # Defines the location of the analysis task cache
+#     GIT_DEPTH: 0 # Tells git to fetch all the branches of the project, required by the analysis task
+#   cache:
+#     key: $CI_COMMIT_REF_SLUG
+#     paths:
+#       - .sonar/cache/
+#       - coverage/
+#   before_script:
+#     - npm install
+#   script:
+#     - CI=true && npm run test -- --coverage || true
+#     - /usr/bin/entrypoint.sh sonar-scanner -Dproject.settings=sonar-project.properties
+#       -Dsonar.projectKey=$PROJECT-$CI_COMMIT_BRANCH
+#       -Dsonar.projectName=$PROJECT-$CI_COMMIT_BRANCH
+#       -Dsonar.projectVersion=1.0
+#       -Dsonar.links.ci=$CI_PIPELINE_URL
+#       -Dsonar.login=$SONAR_LOGIN
+#       -Dsonar.host.url=$SONAR_HOST_URL
+#   coverage: /All\sfiles.*?\s+(\d+.\d+)/
+#   artifacts:
+#     when: always
+#     paths:
+#       - coverage
+#   allow_failure: true
   
 #JOBS
 
@@ -72,7 +72,7 @@ test:dev:
 
 test:prod:
   extends: .test-template
-  tags: [shell-$CI_COMMIT_BRANCH]
+  tags: [docker-dev]
   rules:
     - if: $CI_COMMIT_BRANCH == "main"
 
@@ -80,7 +80,7 @@ test:mr:
   extends: .test-template
   tags:
     - dev
-    - shell-$CI_COMMIT_BRANCH
+    - prod
   rules:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
       variables:
