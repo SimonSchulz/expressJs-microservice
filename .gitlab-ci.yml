@@ -80,7 +80,7 @@ test:mr:
   extends: .test-template
   tags:
     - dev
-    - prod
+    - shell-$CI_COMMIT_BRANCH
   rules:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
       variables:
@@ -96,7 +96,7 @@ image:dev:
 
 image:prod:
   extends: .image-template
-  tags: [dev]
+  tags: [shell-$CI_COMMIT_BRANCH]
   rules:
     - if: $CI_COMMIT_BRANCH == "main"
 
@@ -109,7 +109,7 @@ deploy:dev:
 
 deploy:prod:
   extends: .deploy-template
-  tags: [dev]
+  tags: [shell-$CI_COMMIT_BRANCH]
   rules:
     - if: $CI_COMMIT_BRANCH == "main"
 
