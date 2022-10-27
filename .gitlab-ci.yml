@@ -66,13 +66,13 @@ variables:
 
 test:dev:
   extends: .test-template
-  tags: [docker-dev]
+  tags: [docker]
   rules:
     - if: $CI_COMMIT_BRANCH == "dev"
 
 test:prod:
   extends: .test-template
-  tags: [docker-dev]
+  tags: [docker]
   rules:
     - if: $CI_COMMIT_BRANCH == "main"
 
@@ -89,7 +89,7 @@ test:mr:
 
 image:dev:
   extends: .image-template
-  tags: [dev]
+  tags: [shell-$CI_COMMIT_BRANCH]
   rules:
     - if: $CI_COMMIT_BRANCH == "dev"
 
@@ -103,7 +103,7 @@ image:prod:
 
 deploy:dev:
   extends: .deploy-template
-  tags: [dev]
+  tags: [shell-$CI_COMMIT_BRANCH]
   rules:
     - if: $CI_COMMIT_BRANCH == "dev"
 
