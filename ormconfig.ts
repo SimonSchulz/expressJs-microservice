@@ -1,3 +1,5 @@
+import { ConnectionOptions } from 'typeorm';
+
 export default {
   type: 'postgres',
   host: process.env.POSTGRES_HOST,
@@ -18,5 +20,6 @@ export default {
   },
   name: 'default',
   database: process.env.POSTGRES_DB || 'node_project',
-  synchronize: true,
-};
+  migrationsRun: true,
+  dropSchema: false,
+} as ConnectionOptions;

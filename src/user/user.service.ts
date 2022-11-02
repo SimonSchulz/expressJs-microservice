@@ -1,12 +1,10 @@
-/* eslint-disable no-console */
 import { getRepository } from 'typeorm';
 import bcrypt from 'bcryptjs';
 import Client from '../entities/client.entity';
-import SecurityQuestionsTypes from '../utils/helpers/securityQuestionsTypes';
-import SecurityQuestionEntity from '../entities/seqQuests.entity';
+import { SecurityQuestionsTypes } from '../utils/helpers/securityQuestionsTypes';
+import SecurityQuestionEntity from '../entities/security-question.entity';
 import VerificationEntity from '../entities/verification.entity';
-import ClientVerifStatus from '../utils/helpers/ClientVerifStatus';
-import messages from '../utils/helpers/messages';
+import { ClientVerifStatus } from '../utils/helpers/ClientVerifStatus';
 import { ClientStatus, ErrorMessages } from '../utils/helpers/constants';
 
 class UserService {
@@ -33,10 +31,10 @@ class UserService {
   }
 
   async checkAllParams(user, updateData) {
-    let checkPasswords = await this.checkUserPassword(user, updateData.password);
-    let checkVerifStatus = await this.checkUserVerification(user);
-    let newPassword = await this.genHashPassword(updateData.password);
-    let secQuestTypes = await this.checkSecQuestionData(updateData);
+    const checkPasswords = await this.checkUserPassword(user, updateData.password);
+    const checkVerifStatus = await this.checkUserVerification(user);
+    const newPassword = await this.genHashPassword(updateData.password);
+    const secQuestTypes = await this.checkSecQuestionData(updateData);
     if (!checkPasswords && checkVerifStatus && secQuestTypes) return { checks: true, newPassword: newPassword };
     return {
       checks: false,
@@ -58,7 +56,7 @@ class UserService {
     }
   }
   async checkUserVerification(user) {
-    let verifData = await getRepository(VerificationEntity).findOne({ mobilePhone: user.mobilePhone });
+    const verifData = await getRepository(VerificationEntity).findOne({ mobilePhone: user.mobilePhone });
 
     if (verifData && verifData.clientVerifStatus && verifData.clientVerifStatus === ClientVerifStatus.ACTIVE) {
       return true;
@@ -66,7 +64,7 @@ class UserService {
     return false;
   }
   async checkSecQuestionData(updateData) {
-    let checkId = await getRepository(SecurityQuestionEntity).findOne({
+    const checkId = await getRepository(SecurityQuestionEntity).findOne({
       id: updateData.securityQuestionId,
     });
 
@@ -89,7 +87,7 @@ class UserService {
     return false;
   }
   async checkUserPassword(user, newPassword) {
-    let check = await bcrypt.compareSync(newPassword, user.password);
+    const check = await bcrypt.compareSync(newPassword, user.password);
     return check;
   }
   async genHashPassword(password: string) {
@@ -102,7 +100,7 @@ class UserService {
       const user = await getRepository(Client).findOne({ mobilePhone: registrationData.mobilePhone });
 
       if (!user) {
-        let date = new Date(Date.now());
+        const date = new Date(Date.now());
 
         registrationData.password = await this.genHashPassword(registrationData.password);
         registrationData.securityQuestionAnswer = await this.genHashPassword(registrationData.securityQuestionAnswer);

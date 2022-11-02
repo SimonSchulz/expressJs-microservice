@@ -1,5 +1,4 @@
-/* eslint-disable no-shadow */
-enum ClientStatus {
+export enum ClientStatus {
   ACTIVE = 'active',
   NOT_ACTIVE = 'notActive',
   NOT_REGISTER = 'notRegister',
@@ -8,5 +7,3 @@ enum ClientStatus {
   NOT_CLIENT = 'notClient',
   BLOCKED = 'blocked',
 }
-
-export default ClientStatus;

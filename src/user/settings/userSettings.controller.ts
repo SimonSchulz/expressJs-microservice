@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import TokenController from '../../token/token.controller';
-import messages from '../../utils/helpers/messages';
+import { messages } from '../../utils/helpers/messages';
 import UserService from '../user.service';
 
 class UserSettingsController {

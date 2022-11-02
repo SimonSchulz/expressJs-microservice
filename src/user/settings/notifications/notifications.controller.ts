@@ -2,8 +2,7 @@ import { Request, Response } from 'express';
 import UserService from '../../user.service';
 import TokenController from '../../../token/token.controller';
 import { StatusCodes } from 'http-status-codes';
-import messages from '../../../utils/helpers/messages';
-import { CustomRepositoryCannotInheritRepositoryError } from 'typeorm';
+import { messages } from '../../../utils/helpers/messages';
 
 class NotificationsController {
   constructor(private userService: UserService, private tokenController: TokenController) {
@@ -19,7 +18,7 @@ class NotificationsController {
       if (!user) {
         res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: messages.USER_DOESNT_EXIST });
       } else {
-        let userSettings = {
+        const userSettings = {
           email: user.email,
           smsNotification: user.smsNotification,
           pushNotification: user.pushNotification,

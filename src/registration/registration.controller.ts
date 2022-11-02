@@ -2,14 +2,14 @@ import { Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import UserService from '../user/user.service';
 import RegistrationService from './registration.service';
-import ErrorMessages from '../utils/helpers/errorMessages';
-import ClientStatus from '../utils/helpers/ClientStatus';
+import { ErrorMessages } from '../utils/helpers/errorMessages';
+import { ClientStatus } from '../utils/helpers/ClientStatus';
 import { plainToInstance } from 'class-transformer';
 import UpdateUserProfileDto from './dto/updateData.dto';
-import SecurityQuestionEntity from '../entities/seqQuests.entity';
+import SecurityQuestionEntity from '../entities/security-question.entity';
 import { getRepository } from 'typeorm';
 import { error } from 'console';
-import messages from '../utils/helpers/messages';
+import { messages } from '../utils/helpers/messages';
 import { RegistrationDataDto } from './dto/registrationData.dto';
 
 export default class SecurityController {
@@ -59,8 +59,8 @@ export default class SecurityController {
         return res.status(StatusCodes.NOT_FOUND).json({ msg: ErrorMessages.NOT_FOUND });
       }
       if (user.clientStatus === ClientStatus.ACTIVE || user.clientStatus === ClientStatus.IS_CLIENT) {
-        let allCheck = await this.userService.checkAllParams(user, updateData);
-        let errorMessage = await this.userService.handleError(allCheck);
+        const allCheck = await this.userService.checkAllParams(user, updateData);
+        const errorMessage = await this.userService.handleError(allCheck);
 
         if (allCheck.checks) {
           updateData.password = allCheck.newPassword;

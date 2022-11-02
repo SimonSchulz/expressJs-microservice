@@ -1,4 +1,4 @@
-const messages = {
+export const messages = {
   CLIENT_STILL_BLOCKED: 'You still blocked, try again later',
   CLIENT_BLOCKED_TRY_AFTER: 'You was blocked, you can try again after 10 minutes.',
   CODE_EXPIRED: 'Verification code expired!',
@@ -19,5 +19,3 @@ const messages = {
   SUCCES: 'Success',
   USER_ALREADY_EXIST: 'User already exists',
 };
-
-export default messages;

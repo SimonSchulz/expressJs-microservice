@@ -1,5 +1,4 @@
-/* eslint-disable no-shadow */
-enum ErrorMessages {
+export enum ErrorMessages {
   ERROR = 'Error',
   NOT_CLIENT = 'User is not a client',
   NOT_FOUND = 'User not found',
@@ -9,5 +8,3 @@ enum ErrorMessages {
   SAME_PASS = 'Received same password',
   NOT_VERIFIED = 'User not verified',
 }
-
-export default ErrorMessages;

@@ -1,8 +1,8 @@
 import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
-import ClientVerifStatus from '../utils/helpers/ClientVerifStatus';
+import { ClientVerifStatus } from '../utils/helpers/ClientVerifStatus';
 
-@Entity()
-class VerificationEntity {
+@Entity({ name: 'verification' })
+export default class VerificationEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -50,5 +50,3 @@ class VerificationEntity {
   })
   lastSentSmsTime: Date;
 }
-
-export default VerificationEntity;

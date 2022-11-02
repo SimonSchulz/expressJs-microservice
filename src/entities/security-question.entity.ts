@@ -1,13 +1,10 @@
 import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 
-@Entity()
-class SecurityQuestionEntity {
+@Entity({ name: 'security_question' })
+export default class SecurityQuestion {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Column({ nullable: false })
   question: string;
-  static PREDEFINED: string;
 }
-
-export default SecurityQuestionEntity;

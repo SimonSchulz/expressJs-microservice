@@ -8,9 +8,6 @@ import ChangeUserSettingsDto from '../../user/settings/dto/userSettings.dto';
 import { smsNotificationDto } from '../../user/settings/notifications/dto/notifications.dto';
 import sendNotificationSettingsDto from '../../user/settings/notifications/dto/sendNotificationDto';
 
-const CODE_EXPIRATION_TIME = 15;
-
-// eslint-disable-next-line no-shadow
 export enum ClientStatus {
   ACTIVE = 'active',
   NOT_ACTIVE = 'notActive',

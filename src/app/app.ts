@@ -1,11 +1,9 @@
-/* eslint-disable no-console */
 import express, { Router } from 'express';
 import bodyParser from 'body-parser';
 import cors from 'cors';
 import SecurityRoutes from '../security/security.routes';
 import RegistrationRoutes from '../registration/registration.routes';
 import UserSettingsRoutes from '../user/settings/userSetting.routes';
-import LoginRoutes from '../login/login.routes';
 import UserInformationRoutes from '../user/information/userInformation.routes';
 import NotificationsRoutes from '../user/settings/notifications/notifications.routes';
 
@@ -39,7 +37,6 @@ class App {
 export default new App([
   new SecurityRoutes(),
   new RegistrationRoutes(),
-  new LoginRoutes(),
   new NotificationsRoutes(),
   new UserSettingsRoutes(),
   new UserInformationRoutes(),

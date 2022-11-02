@@ -1,6 +1,6 @@
 import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
-import ClientStatus from '../utils/helpers/ClientStatus';
-import SecurityQuestionsTypes from '../utils/helpers/securityQuestionsTypes';
+import { ClientStatus } from '../utils/helpers/ClientStatus';
+import { SecurityQuestionsTypes } from '../utils/helpers/securityQuestionsTypes';
 
 @Entity()
 export default class Client {

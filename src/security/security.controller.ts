@@ -1,16 +1,11 @@
-/* eslint-disable consistent-return */
-/* eslint-disable no-else-return */
-/* eslint-disable no-empty-function */
-/* eslint-disable no-useless-constructor */
-/* eslint-disable no-console */
 import { plainToInstance } from 'class-transformer';
 import { Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import UserService from '../user/user.service';
-import ClientVerifStatus from '../utils/helpers/ClientVerifStatus';
-import timeDiffInMinutes from '../utils/helpers/timeDiff';
+import { ClientVerifStatus } from '../utils/helpers/ClientVerifStatus';
+import { timeDiffInMinutes } from '../utils/helpers/timeDiff';
 import SecurityService from './security.service';
-import messages from '../utils/helpers/messages';
+import { messages } from '../utils/helpers/messages';
 import generateTime from '../utils/helpers/generateTime';
 import { MobilePhoneDto } from '../registration/dto/mobilePhone.dto';
 
@@ -89,7 +84,6 @@ export default class SecurityController {
       if (verificationCode !== verifData.verificationCode) {
         const triesLeft = +process.env.MAX_CODE_TRIES - verifData.invalidAttempts + 1;
         const now = new Date(Date.now());
-        const blockedTime = await this.securityService.checkCode(id);
         const lastInvalidAttemptTimeObj = { lastInvalidAttemptTime: now };
 
         const newTriesClientData = {

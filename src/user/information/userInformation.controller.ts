@@ -1,7 +1,6 @@
-import console from 'console';
 import { Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
-import messages from '../../utils/helpers/messages';
+import { messages } from '../../utils/helpers/messages';
 import UserService from '../user.service';
 
 class UserInformationController {
