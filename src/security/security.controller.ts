@@ -8,6 +8,8 @@ import SecurityService from './security.service';
 import { messages } from '../utils/helpers/messages';
 import generateTime from '../utils/helpers/generateTime';
 import { MobilePhoneDto } from '../registration/dto/mobilePhone.dto';
+import { getRepository } from 'typeorm';
+import SecurityQuestion from '../entities/security-question.entity';
 
 export default class SecurityController {
   constructor(private securityService: SecurityService, private userService: UserService) {
@@ -62,8 +64,9 @@ export default class SecurityController {
 
   public checkVerificationCode = async (req: Request, res: Response) => {
     try {
-      const { verificationCode, id } = req.body;
-      const verifData = await this.securityService.getClientDataByParam({ id });
+      const { email, verificationCode } = req.body;
+
+      const verifData = await this.securityService.getClientDataByParam({ email });
 
       if (
         verifData.clientVerifStatus === ClientVerifStatus.BLOCKED &&
@@ -75,7 +78,8 @@ export default class SecurityController {
       const newClientData = {
         clientVerifStatus: ClientVerifStatus.ACTIVE,
       };
-      await this.securityService.updateByClientId(id, newClientData);
+
+      await this.securityService.updateByParam({ email }, newClientData);
 
       if (timeDiffInMinutes(verifData.codeExpiration) >= +process.env.CODE_EXPIRATION_TIME) {
         return res.status(StatusCodes.NOT_ACCEPTABLE).json({ msg: messages.CODE_EXPIRED });
@@ -90,7 +94,7 @@ export default class SecurityController {
           lastInvalidAttemptTime: lastInvalidAttemptTimeObj.lastInvalidAttemptTime,
         };
 
-        await this.securityService.updateByClientId(id, newTriesClientData);
+        await this.securityService.updateByParam({ email }, newTriesClientData);
 
         if (triesLeft <= 0) {
           const newBlockClientData = {
@@ -99,7 +103,7 @@ export default class SecurityController {
             invalidAttempts: 0,
           };
 
-          await this.securityService.updateByClientId(id, newBlockClientData);
+          await this.securityService.updateByParam({ email }, newBlockClientData);
 
           return res.status(StatusCodes.NOT_ACCEPTABLE).json({ msg: messages.CLIENT_BLOCKED_TRY_AFTER });
         }
@@ -111,7 +115,7 @@ export default class SecurityController {
         invalidAttempts: 0,
       };
 
-      await this.securityService.updateByClientId(id, newActiveClientData);
+      await this.securityService.updateByParam({ email }, newActiveClientData);
 
       return res.status(StatusCodes.OK).json({ msg: messages.SUCCESS });
     } catch (error) {

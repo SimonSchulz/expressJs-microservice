@@ -1,6 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 
-@Entity({ name: 'security_question' })
+@Entity()
 export default class SecurityQuestion {
   @PrimaryGeneratedColumn('uuid')
   id: string;

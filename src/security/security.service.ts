@@ -34,9 +34,9 @@ class SecurityService {
     return await getRepository(VerificationEntity).findOne(param);
   }
 
-  public async updateByClientId(id: string, newClientData: object) {
+  public async updateByParam(param, newClientData: object) {
     await getRepository(VerificationEntity).update(
-      { id },
+      param,
 
       newClientData
     );
