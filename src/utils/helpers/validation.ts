@@ -10,6 +10,7 @@ export const requestValidationMiddleware = (req: Request, res: Response, next: N
   const data = formatDataToDto(req);
   validate(data, { skipMissingProperties: true }).then((errors) => {
     if (errors.length > 0) {
+      console.log('er')
       let errorTexts = [];
       for (const errorItem of errors) {
         errorTexts = errorTexts.concat(errorItem.constraints);
@@ -24,6 +25,7 @@ export const requestValidationMiddleware = (req: Request, res: Response, next: N
 
 function formatDataToDto(req: Request) {
   const clearUrl = url.parse(req.url).pathname;
+  console.log(clearUrl)
   const data = req.method === 'GET' ? req.query : req.body;
   const formatedData = plainToInstance(Endpoints[clearUrl], data);
   return formatedData;

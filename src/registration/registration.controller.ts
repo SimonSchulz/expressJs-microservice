@@ -18,28 +18,24 @@ export default class SecurityController {
     this.userService = new UserService();
   }
 
-  public checkPhoneStatus = async (req: Request, res: Response) => {
+  public checkEmailStatus = async (req: Request, res: Response) => {
     try {
-      const phoneNumber = req.query.mobilePhone;
-      const objToFind = { mobilePhone: phoneNumber };
+      const mail = req.query.email;
+      const objToFind = { email: mail };
 
       const user = await this.userService.getUser(objToFind);
       if (!user) {
-        return res
-          .status(StatusCodes.NOT_FOUND)
-          .json({ mobilePhone: objToFind.mobilePhone, msg: ErrorMessages.NOT_FOUND });
+        return res.status(StatusCodes.NOT_FOUND).json({ mail: objToFind.email, msg: ErrorMessages.NOT_FOUND });
       }
 
       switch (user.clientStatus) {
         case ClientStatus.ACTIVE:
         case ClientStatus.NOT_ACTIVE:
-          return res
-            .status(StatusCodes.OK)
-            .json({ mobilePhone: objToFind.mobilePhone, clientStatus: ClientStatus.IS_CLIENT });
+          return res.status(StatusCodes.OK).json({ mail: objToFind.email, clientStatus: ClientStatus.IS_CLIENT });
         case ClientStatus.NOT_REGISTER:
           return res
             .status(StatusCodes.OK)
-            .json({ mobilePhone: phoneNumber, clientStatus: user.clientStatus, clientId: user.clientId });
+            .json({ email: mail, clientStatus: user.clientStatus, clientId: user.clientId });
 
         default:
           return res.status(StatusCodes.BAD_REQUEST).json({ clientStatus: user.clientStatus });
