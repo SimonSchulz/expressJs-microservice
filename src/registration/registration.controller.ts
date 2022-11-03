@@ -18,19 +18,29 @@ export default class RegistrationController {
     this.userService = new UserService();
   }
 
-  public checkPhoneStatus = async (req: Request, res: Response) => {
+  public checkEmailStatus = async (req: Request, res: Response) => {
     try {
-      const phoneNumber = req.query.mobilePhone;
-      const objToFind = { mobilePhone: phoneNumber };
+      const mail = req.query.email;
+      const objToFind = { email: mail };
 
       const user = await this.userService.getUser(objToFind);
       if (!user) {
-        return res
-          .status(StatusCodes.NOT_FOUND)
-          .json({ mobilePhone: objToFind.mobilePhone, msg: ErrorMessages.NOT_FOUND });
+        return res.status(StatusCodes.NOT_FOUND).json({ mail: objToFind.email, msg: ErrorMessages.NOT_FOUND });
       }
 
-      return res.status(StatusCodes.OK).json({ msg: user.clientStatus });
+      switch (user.clientStatus) {
+        case ClientStatus.ACTIVE:
+        case ClientStatus.NOT_ACTIVE:
+          return res
+          .status(StatusCodes.OK)
+          .json({ mail: objToFind.email, clientStatus: ClientStatus.IS_CLIENT });
+        case ClientStatus.NOT_REGISTER:
+          return res
+            .status(StatusCodes.OK)
+            .json({ email: mail, clientStatus: user.clientStatus, clientId: user.clientId });
+        default:
+          return res.status(StatusCodes.BAD_REQUEST).json({ clientStatus: user.clientStatus });
+      }
     } catch (error) {
       return res.status(StatusCodes.NOT_FOUND).json({ msg: ErrorMessages.ERROR });
     }
@@ -45,7 +55,7 @@ export default class RegistrationController {
       if (!user) {
         return res.status(StatusCodes.NOT_FOUND).json({ msg: ErrorMessages.NOT_FOUND });
       }
-      if (user.clientStatus === ClientStatus.NOT_REGISTERED) {
+      if (user.clientStatus === ClientStatus.NOT_REGISTER) {
         const allCheck = await this.userService.checkAllParams(user, updateData);
         const errorMessage = await this.userService.handleError(allCheck);
         if (allCheck.checks) {

@@ -1,4 +1,5 @@
 import { UpdateUserPasswordDto } from '../../login/dto/UpdateUserPassword.dto';
+import { EmailDto } from '../../registration/dto/email.dto';
 import { MobilePhoneDto } from '../../registration/dto/mobilePhone.dto';
 import { RegistrationDataDto } from '../../registration/dto/registrationData.dto';
 import UpdateUserProfileDto from '../../registration/dto/updateData.dto';
@@ -31,7 +32,7 @@ export enum ErrorMessages {
 }
 
 export const Endpoints = {
-  '/registration': MobilePhoneDto,
+  '/registration': EmailDto,
   '/registration/user-profile': UpdateUserProfileDto,
   '/registration/user-profile/new': RegistrationDataDto,
   '/auth/user/settings/all': ChangeUserSettingsDto,
