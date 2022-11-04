@@ -36,7 +36,7 @@ class RegistrationRoutes {
     this.router.post(
       '/registration/user-profile/new',
       requestValidationMiddleware,
-      this.registrationController.createUserProfile
+      this.registrationController.createUserProfileNonClient
     );
   }
 }

@@ -7,7 +7,7 @@ export default class Client {
   @PrimaryGeneratedColumn('uuid')
   clientId: number;
 
-  @Column({ nullable: false })
+  @Column({ nullable: true })
   mobilePhone: string;
 
   @Column({ type: 'enum', enum: ClientStatus, default: ClientStatus.NOT_REGISTER })

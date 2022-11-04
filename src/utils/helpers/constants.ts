@@ -2,6 +2,7 @@ import { UpdateUserPasswordDto } from '../../login/dto/UpdateUserPassword.dto';
 import { EmailDto } from '../../registration/dto/email.dto';
 import { MobilePhoneDto } from '../../registration/dto/mobilePhone.dto';
 import { RegistrationDataDto } from '../../registration/dto/registrationData.dto';
+import { RegistrationNotClientDto } from '../../registration/dto/registrationNotClient.dto';
 import UpdateUserProfileDto from '../../registration/dto/updateData.dto';
 import { VerificationDto } from '../../security/dto/verificationDto';
 import SendUserDataDto from '../../user/information/dto/getUserInformation.dto';
@@ -34,7 +35,7 @@ export enum ErrorMessages {
 export const Endpoints = {
   '/registration': EmailDto,
   '/registration/user-profile': UpdateUserProfileDto,
-  '/registration/user-profile/new': RegistrationDataDto,
+  '/registration/user-profile/new': RegistrationNotClientDto,
   '/auth/user/settings/all': ChangeUserSettingsDto,
   '/security/session': MobilePhoneDto,
   '/security/session/verification': VerificationDto,
