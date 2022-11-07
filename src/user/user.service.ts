@@ -103,7 +103,7 @@ class UserService {
   }
   async createUser(registrationData) {
     if (registrationData) {
-      const user = await getRepository(Client).findOne({ mobilePhone: registrationData.mobilePhone });
+      const user = await getRepository(Client).findOne({ email: registrationData.email });
 
       if (!user) {
         const date = new Date(Date.now());
@@ -112,7 +112,6 @@ class UserService {
         registrationData.securityQuestionAnswer = await this.genHashPassword(registrationData.securityQuestionAnswer);
 
         await getRepository(Client).insert({
-          mobilePhone: registrationData.mobilePhone,
           password: registrationData.password,
           securityQuestion: registrationData.securityQuestion,
           securityQuestionId: registrationData.securityQuestionId,
