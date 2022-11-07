@@ -13,10 +13,11 @@ export default {
   entities: [`src/entities/**/*.ts`],
   migrations: [`src/database/migration/**/*.ts`],
   seeds: [`src/database/seeds/**/*.ts`],
-  factories: [`src/sequrityQuestions/**/*.ts`],
+  factories: [`src/database/factories/**/*.ts`],
   cli: {
     entitiesDir: '/src/entities',
     migrationsDir: 'src/database/migration',
+    factories: 'src/database/factories'
   },
   name: 'default',
   database: process.env.POSTGRES_DB || 'node_project',

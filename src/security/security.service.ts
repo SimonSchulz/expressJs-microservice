@@ -2,30 +2,35 @@
 /* eslint-disable no-console */
 import { getRepository } from 'typeorm';
 import VerificationEntity from '../entities/verification.entity';
+import nodemailer from "nodemailer";
 
 class SecurityService {
-  public async sendCode(mobilePhone, codeExpiration: Date, lastSentSmsTime: Date) {
+  public async sendCode(email, codeExpiration: Date, lastSentEmailTime: Date) {
     const verificationCode = process.env.VERIFICATION_CODE;
+    const existedEmail = await getRepository(VerificationEntity).findOne({ email });
 
-    const existedPhone = await getRepository(VerificationEntity).findOne({ mobilePhone });
+    if (!existedEmail) {
+      try {
+        const id = await getRepository(VerificationEntity).insert({
+          email,
+          verificationCode,
+          codeExpiration,
+          lastSentEmailTime,
+        });
+  
+        return id.identifiers[0].id;
 
-    if (!existedPhone) {
-      const id = await getRepository(VerificationEntity).insert({
-        mobilePhone,
-        verificationCode,
-        codeExpiration,
-        lastSentSmsTime,
-      });
-
-      return id.identifiers[0].id;
+      } catch (error) {
+        console.log(error);
+      }
     }
 
     await getRepository(VerificationEntity).update(
-      { mobilePhone },
-      { verificationCode, codeExpiration, lastSentSmsTime }
+      { email },
+      { verificationCode, codeExpiration, lastSentEmailTime }
     );
 
-    const { id } = await getRepository(VerificationEntity).findOne({ mobilePhone });
+    const { id } = await getRepository(VerificationEntity).findOne({ email });
 
     return id;
   }
