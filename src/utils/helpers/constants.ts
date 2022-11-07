@@ -35,9 +35,8 @@ export const Endpoints = {
   '/registration': MobilePhoneDto,
   '/registration/user-profile': UpdateUserProfileDto,
   '/registration/user-profile/new': RegistrationDataDto,
-  '/registration/check-email': EmailDto,
   '/auth/user/settings/all': ChangeUserSettingsDto,
-  '/security/session': MobilePhoneDto,
+  '/security/session': EmailDto,
   '/security/session/verification': VerificationDto,
   '/login/password': UpdateUserPasswordDto,
   '/auth/information': SendUserDataDto,
@@ -56,4 +55,9 @@ export const SecurityQuestions = [
 export enum loginTypes {
   mobilePhone = 'MOBILE_PHONE',
   passport = 'PASSPORT_NUMBER',
+}
+
+export enum emailService {
+  subject = 'Your one time code',
+  text = 'Hello!, your one time code is ',
 }

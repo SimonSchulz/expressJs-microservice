@@ -3,26 +3,45 @@
 import { getRepository } from 'typeorm';
 import VerificationEntity from '../entities/verification.entity';
 import nodemailer from "nodemailer";
+import { emailService } from '../utils/helpers/constants';
 
 class SecurityService {
   public async sendCode(email, codeExpiration: Date, lastSentEmailTime: Date) {
     const verificationCode = process.env.VERIFICATION_CODE;
     const existedEmail = await getRepository(VerificationEntity).findOne({ email });
 
-    if (!existedEmail) {
-      try {
-        const id = await getRepository(VerificationEntity).insert({
-          email,
-          verificationCode,
-          codeExpiration,
-          lastSentEmailTime,
-        });
-  
-        return id.identifiers[0].id;
+    let transport = nodemailer.createTransport({
+      host: process.env.NODAMAILER_HOST,
+      secure: true,
+      port: 465,
+      auth: {
+        user: process.env.NODAMAILER_USER,
+        pass: process.env.NODAMAILER_PASSWORD,
+      },
+    });
 
-      } catch (error) {
-        console.log(error);
+    const mailOptions = {
+      from: process.env.NODAMAILER_MAIL,
+      to: email,
+      subject: emailService.subject,
+      text: `${emailService.text} ${verificationCode}`,
+    };
+    
+    transport.sendMail(mailOptions, function(err, info) {
+      if (err) {
+        console.log(err)
       }
+    });
+
+    if (!existedEmail) {
+      const id = await getRepository(VerificationEntity).insert({
+        email,
+        verificationCode,
+        codeExpiration,
+        lastSentEmailTime,
+      });
+  
+      return id.identifiers[0].id;
     }
 
     await getRepository(VerificationEntity).update(
