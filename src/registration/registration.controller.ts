@@ -11,7 +11,6 @@ import { getRepository } from 'typeorm';
 import { error } from 'console';
 import { messages } from '../utils/helpers/messages';
 import { RegistrationDataDto } from './dto/registrationData.dto';
-import { RegistrationNotClientDto } from './dto/registrationNotClient.dto';
 
 export default class RegistrationController {
   constructor(private registration: RegistrationService, private userService: UserService) {
@@ -89,17 +88,17 @@ export default class RegistrationController {
     }
   };
 
-  public createUserProfileNonClient = async (req: Request, res: Response) => {
-    try {
-      const registrationData = plainToInstance(RegistrationNotClientDto, req.body);
+  // public createUserProfileNonClient = async (req: Request, res: Response) => {
+  //   try {
+  //     const registrationData = plainToInstance(RegistrationNotClientDto, req.body);
 
-      const createUser = await this.userService.createUserNonClient(registrationData);
-      if (createUser) return res.status(StatusCodes.OK).json({ msg: messages.SUCCESS });
-      else return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: messages.USER_ALREADY_EXIST });
-    } catch (error) {
-      return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: error.message });
-    }
-  };
+  //     const createUser = await this.userService.createUserNonClient(registrationData);
+  //     if (createUser) return res.status(StatusCodes.OK).json({ msg: messages.SUCCESS });
+  //     else return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: messages.USER_ALREADY_EXIST });
+  //   } catch (error) {
+  //     return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: error.message });
+  //   }
+  // };
 
   public sendSecurityQuestions = async (req: Request, res: Response) => {
     try {
