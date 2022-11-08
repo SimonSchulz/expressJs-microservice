@@ -27,7 +27,7 @@ export class RegistrationDataDto {
   @IsDefined()
   @IsString()
   firstName: string;
-  middleName: string;
+
   @IsDefined()
   @IsString()
   lastName: string;
