@@ -1,9 +1,9 @@
-import { IsDefined, IsEmail, IsNumberString, Length } from 'class-validator';
+import { IsDefined, IsEmail, IsNumberString, IsUUID, Length } from 'class-validator';
 
 export class VerificationDto {
   @IsDefined()
-  @IsEmail()
-  email: string;
+  @IsUUID()
+  id: string;
 
   @Length(6)
   @IsNumberString()
