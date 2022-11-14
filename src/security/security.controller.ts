@@ -10,6 +10,7 @@ import generateTime from '../utils/helpers/generateTime';
 import { MobilePhoneDto } from '../registration/dto/mobilePhone.dto';
 import { getRepository } from 'typeorm';
 import SecurityQuestion from '../entities/security-question.entity';
+import { USERS } from '../utils/helpers/verif.creator';
 
 export default class SecurityController {
   constructor(private securityService: SecurityService, private userService: UserService) {
@@ -68,6 +69,8 @@ export default class SecurityController {
       const { id, verificationCode } = req.body;
 
       const verifData = await this.securityService.getClientDataByParam({ id });
+
+      if (!verifData) return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: messages.USER_DOESNT_EXIST });
 
       if (
         verifData.clientVerifStatus === ClientVerifStatus.BLOCKED &&
