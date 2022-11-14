@@ -1,7 +1,7 @@
 import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 import { ClientVerifStatus } from '../utils/helpers/ClientVerifStatus';
 
-@Entity()
+@Entity({ name: 'verification' })
 export default class VerificationEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;

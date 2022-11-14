@@ -18,4 +18,5 @@ export const messages = {
   PASSWORD_IS_INVALID: 'Password is invalid',
   SUCCES: 'Success',
   USER_ALREADY_EXIST: 'User already exists',
+  USER_NOT_FOUND: 'User not found',
 };

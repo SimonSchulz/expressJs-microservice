@@ -70,7 +70,7 @@ export default class SecurityController {
 
       const verifData = await this.securityService.getClientDataByParam({ id });
 
-      if (!verifData) return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: messages.USER_DOESNT_EXIST });
+      if (!verifData) return res.status(StatusCodes.NOT_FOUND);
 
       if (
         verifData.clientVerifStatus === ClientVerifStatus.BLOCKED &&

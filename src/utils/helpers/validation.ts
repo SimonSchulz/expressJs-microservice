@@ -14,7 +14,6 @@ export const requestValidationMiddleware = async (req: Request, res: Response, n
       for (const errorItem of errors) {
         errorTexts = errorTexts.concat(errorItem.constraints);
       }
-      console.log(errors);
       res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(errorTexts);
       return;
     } else {
