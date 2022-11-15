@@ -52,7 +52,7 @@ export default class SecurityController {
   public updateUserProfile = async (req: Request, res: Response) => {
     try {
       const updateData = plainToInstance(UpdateUserProfileDto, req.body);
-      const objToFind = { mobilePhone: updateData.mobilePhone };
+      const objToFind = { email: updateData.email };
 
       const user = await this.userService.getUser(objToFind);
       if (!user) {
@@ -61,9 +61,9 @@ export default class SecurityController {
       if (user.clientStatus === ClientStatus.ACTIVE || user.clientStatus === ClientStatus.IS_CLIENT) {
         const allCheck = await this.userService.checkAllParams(user, updateData);
         const errorMessage = await this.userService.handleError(allCheck);
-
         if (allCheck.checks) {
           updateData.password = allCheck.newPassword;
+          updateData.securityQuestionAnswer = allCheck.secQuestAnswer;
           await this.userService.updateUserData(user.clientId, updateData);
           await this.userService.changeUserQuestionType(user.clientId, updateData);
           return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: messages.SUCCESS });

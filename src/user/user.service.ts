@@ -34,8 +34,10 @@ class UserService {
     const checkPasswords = await this.checkUserPassword(user, updateData.password);
     const checkVerifStatus = await this.checkUserVerification(user);
     const newPassword = await this.genHashPassword(updateData.password);
+    const secQuestAnswer = await this.genHashPassword(updateData.securityQuestionAnswer);
     const secQuestTypes = await this.checkSecQuestionData(updateData);
-    if (!checkPasswords && checkVerifStatus && secQuestTypes) return { checks: true, newPassword: newPassword };
+    if (!checkPasswords && checkVerifStatus && secQuestTypes)
+      return { checks: true, newPassword: newPassword, secQuestAnswer: secQuestAnswer };
     return {
       checks: false,
       newPassword: newPassword,

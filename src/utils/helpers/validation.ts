@@ -8,7 +8,7 @@ import { Endpoints } from './constants';
 
 export const requestValidationMiddleware = async (req: Request, res: Response, next: NextFunction) => {
   const data = formatDataToDto(req);
-  await validate(data).then((errors) => {
+  await validate(data, { skipMissingProperties: true }).then((errors) => {
     if (errors.length > 0) {
       let errorTexts = [];
       for (const errorItem of errors) {
