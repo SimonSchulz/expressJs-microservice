@@ -134,34 +134,6 @@ class UserService {
       }
     }
   }
-
-  async createUserNonClient(registrationData) {
-    if (registrationData) {
-      const user = await getRepository(Client).findOne({ email: registrationData.email });
-
-      if (!user) {
-        const date = new Date(Date.now());
-
-        registrationData.password = await this.genHashPassword(registrationData.password);
-        registrationData.securityQuestionAnswer = await this.genHashPassword(registrationData.securityQuestionAnswer);
-
-        await getRepository(Client).insert({
-          password: registrationData.password,
-          securityQuestion: registrationData.securityQuestion,
-          securityQuestionId: registrationData.securityQuestionId,
-          securityQuestionType: registrationData.securityQuestionType,
-          securityQuestionAnswer: registrationData.securityQuestionAnswer,
-          email: registrationData.email,
-          accesionDate: date,
-          registrationDate: date,
-        });
-
-        return true;
-      } else {
-        return false;
-      }
-    }
-  }
 }
 
 export default UserService;
