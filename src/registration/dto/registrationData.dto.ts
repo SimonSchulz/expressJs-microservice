@@ -33,8 +33,9 @@ export class RegistrationDataDto {
   lastName: string;
 
   @IsDefined()
+  @Matches(RegExp(/^([A-Za-z0-9]{6,20})|^(?=.{6,20}$)([A-Za-z0-9]+\s?[A-Za-z0-9]+)$/))
   passportNumber: string;
 
   @IsBoolean()
-  countryOfResidence: boolean;
+  isResident: boolean;
 }

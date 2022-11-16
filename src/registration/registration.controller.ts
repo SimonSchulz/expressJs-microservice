@@ -11,6 +11,7 @@ import { getRepository } from 'typeorm';
 import { error } from 'console';
 import { messages } from '../utils/helpers/messages';
 import { RegistrationDataDto } from './dto/registrationData.dto';
+import { SecurityQuestionsTypes } from '../utils/helpers/securityQuestionsTypes';
 
 export default class SecurityController {
   constructor(private registration: RegistrationService, private userService: UserService) {
@@ -76,26 +77,32 @@ export default class SecurityController {
   public createUserProfile = async (req: Request, res: Response) => {
     try {
       const registrationData = plainToInstance(RegistrationDataDto, req.body);
+      const { email, securityQuestionId, securityQuestionType } = registrationData;
+      const user = await this.userService.getUser({ email });
 
-      const createUser = await this.userService.createUser(registrationData);
-      if (createUser) return res.status(StatusCodes.OK).json({ msg: messages.SUCCESS });
-      else return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: messages.USER_ALREADY_EXIST });
+      if (user) {
+        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: messages.USER_ALREADY_EXIST });
+      }
+
+      if (securityQuestionType === SecurityQuestionsTypes.PREDEFINED) {
+        const isQuestionId = await this.userService.checkSecQuestionId(securityQuestionId);
+        if (!isQuestionId) {
+          return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: ErrorMessages.INVALID_ID });
+        }
+      }
+
+      const isUserVerified = await this.userService.checkUserVerification(registrationData);
+
+      if (isUserVerified) {
+        await this.userService.createUser(registrationData);
+        return res.status(StatusCodes.OK).json({ msg: messages.SUCCESS });
+      } else {
+        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: ErrorMessages.NOT_VERIFIED });
+      }
     } catch (error) {
       return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: error.message });
     }
   };
-
-  // public createUserProfileNonClient = async (req: Request, res: Response) => {
-  //   try {
-  //     const registrationData = plainToInstance(RegistrationNotClientDto, req.body);
-
-  //     const createUser = await this.userService.createUserNonClient(registrationData);
-  //     if (createUser) return res.status(StatusCodes.OK).json({ msg: messages.SUCCESS });
-  //     else return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: messages.USER_ALREADY_EXIST });
-  //   } catch (error) {
-  //     return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: error.message });
-  //   }
-  // };
 
   public sendSecurityQuestions = async (req: Request, res: Response) => {
     try {

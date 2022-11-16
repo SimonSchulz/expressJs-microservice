@@ -56,9 +56,9 @@ class UserService {
     }
   }
   async checkUserVerification(user) {
-    const verifData = await getRepository(VerificationEntity).findOne({ mobilePhone: user.mobilePhone });
+    const verifData = await getRepository(VerificationEntity).findOne({ email: user.email });
 
-    if (verifData && verifData.clientVerifStatus && verifData.clientVerifStatus === ClientVerifStatus.ACTIVE) {
+    if (verifData && verifData.clientVerifStatus === ClientVerifStatus.ACTIVE) {
       return true;
     }
     return false;
@@ -86,6 +86,9 @@ class UserService {
     }
     return false;
   }
+  async checkSecQuestionId(id) {
+    return await getRepository(SecurityQuestionEntity).findOne({ id });
+  }
   async checkUserPassword(user, newPassword) {
     const check = await bcrypt.compareSync(newPassword, user.password);
     return check;
@@ -96,37 +99,26 @@ class UserService {
     return bcrypt.hash(password, salt);
   }
   async createUser(registrationData) {
-    if (registrationData) {
-      const user = await getRepository(Client).findOne({ email: registrationData.email });
+    const date = new Date(Date.now());
 
-      if (!user) {
-        const date = new Date(Date.now());
+    registrationData.password = await this.genHashPassword(registrationData.password);
+    registrationData.securityQuestionAnswer = await this.genHashPassword(registrationData.securityQuestionAnswer);
 
-        registrationData.password = await this.genHashPassword(registrationData.password);
-        registrationData.securityQuestionAnswer = await this.genHashPassword(registrationData.securityQuestionAnswer);
-
-        await getRepository(Client).insert({
-          password: registrationData.password,
-          securityQuestion: registrationData.securityQuestion,
-          securityQuestionId: registrationData.securityQuestionId,
-          securityQuestionType: registrationData.securityQuestionType,
-          securityQuestionAnswer: registrationData.securityQuestionAnswer,
-          clientStatus: ClientStatus.ACTIVE,
-          email: registrationData.email,
-          firstName: registrationData.firstName,
-          middleName: registrationData.middleName,
-          lastName: registrationData.lastName,
-          passportId: registrationData.passportNumber,
-          countryOfResidence: registrationData.countryOfResidence,
-          accesionDate: date,
-          registrationDate: date,
-        });
-
-        return true;
-      } else {
-        return false;
-      }
-    }
+    return await getRepository(Client).insert({
+      password: registrationData.password,
+      securityQuestion: registrationData.securityQuestion,
+      securityQuestionId: registrationData.securityQuestionId,
+      securityQuestionType: registrationData.securityQuestionType,
+      securityQuestionAnswer: registrationData.securityQuestionAnswer,
+      clientStatus: ClientStatus.ACTIVE,
+      email: registrationData.email,
+      firstName: registrationData.firstName,
+      lastName: registrationData.lastName,
+      passportId: registrationData.passportNumber,
+      isResident: registrationData.isResident,
+      accesionDate: date,
+      registrationDate: date,
+    });
   }
 }
 
