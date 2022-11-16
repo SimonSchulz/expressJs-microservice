@@ -23,7 +23,7 @@ export default class VerificationEntity {
   @Column({ nullable: true, default: 0 })
   invalidAttempts: number;
 
-  @Column({ nullable: false })
+  @Column({ nullable: true })
   mobilePhone: string;
 
   @Column({ nullable: true })
