@@ -8,9 +8,6 @@ import SecurityService from './security.service';
 import { messages } from '../utils/helpers/messages';
 import generateTime from '../utils/helpers/generateTime';
 import { MobilePhoneDto } from '../registration/dto/mobilePhone.dto';
-import { getRepository } from 'typeorm';
-import SecurityQuestion from '../entities/security-question.entity';
-import { USERS } from '../utils/helpers/verif.creator';
 
 export default class SecurityController {
   constructor(private securityService: SecurityService, private userService: UserService) {

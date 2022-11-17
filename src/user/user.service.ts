@@ -5,7 +5,8 @@ import { SecurityQuestionsTypes } from '../utils/helpers/securityQuestionsTypes'
 import SecurityQuestionEntity from '../entities/security-question.entity';
 import VerificationEntity from '../entities/verification.entity';
 import { ClientVerifStatus } from '../utils/helpers/ClientVerifStatus';
-import { ClientStatus, ErrorMessages } from '../utils/helpers/constants';
+import { ErrorMessages } from '../utils/helpers/constants';
+import { ClientStatus } from '../utils/helpers/ClientStatus';
 
 class UserService {
   async getUser(param: object) {
@@ -25,6 +26,9 @@ class UserService {
 
   public async updateUserData(clientId: number, objData: object) {
     await getRepository(Client).update({ clientId }, objData);
+  }
+  public async updateUserStatus(email) {
+    await getRepository(Client).update({ email }, { clientStatus: ClientStatus.REGISTERED });
   }
   public async insertRefreshToken(id: number, refreshToken: string) {
     await getRepository(Client).save({ refreshToken });
@@ -47,18 +51,18 @@ class UserService {
     };
   }
   handleError(allCheck) {
-    if (allCheck.passwordCheck) {
+    if (allCheck.passwordCheck === true) {
       return ErrorMessages.SAME_PASS;
     }
-    if (!allCheck.verifCheck) {
+    if (allCheck.verifCheck === false) {
       return ErrorMessages.NOT_VERIFIED;
     }
-    if (!allCheck.secQuestTypes) {
+    if (allCheck.secQuestTypes === false) {
       return ErrorMessages.INVALID_QUESTION_FORMAT;
     }
   }
-  async checkUserVerification(user) {
-    const verifData = await getRepository(VerificationEntity).findOne({ mobilePhone: user.mobilePhone });
+  async checkUserVerification(user): Promise<boolean> {
+    const verifData = await getRepository(VerificationEntity).findOne({ email: user.email });
 
     if (verifData && verifData.clientVerifStatus && verifData.clientVerifStatus === ClientVerifStatus.ACTIVE) {
       return true;
@@ -114,7 +118,7 @@ class UserService {
           securityQuestionId: registrationData.securityQuestionId,
           securityQuestionType: registrationData.securityQuestionType,
           securityQuestionAnswer: registrationData.securityQuestionAnswer,
-          clientStatus: ClientStatus.ACTIVE,
+          clientStatus: ClientStatus.REGISTERED,
           email: registrationData.email,
           firstName: registrationData.firstName,
           middleName: registrationData.middleName,

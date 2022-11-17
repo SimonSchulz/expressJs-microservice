@@ -29,8 +29,6 @@ class RegistrationRoutes {
     this.router.patch(
       '/registration/user-profile',
       requestValidationMiddleware,
-
-      requestValidationMiddleware,
       this.registrationController.updateUserProfile
     );
     this.router.post(

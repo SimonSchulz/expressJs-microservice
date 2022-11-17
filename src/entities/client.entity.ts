@@ -10,7 +10,7 @@ export default class Client {
   @Column({ nullable: false })
   mobilePhone: string;
 
-  @Column({ type: 'enum', enum: ClientStatus, default: ClientStatus.NOT_REGISTER })
+  @Column({ type: 'enum', enum: ClientStatus, default: ClientStatus.NOT_REGISTERED })
   clientStatus: ClientStatus;
 
   @Column({ nullable: true })
