@@ -28,7 +28,7 @@ describe('UserService', () => {
   describe('checkUserVerification', () => {
     jest.spyOn(UserService.prototype, 'checkUserVerification').mockReturnValueOnce(Promise.resolve(false));
 
-    it('should return questionData by id', async () => {
+    it('should return false when user not verified', async () => {
       const isUserVerify = await new UserService().checkUserVerification(Client);
       expect(isUserVerify).toBe(false);
     });
