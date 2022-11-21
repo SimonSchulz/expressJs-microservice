@@ -12,7 +12,6 @@ import { error } from 'console';
 import { messages } from '../utils/helpers/messages';
 import { RegistrationDataDto } from './dto/registrationData.dto';
 import { SecurityQuestionsTypes } from '../utils/helpers/securityQuestionsTypes';
-import { SecurityQuestionsTypes } from '../utils/helpers/securityQuestionsTypes';
 
 export default class RegistrationController {
   constructor(private registration: RegistrationService, private userService: UserService) {
@@ -31,10 +30,10 @@ export default class RegistrationController {
       }
 
       switch (user.clientStatus) {
-        case ClientStatus.ACTIVE:
-        case ClientStatus.NOT_ACTIVE:
-          return res.status(StatusCodes.OK).json({ mail: objToFind.email, clientStatus: ClientStatus.IS_CLIENT });
-        case ClientStatus.NOT_REGISTER:
+        //case ClientStatus.ACTIVE:
+        case ClientStatus.REGISTERED:
+          return res.status(StatusCodes.OK).json({ mail: objToFind.email, clientStatus: ClientStatus.REGISTERED });
+        case ClientStatus.NOT_REGISTERED:
           return res
             .status(StatusCodes.OK)
             .json({ email: mail, clientStatus: user.clientStatus, clientId: user.clientId });
@@ -56,7 +55,7 @@ export default class RegistrationController {
       if (!user) {
         return res.status(StatusCodes.NOT_FOUND).json({ msg: ErrorMessages.NOT_FOUND });
       }
-      if (user.clientStatus === ClientStatus.NOT_REGISTER) {
+      if (user.clientStatus === ClientStatus.NOT_REGISTERED) {
         const allCheck = await this.userService.checkAllParams(user, updateData);
         const errorMessage = await this.userService.handleError(allCheck);
         if (allCheck.checks) {
@@ -72,7 +71,6 @@ export default class RegistrationController {
       }
       return res.status(StatusCodes.BAD_REQUEST).json({ msg: user.clientStatus });
     } catch (error) {
-      console.log(error);
       return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: error.message });
     }
   };
@@ -80,21 +78,6 @@ export default class RegistrationController {
   public createUserProfile = async (req: Request, res: Response) => {
     try {
       const registrationData = plainToInstance(RegistrationDataDto, req.body);
-      const { email, securityQuestionId, securityQuestionType } = registrationData;
-      const user = await this.userService.getUser({ email });
-
-      if (user) {
-        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: messages.USER_ALREADY_EXIST });
-      }
-
-      if (securityQuestionType === SecurityQuestionsTypes.PREDEFINED) {
-        const isQuestionId = await this.userService.checkSecQuestionId(securityQuestionId);
-        if (!isQuestionId) {
-          return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: ErrorMessages.INVALID_ID });
-        }
-      }
-
-      const isUserVerified = await this.userService.checkUserVerification(registrationData);
       const { email, securityQuestionId, securityQuestionType } = registrationData;
       const user = await this.userService.getUser({ email });
 
@@ -121,7 +104,6 @@ export default class RegistrationController {
       return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: error.message });
     }
   };
-
 
   public sendSecurityQuestions = async (req: Request, res: Response) => {
     try {

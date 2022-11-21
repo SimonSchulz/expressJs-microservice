@@ -28,6 +28,10 @@ class UserService {
     await getRepository(Client).update({ clientId }, objData);
   }
 
+  public async updateUserStatus(email) {
+    await getRepository(Client).update({ email }, { clientStatus: ClientStatus.REGISTERED });
+  }
+
   public async insertRefreshToken(id: number, refreshToken: string) {
     await getRepository(Client).save({ refreshToken });
   }
@@ -36,10 +40,10 @@ class UserService {
     const checkPasswords = await this.checkUserPassword(user, updateData.password);
     const checkVerifStatus = await this.checkUserVerification(user);
     const newPassword = await this.genHashPassword(updateData.password);
-    
+    const secQuestAnswer = await this.genHashPassword(updateData.securityQuestionAnswer);
     const secQuestTypes = await this.checkSecQuestionData(updateData);
-    if (!checkPasswords && checkVerifStatus && secQuestTypes) return { checks: true, newPassword: newPassword };
-    
+    if (!checkPasswords && checkVerifStatus && secQuestTypes)
+      return { checks: true, newPassword: newPassword, secQuestAnswer: secQuestAnswer };
     return {
       checks: false,
       newPassword: newPassword,
@@ -52,13 +56,14 @@ class UserService {
     if (allCheck.passwordCheck === true) {
       return ErrorMessages.SAME_PASS;
     }
-    if (!allCheck.verifCheck) {
+    if (allCheck.verifCheck === false) {
       return ErrorMessages.NOT_VERIFIED;
     }
-    if (!allCheck.secQuestTypes) {
+    if (allCheck.secQuestTypes === false) {
       return ErrorMessages.INVALID_QUESTION_FORMAT;
     }
   }
+
   async checkUserVerification(user) {
     const verifData = await getRepository(VerificationEntity).findOne({ email: user.email });
 
@@ -114,7 +119,6 @@ class UserService {
       securityQuestionId: registrationData.securityQuestionId,
       securityQuestionType: registrationData.securityQuestionType,
       securityQuestionAnswer: registrationData.securityQuestionAnswer,
-      clientStatus: ClientStatus.ACTIVE,
       email: registrationData.email,
       firstName: registrationData.firstName,
       lastName: registrationData.lastName,
