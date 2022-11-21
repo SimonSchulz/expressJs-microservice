@@ -108,28 +108,21 @@ class UserService {
     registrationData.password = await this.genHashPassword(registrationData.password);
     registrationData.securityQuestionAnswer = await this.genHashPassword(registrationData.securityQuestionAnswer);
 
-        await getRepository(Client).insert({
-          password: registrationData.password,
-          securityQuestion: registrationData.securityQuestion,
-          securityQuestionId: registrationData.securityQuestionId,
-          securityQuestionType: registrationData.securityQuestionType,
-          securityQuestionAnswer: registrationData.securityQuestionAnswer,
-          clientStatus: ClientStatus.ACTIVE,
-          email: registrationData.email,
-          firstName: registrationData.firstName,
-          
-          lastName: registrationData.lastName,
-          passportId: registrationData.passportNumber,
-          isResident: registrationData.isResident,
-          accesionDate: date,
-          registrationDate: date,
-        });
-
-        return true;
-      } else {
-        return false;
-      }
-    }
+    return await getRepository(Client).insert({
+      password: registrationData.password,
+      securityQuestion: registrationData.securityQuestion,
+      securityQuestionId: registrationData.securityQuestionId,
+      securityQuestionType: registrationData.securityQuestionType,
+      securityQuestionAnswer: registrationData.securityQuestionAnswer,
+      clientStatus: ClientStatus.ACTIVE,
+      email: registrationData.email,
+      firstName: registrationData.firstName,
+      lastName: registrationData.lastName,
+      passportId: registrationData.passportNumber,
+      isResident: registrationData.isResident,
+      accesionDate: date,
+      registrationDate: date,
+    });
   }
 }
 

@@ -12,6 +12,7 @@ import { error } from 'console';
 import { messages } from '../utils/helpers/messages';
 import { RegistrationDataDto } from './dto/registrationData.dto';
 import { SecurityQuestionsTypes } from '../utils/helpers/securityQuestionsTypes';
+import { SecurityQuestionsTypes } from '../utils/helpers/securityQuestionsTypes';
 
 export default class RegistrationController {
   constructor(private registration: RegistrationService, private userService: UserService) {
@@ -32,13 +33,12 @@ export default class RegistrationController {
       switch (user.clientStatus) {
         case ClientStatus.ACTIVE:
         case ClientStatus.NOT_ACTIVE:
-          return res
-          .status(StatusCodes.OK)
-          .json({ mail: objToFind.email, clientStatus: ClientStatus.IS_CLIENT });
+          return res.status(StatusCodes.OK).json({ mail: objToFind.email, clientStatus: ClientStatus.IS_CLIENT });
         case ClientStatus.NOT_REGISTER:
           return res
             .status(StatusCodes.OK)
             .json({ email: mail, clientStatus: user.clientStatus, clientId: user.clientId });
+
         default:
           return res.status(StatusCodes.BAD_REQUEST).json({ clientStatus: user.clientStatus });
       }
@@ -95,6 +95,21 @@ export default class RegistrationController {
       }
 
       const isUserVerified = await this.userService.checkUserVerification(registrationData);
+      const { email, securityQuestionId, securityQuestionType } = registrationData;
+      const user = await this.userService.getUser({ email });
+
+      if (user) {
+        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: messages.USER_ALREADY_EXIST });
+      }
+
+      if (securityQuestionType === SecurityQuestionsTypes.PREDEFINED) {
+        const isQuestionId = await this.userService.checkSecQuestionId(securityQuestionId);
+        if (!isQuestionId) {
+          return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: ErrorMessages.INVALID_ID });
+        }
+      }
+
+      const isUserVerified = await this.userService.checkUserVerification(registrationData);
 
       if (isUserVerified) {
         await this.userService.createUser(registrationData);
@@ -106,6 +121,7 @@ export default class RegistrationController {
       return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: error.message });
     }
   };
+
 
   public sendSecurityQuestions = async (req: Request, res: Response) => {
     try {
