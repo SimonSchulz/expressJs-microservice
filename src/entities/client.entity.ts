@@ -7,14 +7,14 @@ export default class Client {
   @PrimaryGeneratedColumn('uuid')
   clientId: number;
 
-  @Column({ nullable: false })
+  @Column({ nullable: true })
   mobilePhone: string;
 
   @Column({ type: 'enum', enum: ClientStatus, default: ClientStatus.NOT_REGISTERED })
   clientStatus: ClientStatus;
 
   @Column({ nullable: true })
-  countryOfResidence: string;
+  isResident: string;
 
   @Column({ nullable: true })
   accesionDate: Date;

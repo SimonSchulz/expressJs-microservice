@@ -22,3 +22,5 @@ export class newClientStatuses1668591481425 implements MigrationInterface {
     }
 
 }
+
+
