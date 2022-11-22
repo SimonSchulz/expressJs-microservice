@@ -6,8 +6,6 @@ import RegistrationRoutes from '../registration/registration.routes';
 import UserSettingsRoutes from '../user/settings/userSetting.routes';
 import UserInformationRoutes from '../user/information/userInformation.routes';
 import NotificationsRoutes from '../user/settings/notifications/notifications.routes';
-import swaggerUi from 'swagger-ui-express';
-import swaggerFile from '../../swagger-output.json';
 
 interface Route {
   router: Router;
@@ -27,7 +25,6 @@ class App {
     this.app.use(bodyParser.json({ limit: '50mb' }));
     this.app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
     this.app.use(express.static('static'));
-    this.app.use('/docs-api', swaggerUi.serve, swaggerUi.setup(swaggerFile))
   }
 
   private initializeRoutes(routes: Route[]) {
