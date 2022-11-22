@@ -1,6 +1,7 @@
 import { Connection } from 'typeorm';
 import { Factory, Seeder } from 'typeorm-seeding';
 import SequrityQuestionEntity from '../../entities/security-question.entity';
+import VerificationEntity from '../../entities/verification.entity';
 import Client from '../../entities/client.entity';
 import { SecurityQuestions } from '../../utils/helpers/constants';
 

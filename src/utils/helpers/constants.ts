@@ -49,7 +49,6 @@ export const SecurityQuestions = [
   { question: 'Favorite book' },
   { question: 'Favourite dish' },
   { question: 'Choose your favorite color' },
-  { question: 'Write your question' },
 ];
 
 export enum loginTypes {
