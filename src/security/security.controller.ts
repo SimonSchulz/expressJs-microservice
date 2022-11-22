@@ -1,5 +1,5 @@
 import { plainToInstance } from 'class-transformer';
-import { Request, Response } from 'express';
+import e, { Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import UserService from '../user/user.service';
 import { ClientVerifStatus } from '../utils/helpers/ClientVerifStatus';
@@ -7,7 +7,8 @@ import { timeDiffInMinutes } from '../utils/helpers/timeDiff';
 import SecurityService from './security.service';
 import { messages } from '../utils/helpers/messages';
 import generateTime from '../utils/helpers/generateTime';
-import { MobilePhoneDto } from '../registration/dto/mobilePhone.dto';
+import { EmailDto } from '../registration/dto/email.dto';
+import { ClientStatus } from '../utils/helpers/ClientStatus';
 
 export default class SecurityController {
   constructor(private securityService: SecurityService, private userService: UserService) {
@@ -17,44 +18,43 @@ export default class SecurityController {
 
   public sendVerificationCode = async (req: Request, res: Response) => {
     try {
-      const { mobilePhone } = plainToInstance(MobilePhoneDto, req.body);
-      const user = await this.userService.getUser({ mobilePhone });
+      const { email } = plainToInstance(EmailDto, req.body);
+      const user = await this.userService.getUser({ email });
 
-      const clientData = await this.securityService.getClientDataByParam({ mobilePhone });
+      const verificationData = await this.securityService.getVerifDataByParam({ email });
 
-      if (!user) {
-        return res.status(StatusCodes.CONFLICT).json({ msg: messages.USER_DOESNT_EXIST });
+      if(user.clientStatus !== ClientStatus.NOT_REGISTERED) {
+        return res.status(StatusCodes.CONFLICT).json({ msg: messages.USER_ALREADY_EXIST });
       }
-
-      if (!clientData) {
+      
+      if (!verificationData) {
         const timeObj = generateTime();
-
-        const smsId = await this.securityService.sendCode(
-          mobilePhone,
+        const data = await this.securityService.sendCode(
+          email,
           timeObj.codeExpirationTime,
-          timeObj.lastSentSmsTime
+          timeObj.lastSentEmailTime
         );
-        const blockSecondsLeft = Math.round(60 - (new Date().getTime() - timeObj.lastSentSmsTime.getTime()) / 1000);
+        const { id } = data;
+        const blockSecondsLeft = Math.round(60 - (new Date().getTime() - timeObj.lastSentEmailTime.getTime()) / 1000);
 
-        return res.status(StatusCodes.OK).json({ smsId, blockSeconds: blockSecondsLeft });
+        return res.status(StatusCodes.OK).json({ id, blockSeconds: blockSecondsLeft });
       } else {
-        if (timeDiffInMinutes(clientData.lastSentSmsTime) < +process.env.COOLDOWN_TIME) {
+        if (timeDiffInMinutes(verificationData.lastSentEmailTime) < +process.env.COOLDOWN_TIME) {
           const blockSecondsLeft = Math.round(
-            60 - (new Date().getTime() - clientData.lastSentSmsTime.getTime()) / 1000
+            60 - (new Date().getTime() - verificationData.lastSentEmailTime.getTime()) / 1000
           );
 
-          return res.status(StatusCodes.NOT_ACCEPTABLE).json({ blockSeconds: blockSecondsLeft });
+          return res.status(StatusCodes.NOT_ACCEPTABLE).json({ blockSeconds: blockSecondsLeft, msg: messages.COOLDOWN });
         }
 
         const timeObj = generateTime();
-
-        const smsId = await this.securityService.sendCode(
-          mobilePhone,
+        const data = await this.securityService.sendCode(
+          email,
           timeObj.codeExpirationTime,
-          timeObj.lastSentSmsTime
+          timeObj.lastSentEmailTime
         );
-
-        return res.status(StatusCodes.OK).json({ smsId });
+        const { id } = data;
+        return res.status(StatusCodes.OK).json({ id });
       }
     } catch (error) {
       return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: messages.INTERNAL_SERVER_ERROR });
@@ -65,7 +65,7 @@ export default class SecurityController {
     try {
       const { id, verificationCode } = req.body;
 
-      const verifData = await this.securityService.getClientDataByParam({ id });
+      const verifData = await this.securityService.getVerifDataByParam({ id });
 
       if (!verifData) return res.status(StatusCodes.NOT_FOUND);
 

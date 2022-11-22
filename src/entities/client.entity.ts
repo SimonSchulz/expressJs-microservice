@@ -2,7 +2,7 @@ import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 import { ClientStatus } from '../utils/helpers/ClientStatus';
 import { SecurityQuestionsTypes } from '../utils/helpers/securityQuestionsTypes';
 
-@Entity({ name: 'client' })
+@Entity({ name: 'client'  })
 export default class Client {
   @PrimaryGeneratedColumn('uuid')
   clientId: number;
