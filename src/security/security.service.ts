@@ -10,24 +10,21 @@ class SecurityService {
     const existedEmail = await getRepository(VerificationEntity).findOne({ email });
 
     if (!existedEmail) {
-      const id = await getRepository(VerificationEntity).insert({
+      await getRepository(VerificationEntity).insert({
         email,
         verificationCode,
         codeExpiration,
         lastSentEmailTime,
       });
-  
-      return id.identifiers[0].id;
+    } else {
+      await getRepository(VerificationEntity).update(
+        { email },
+        { verificationCode, codeExpiration, lastSentEmailTime }
+      );
     }
+    const data = await getRepository(VerificationEntity).findOne({ email });
 
-    await getRepository(VerificationEntity).update(
-      { email },
-      { verificationCode, codeExpiration, lastSentEmailTime }
-    );
-
-    const { id } = await getRepository(VerificationEntity).findOne({ email });
-
-    return id;
+    return data;
   }
 
   public async getClientDataByParam(param: object) {

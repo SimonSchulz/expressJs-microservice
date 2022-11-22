@@ -8,6 +8,7 @@ import SecurityService from './security.service';
 import { messages } from '../utils/helpers/messages';
 import generateTime from '../utils/helpers/generateTime';
 import { EmailDto } from '../registration/dto/email.dto';
+import { ClientStatus } from '../utils/helpers/ClientStatus';
 
 export default class SecurityController {
   constructor(private securityService: SecurityService, private userService: UserService) {
@@ -19,39 +20,40 @@ export default class SecurityController {
     try {
       const { email } = plainToInstance(EmailDto, req.body);
       const user = await this.userService.getUser({ email });
-      const clientData = await this.securityService.getClientDataByParam({ email });
+      const verificationData = await this.securityService.getClientDataByParam({ email });
 
-      if(user) {
+      if(user.clientStatus !== ClientStatus.NOT_REGISTER) {
         return res.status(StatusCodes.CONFLICT).json({ msg: messages.USER_ALREADY_EXIST });
       }
       
-      if (!clientData) {
+      if (!verificationData) {
         const timeObj = generateTime();
-        const emailId = await this.securityService.sendCode(
+        const data = await this.securityService.sendCode(
           email,
           timeObj.codeExpirationTime,
           timeObj.lastSentEmailTime
         );
+        const { id } = data;
         const blockSecondsLeft = Math.round(60 - (new Date().getTime() - timeObj.lastSentEmailTime.getTime()) / 1000);
 
-        return res.status(StatusCodes.OK).json({ emailId, blockSeconds: blockSecondsLeft });
+        return res.status(StatusCodes.OK).json({ id, blockSeconds: blockSecondsLeft });
       } else {
-        if (timeDiffInMinutes(clientData.lastSentEmailTime) < +process.env.COOLDOWN_TIME) {
+        if (timeDiffInMinutes(verificationData.lastSentEmailTime) < +process.env.COOLDOWN_TIME) {
           const blockSecondsLeft = Math.round(
-            60 - (new Date().getTime() - clientData.lastSentEmailTime.getTime()) / 1000
+            60 - (new Date().getTime() - verificationData.lastSentEmailTime.getTime()) / 1000
           );
 
           return res.status(StatusCodes.NOT_ACCEPTABLE).json({ blockSeconds: blockSecondsLeft });
         }
 
         const timeObj = generateTime();
-        const emailId = await this.securityService.sendCode(
+        const data = await this.securityService.sendCode(
           email,
           timeObj.codeExpirationTime,
           timeObj.lastSentEmailTime
         );
-
-        return res.status(StatusCodes.OK).json({ emailId });
+        const { id } = data;
+        return res.status(StatusCodes.OK).json({ id });
       }
     } catch (error) {
       return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: messages.INTERNAL_SERVER_ERROR });
