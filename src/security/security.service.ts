@@ -26,7 +26,7 @@ class SecurityService {
     return data;
   }
 
-  public async getClientDataByParam(param: object) {
+  public async getVerifDataByParam(param: object) {
     return await getRepository(VerificationEntity).findOne(param);
   }
 

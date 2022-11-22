@@ -1,7 +1,7 @@
-import { IsDefined, IsNumberString, MaxLength, MinLength, Contains } from 'class-validator';
+import { IsDefined, IsEmail, IsNumberString, MaxLength, MinLength, Contains } from 'class-validator';
 
 export class EmailDto {
-  @Contains('@')
+  @IsEmail()
   @IsDefined()
   email: string;
 }

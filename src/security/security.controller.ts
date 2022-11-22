@@ -21,7 +21,7 @@ export default class SecurityController {
       const { email } = plainToInstance(EmailDto, req.body);
       const user = await this.userService.getUser({ email });
 
-      const verificationData = await this.securityService.getClientDataByParam({ email });
+      const verificationData = await this.securityService.getVerifDataByParam({ email });
 
       if(user.clientStatus !== ClientStatus.NOT_REGISTERED) {
         return res.status(StatusCodes.CONFLICT).json({ msg: messages.USER_ALREADY_EXIST });
@@ -44,7 +44,7 @@ export default class SecurityController {
             60 - (new Date().getTime() - verificationData.lastSentEmailTime.getTime()) / 1000
           );
 
-          return res.status(StatusCodes.NOT_ACCEPTABLE).json({ blockSeconds: blockSecondsLeft });
+          return res.status(StatusCodes.NOT_ACCEPTABLE).json({ blockSeconds: blockSecondsLeft, msg: messages.COOLDOWN });
         }
 
         const timeObj = generateTime();
@@ -65,7 +65,7 @@ export default class SecurityController {
     try {
       const { id, verificationCode } = req.body;
 
-      const verifData = await this.securityService.getClientDataByParam({ id });
+      const verifData = await this.securityService.getVerifDataByParam({ id });
 
       if (!verifData) return res.status(StatusCodes.NOT_FOUND);
 
