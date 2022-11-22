@@ -64,7 +64,7 @@ export default class RegistrationController {
           await this.userService.updateUserData(user.clientId, updateData);
           await this.userService.updateUserStatus(user.email);
           await this.userService.changeUserQuestionType(user.clientId, updateData);
-          return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: messages.SUCCESS });
+          return res.status(StatusCodes.OK).json({ msg: messages.SUCCESS });
         } else {
           return res.status(StatusCodes.BAD_REQUEST).json({ msg: errorMessage });
         }

@@ -14,16 +14,20 @@ export default class UpdateUserProfileDto {
 
   @IsDefined()
   @IsString()
+  @MinLength(1)
   securityQuestionType: string;
 
   @IsString()
   @IsUUID()
+  @MinLength(1)
   securityQuestionId: string;
 
   @IsString()
+  @MinLength(1)
   securityQuestion: string;
 
   @IsDefined()
   @IsString()
+  @MinLength(1)
   securityQuestionAnswer: string;
 }
