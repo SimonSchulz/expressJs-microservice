@@ -22,7 +22,7 @@ export default class SecurityController {
       const user = await this.userService.getUser({ email });
       const verificationData = await this.securityService.getClientDataByParam({ email });
 
-      if(user.clientStatus !== ClientStatus.NOT_REGISTER) {
+      if(user.clientStatus !== ClientStatus.NOT_REGISTERED) {
         return res.status(StatusCodes.CONFLICT).json({ msg: messages.USER_ALREADY_EXIST });
       }
       
