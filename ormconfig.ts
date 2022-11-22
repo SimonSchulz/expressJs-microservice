@@ -17,7 +17,7 @@ export default {
   cli: {
     entitiesDir: '/src/entities',
     migrationsDir: 'src/database/migration',
-    factories: 'src/database/factories'
+    factories: 'src/database/factories',
   },
   name: 'default',
   database: process.env.POSTGRES_DB || 'node_project',

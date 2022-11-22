@@ -2,7 +2,6 @@
 /* eslint-disable no-console */
 import { getRepository } from 'typeorm';
 import VerificationEntity from '../entities/verification.entity';
-import { emailService } from '../utils/helpers/constants';
 
 class SecurityService {
   public async sendCode(email, codeExpiration: Date, lastSentEmailTime: Date) {
