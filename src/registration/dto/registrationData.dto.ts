@@ -1,22 +1,6 @@
-import {
-  IsBoolean,
-  IsDefined,
-  IsEmail,
-  IsNumberString,
-  IsString,
-  IsUUID,
-  Matches,
-  MaxLength,
-  MinLength,
-} from 'class-validator';
+import { IsBoolean, IsDefined, IsEmail, IsString, IsUUID, Matches } from 'class-validator';
 
 export class RegistrationDataDto {
-  @MinLength(11)
-  @MaxLength(11)
-  @IsNumberString()
-  @IsDefined()
-  mobilePhone: string;
-
   @IsDefined()
   @IsString()
   @Matches(RegExp(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{8,}$/))
@@ -36,21 +20,22 @@ export class RegistrationDataDto {
   @IsString()
   securityQuestionAnswer: string;
 
+  @IsDefined()
   @IsEmail()
   email: string;
 
   @IsDefined()
   @IsString()
   firstName: string;
-  middleName: string;
+
   @IsDefined()
   @IsString()
   lastName: string;
 
   @IsDefined()
-  @IsNumberString()
+  @Matches(RegExp(/^([A-Za-z0-9]{6,20})|^(?=.{6,20}$)([A-Za-z0-9]+\s?[A-Za-z0-9]+)$/))
   passportNumber: string;
 
   @IsBoolean()
-  countryOfResidence: boolean;
+  isResident: boolean;
 }

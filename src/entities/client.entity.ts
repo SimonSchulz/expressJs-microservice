@@ -2,19 +2,19 @@ import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 import { ClientStatus } from '../utils/helpers/ClientStatus';
 import { SecurityQuestionsTypes } from '../utils/helpers/securityQuestionsTypes';
 
-@Entity({ name: 'client' })
+@Entity({ name: 'client'  })
 export default class Client {
   @PrimaryGeneratedColumn('uuid')
   clientId: number;
 
-  @Column({ nullable: false })
+  @Column({ nullable: true })
   mobilePhone: string;
 
   @Column({ type: 'enum', enum: ClientStatus, default: ClientStatus.NOT_REGISTERED })
   clientStatus: ClientStatus;
 
   @Column({ nullable: true })
-  countryOfResidence: string;
+  isResident: string;
 
   @Column({ nullable: true })
   accesionDate: Date;

@@ -1,5 +1,7 @@
 import { UpdateUserPasswordDto } from '../../login/dto/UpdateUserPassword.dto';
+import { RegistrationInputDto } from '../../registration/dto/registration.input.dto';
 import { MobilePhoneDto } from '../../registration/dto/mobilePhone.dto';
+import { EmailDto } from '../../registration/dto/email.dto';
 import { RegistrationDataDto } from '../../registration/dto/registrationData.dto';
 import UpdateUserProfileDto from '../../registration/dto/updateData.dto';
 import { VerificationDto } from '../../security/dto/verificationDto';
@@ -31,11 +33,11 @@ export enum ErrorMessages {
 }
 
 export const Endpoints = {
-  '/registration': MobilePhoneDto,
+  '/registration': RegistrationInputDto,
   '/registration/user-profile': UpdateUserProfileDto,
   '/registration/user-profile/new': RegistrationDataDto,
   '/auth/user/settings/all': ChangeUserSettingsDto,
-  '/security/session': MobilePhoneDto,
+  '/security/session': EmailDto,
   '/security/session/verification': VerificationDto,
   '/login/password': UpdateUserPasswordDto,
   '/auth/information': SendUserDataDto,
@@ -53,4 +55,9 @@ export const SecurityQuestions = [
 export enum loginTypes {
   mobilePhone = 'MOBILE_PHONE',
   passport = 'PASSPORT_NUMBER',
+}
+
+export enum emailService {
+  subject = 'Your one time code',
+  text = 'Hello!, your one time code is ',
 }
