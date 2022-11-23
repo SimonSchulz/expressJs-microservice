@@ -20,14 +20,12 @@ export default class RegistrationController {
 
   public checkPhoneStatus = async (req: Request, res: Response) => {
     try {
-      const phoneNumber = req.query.mobilePhone;
-      const objToFind = { mobilePhone: phoneNumber };
+      const email = req.query.email;
+      const objToFind = { email: email };
 
       const user = await this.userService.getUser(objToFind);
       if (!user) {
-        return res
-          .status(StatusCodes.NOT_FOUND)
-          .json({ mobilePhone: objToFind.mobilePhone, msg: ErrorMessages.NOT_FOUND });
+        return res.status(StatusCodes.NOT_FOUND).json({ email: objToFind.email, msg: ErrorMessages.NOT_FOUND });
       }
 
       return res.status(StatusCodes.OK).json({ msg: user.clientStatus });
