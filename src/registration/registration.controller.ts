@@ -21,26 +21,14 @@ export default class RegistrationController {
 
   public checkEmailStatus = async (req: Request, res: Response) => {
     try {
-      const mail = req.query.email;
-      const objToFind = { email: mail };
+      const email = req.query.email;
+      const objToFind = { email: email };
 
       const user = await this.userService.getUser(objToFind);
       if (!user) {
-        return res.status(StatusCodes.NOT_FOUND).json({ mail: objToFind.email, msg: ErrorMessages.NOT_FOUND });
+        return res.status(StatusCodes.NOT_FOUND).json({ email: objToFind.email, msg: ErrorMessages.NOT_FOUND });
       }
-
-      switch (user.clientStatus) {
-        //case ClientStatus.ACTIVE:
-        case ClientStatus.REGISTERED:
-          return res.status(StatusCodes.OK).json({ mail: objToFind.email, clientStatus: ClientStatus.REGISTERED });
-        case ClientStatus.NOT_REGISTERED:
-          return res
-            .status(StatusCodes.OK)
-            .json({ email: mail, clientStatus: user.clientStatus, clientId: user.clientId });
-
-        default:
-          return res.status(StatusCodes.BAD_REQUEST).json({ clientStatus: user.clientStatus });
-      }
+      return res.status(StatusCodes.OK).json({ clientStatus: user.clientStatus });
     } catch (error) {
       return res.status(StatusCodes.NOT_FOUND).json({ msg: ErrorMessages.ERROR });
     }
