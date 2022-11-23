@@ -6,7 +6,6 @@ define(Client, () => {
   const client = new Client();
 
   client.mobilePhone = faker.random.numeric(11);
-  client.countryOfResidence = faker.address.country();
   client.accesionDate = faker.date.past();
   client.firstName = faker.name.firstName();
   client.lastName = faker.name.lastName();

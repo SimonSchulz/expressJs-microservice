@@ -23,7 +23,7 @@ export default class SecurityController {
 
       const verificationData = await this.securityService.getVerifDataByParam({ email });
 
-      if(user.clientStatus !== ClientStatus.NOT_REGISTERED) {
+      if(user && user.clientStatus !== ClientStatus.NOT_REGISTERED) {
         return res.status(StatusCodes.CONFLICT).json({ msg: messages.USER_ALREADY_EXIST });
       }
       
