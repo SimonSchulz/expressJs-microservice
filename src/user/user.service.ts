@@ -119,6 +119,7 @@ class UserService {
       securityQuestionId: registrationData.securityQuestionId,
       securityQuestionType: registrationData.securityQuestionType,
       securityQuestionAnswer: registrationData.securityQuestionAnswer,
+      clientStatus: ClientStatus.REGISTERED,
       email: registrationData.email,
       firstName: registrationData.firstName,
       lastName: registrationData.lastName,
