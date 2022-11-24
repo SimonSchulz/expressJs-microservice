@@ -9,6 +9,7 @@ import SendUserDataDto from '../../user/information/dto/getUserInformation.dto';
 import ChangeUserSettingsDto from '../../user/settings/dto/userSettings.dto';
 import { smsNotificationDto } from '../../user/settings/notifications/dto/notifications.dto';
 import sendNotificationSettingsDto from '../../user/settings/notifications/dto/sendNotificationDto';
+import { LoginDataDto } from '../../login/dto/loginData.dto';
 
 export enum ClientStatus {
   ACTIVE = 'active',
@@ -39,6 +40,7 @@ export const Endpoints = {
   '/auth/user/settings/all': ChangeUserSettingsDto,
   '/security/session': EmailDto,
   '/security/session/verification': VerificationDto,
+  '/login': LoginDataDto,
   '/login/password': UpdateUserPasswordDto,
   '/auth/information': SendUserDataDto,
   '/auth/user/settings/notifications/all': sendNotificationSettingsDto,
@@ -53,8 +55,8 @@ export const SecurityQuestions = [
 ];
 
 export enum loginTypes {
-  mobilePhone = 'MOBILE_PHONE',
-  passport = 'PASSPORT_NUMBER',
+  email = 'email',
+  passportId = 'passportId',
 }
 
 export enum emailService {
