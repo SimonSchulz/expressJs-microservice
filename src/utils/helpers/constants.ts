@@ -9,7 +9,7 @@ import SendUserDataDto from '../../user/information/dto/getUserInformation.dto';
 import ChangeUserSettingsDto from '../../user/settings/dto/userSettings.dto';
 import { smsNotificationDto } from '../../user/settings/notifications/dto/notifications.dto';
 import sendNotificationSettingsDto from '../../user/settings/notifications/dto/sendNotificationDto';
-import { LoginDataDto } from '../../login/dto/loginData.dto';
+import { LoginDataDto } from '../../login/dto/logindata.dto';
 
 export enum ClientStatus {
   ACTIVE = 'active',
