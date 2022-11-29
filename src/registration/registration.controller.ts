@@ -39,6 +39,7 @@ export default class RegistrationController {
   public updateUserProfile = async (req: Request, res: Response) => {
     try {
       const updateData = plainToInstance(UpdateUserProfileDto, req.body);
+      updateData.email = updateData.email.toLocaleLowerCase();
       const objToFind = { email: updateData.email };
 
       const user = await this.userService.getUser(objToFind);
