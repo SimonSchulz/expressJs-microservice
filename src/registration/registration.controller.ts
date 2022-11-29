@@ -67,7 +67,7 @@ export default class RegistrationController {
     try {
       const registrationData = plainToInstance(RegistrationDataDto, req.body);
       const { email, securityQuestionId, securityQuestionType } = registrationData;
-      const user = await this.userService.getUser({ email });
+      const user = await this.userService.getUser({ email: email.toLowerCase() });
 
       if (user) {
         return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: messages.USER_ALREADY_EXIST });
