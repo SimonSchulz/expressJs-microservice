@@ -115,7 +115,7 @@ class UserService {
 
     return await getRepository(Client).insert({
       password: registrationData.password,
-      securityQuestion: registrationData.securityQuestion,
+      securityQuestion: registrationData.securityQuestion.toLowerCase(),
       securityQuestionId: registrationData.securityQuestionId,
       securityQuestionType: registrationData.securityQuestionType,
       securityQuestionAnswer: registrationData.securityQuestionAnswer,

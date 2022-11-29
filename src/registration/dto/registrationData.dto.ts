@@ -4,7 +4,7 @@ export class RegistrationDataDto {
   @IsDefined()
   @IsNotEmpty()
   @IsString()
-  @Matches(RegExp(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{8,}$/))
+  @Matches(RegExp(/(?=.*[0-9])(?=.*[!@#$%^&*])(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z!@#$%^&*~]{8,}/))
   password: string;
 
   @IsString()
@@ -42,7 +42,7 @@ export class RegistrationDataDto {
 
   @IsDefined()
   @IsNotEmpty()
-  @Matches(RegExp(/^([A-Za-z0-9]{6,20})|^(?=.{6,20}$)([A-Za-z0-9]+\s?[A-Za-z0-9]+)$/))
+  @Matches(RegExp(/^(?=.{6,20}$)([0-9A-Za-z]{1,}[A-Za-z0-9\-\s]{0,}[0-9A-Za-z]{1,})?$/))
   passportNumber: string;
 
   @IsBoolean()
