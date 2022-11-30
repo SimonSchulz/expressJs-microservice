@@ -65,7 +65,7 @@ class UserService {
   }
 
   async checkUserVerification(user) {
-    const verifData = await getRepository(VerificationEntity).findOne({ email: user.email });
+    const verifData = await getRepository(VerificationEntity).findOne({ email: user.email.toLowerCase() });
 
     if (verifData && verifData.clientVerifStatus === ClientVerifStatus.ACTIVE) {
       return true;
@@ -120,7 +120,7 @@ class UserService {
       securityQuestionType: registrationData.securityQuestionType,
       securityQuestionAnswer: registrationData.securityQuestionAnswer,
       clientStatus: ClientStatus.REGISTERED,
-      email: registrationData.email,
+      email: registrationData.email.toLowerCase(),
       firstName: registrationData.firstName,
       lastName: registrationData.lastName,
       passportId: registrationData.passportNumber,
