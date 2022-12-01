@@ -2,6 +2,7 @@
 /* eslint-disable no-console */
 import { getRepository } from 'typeorm';
 import VerificationEntity from '../entities/verification.entity';
+import Client from '../entities/client.entity';
 
 class SecurityService {
   public async sendCode(email, codeExpiration: Date, lastSentEmailTime: Date) {
@@ -28,6 +29,17 @@ class SecurityService {
 
   public async getVerifDataByParam(param: object) {
     return await getRepository(VerificationEntity).findOne(param);
+  }
+  public async removeVerifRecord(param: object) {
+    return await getRepository(VerificationEntity).delete(param);
+  }
+
+  public async updateUserByParam(param, newClientData: object) {
+    await getRepository(Client).update(
+      param,
+
+      newClientData
+    );
   }
 
   public async updateByParam(param, newClientData: object) {
