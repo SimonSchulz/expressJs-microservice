@@ -46,7 +46,7 @@ export default class LoginController {
 
       const data =
         type === loginTypes.email
-          ? await this.userService.getUser({ email: login })
+          ? await this.userService.getUser({ email: login.toLowerCase() })
           : await this.userService.getUser({ passportId: login });
 
       if (!data) {
