@@ -45,4 +45,22 @@ export default class TokenController {
       res.status(StatusCodes.UNAUTHORIZED);
     }
   }
+
+  public async saveToken(clientId: number, refreshToken: string) {
+    const tokenData = await this.userService.getUser({ clientId });
+
+    if (tokenData) {
+      return this.userService.updateUserData(clientId, { refreshToken });
+    }
+
+    return this.userService.insertRefreshToken(clientId, refreshToken);
+  }
+
+  public setToken(res: Response, refreshToken: string) {
+    try {
+      return res.cookie('refreshToken', refreshToken, { maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true });
+    } catch (error) {
+      throw Error('Incorrect token');
+    }
+  }
 }
