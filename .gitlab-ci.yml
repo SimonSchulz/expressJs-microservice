@@ -25,7 +25,7 @@ variables:
   stage: deploy
   before_script:
     - echo "$AND_DOCKER_REGISTRY_RO_PASS" | docker login -u nexus-ro "$AND_DOCKER_REGISTRY_NAME" --password-stdin
-    - cp $AND_ENV_DEV .env
+    - cp $AND_ENV_TEST .env
   script:
     - docker-compose -f docker-compose.yml stop || true
     - docker system prune -f --filter "label!=keep"
