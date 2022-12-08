@@ -57,14 +57,10 @@ export default class SecurityController {
           );
           const { id } = data;
 
-          return res.status(StatusCodes.OK).json({ id });
+          return res.status(StatusCodes.OK).json({ id, email });
         } else {
           if (timeDiffInMinutes(verificationData.lastSentEmailTime) < +process.env.COOLDOWN_TIME) {
-            const blockSecondsLeft = Math.round(
-              60 - (new Date().getTime() - verificationData.lastSentEmailTime.getTime()) / 1000
-            );
-  
-            return res.status(StatusCodes.NOT_ACCEPTABLE).json({ blockSeconds: blockSecondsLeft, msg: messages.COOLDOWN });
+            return res.status(StatusCodes.OK).json({ id: verificationData.id, email: verificationData.email });
           }
   
           const timeObj = generateTime();
