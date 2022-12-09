@@ -110,13 +110,13 @@ deploy:prod:
   rules:
     - if: $CI_COMMIT_BRANCH == "main"
 
-image:prod:
+image:test:
   extends: .image-template
   tags: [shell-$CI_COMMIT_BRANCH]
   rules:
     - if: $CI_COMMIT_BRANCH == "test"
 
-deploy:prod:
+deploy:test:
   extends: .deploy-template
   tags: [shell-$CI_COMMIT_BRANCH]
   rules:
