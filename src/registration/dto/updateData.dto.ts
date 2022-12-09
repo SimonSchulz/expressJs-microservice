@@ -1,4 +1,4 @@
-import { IsDefined, IsEmail, IsNumberString, IsString, IsUUID, Matches, MaxLength, MinLength } from 'class-validator';
+import { IsDefined, IsEmail, IsString, IsUUID, Matches, MinLength } from 'class-validator';
 
 export default class UpdateUserProfileDto {
   id: string;

@@ -26,6 +26,16 @@ class SecurityRoutes {
       requestValidationMiddleware,
       this.securityController.checkVerificationCode
     );
+    this.router.post(
+      '/security/session/newpasswordotp/', 
+      requestValidationMiddleware, 
+      this.securityController.sendVerificationCodeUpdatePassword
+    );
+    this.router.patch(
+      '/security/session/updatepassword/', 
+      requestValidationMiddleware, 
+      this.securityController.updatePassword
+    );
   }
 }
 

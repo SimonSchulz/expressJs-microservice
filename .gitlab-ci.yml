@@ -25,7 +25,7 @@ variables:
   stage: deploy
   before_script:
     - echo "$AND_DOCKER_REGISTRY_RO_PASS" | docker login -u nexus-ro "$AND_DOCKER_REGISTRY_NAME" --password-stdin
-    - cp $AND_ENV_DEV .env
+    - cp $AND_ENV_TEST .env
   script:
     - docker-compose -f docker-compose.yml stop || true
     - docker system prune -f --filter "label!=keep"
@@ -78,9 +78,7 @@ test:prod:
 
 test:mr:
   extends: .test-template
-  tags:
-    - dev
-    - prod
+  tags: [docker]
   rules:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
       variables:
@@ -94,22 +92,33 @@ image:dev:
     - if: $CI_COMMIT_BRANCH == "dev"
 
 
-image:prod:
-  extends: .image-template
-  tags: [shell-$CI_COMMIT_BRANCH]
-  rules:
-    - if: $CI_COMMIT_BRANCH == "main"
-
-
 deploy:dev:
   extends: .deploy-template
   tags: [shell-$CI_COMMIT_BRANCH]
   rules:
     - if: $CI_COMMIT_BRANCH == "dev"
 
+image:prod:
+  extends: .image-template
+  tags: [shell-$CI_COMMIT_BRANCH]
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
+
 deploy:prod:
   extends: .deploy-template
   tags: [shell-$CI_COMMIT_BRANCH]
   rules:
     - if: $CI_COMMIT_BRANCH == "main"
+
+image:test:
+  extends: .image-template
+  tags: [shell-$CI_COMMIT_BRANCH]
+  rules:
+    - if: $CI_COMMIT_BRANCH == "test"
+
+deploy:test:
+  extends: .deploy-template
+  tags: [shell-$CI_COMMIT_BRANCH]
+  rules:
+    - if: $CI_COMMIT_BRANCH == "test"
 
