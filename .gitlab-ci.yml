@@ -92,22 +92,33 @@ image:dev:
     - if: $CI_COMMIT_BRANCH == "dev"
 
 
-image:prod:
-  extends: .image-template
-  tags: [shell-$CI_COMMIT_BRANCH]
-  rules:
-    - if: $CI_COMMIT_BRANCH == "main"
-
-
 deploy:dev:
   extends: .deploy-template
   tags: [shell-$CI_COMMIT_BRANCH]
   rules:
     - if: $CI_COMMIT_BRANCH == "dev"
 
+image:prod:
+  extends: .image-template
+  tags: [shell-$CI_COMMIT_BRANCH]
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
+
 deploy:prod:
   extends: .deploy-template
   tags: [shell-$CI_COMMIT_BRANCH]
   rules:
     - if: $CI_COMMIT_BRANCH == "main"
+
+image:prod:
+  extends: .image-template
+  tags: [shell-$CI_COMMIT_BRANCH]
+  rules:
+    - if: $CI_COMMIT_BRANCH == "test"
+
+deploy:prod:
+  extends: .deploy-template
+  tags: [shell-$CI_COMMIT_BRANCH]
+  rules:
+    - if: $CI_COMMIT_BRANCH == "test"
 
