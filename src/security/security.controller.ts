@@ -10,11 +10,18 @@ import generateTime from '../utils/helpers/generateTime';
 import { EmailDto } from '../registration/dto/email.dto';
 import { PassportIdDto } from '../registration/dto/passportId.dto';
 import { ClientStatus } from '../utils/helpers/ClientStatus';
+import bcrypt from 'bcryptjs';
 
 export default class SecurityController {
   constructor(private securityService: SecurityService, private userService: UserService) {
     this.securityService = new SecurityService();
     this.userService = new UserService();
+  }
+
+  async genHashPassword(password: string) {
+    const saltRounds = 10;
+    const salt = await bcrypt.genSalt(saltRounds);
+    return bcrypt.hash(password, salt);
   }
 
   public updatePassword = async (req: Request, res: Response) => {
@@ -28,7 +35,7 @@ export default class SecurityController {
       }
       const email = verifData.email;
       const newPasswordClientData = {
-        password: newPassword,
+        password: await this.genHashPassword(newPassword),
       };
 
       await this.securityService.removeVerifRecord({ id });
