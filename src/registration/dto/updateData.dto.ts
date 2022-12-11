@@ -1,4 +1,4 @@
-import { IsDefined, IsEmail, IsString, IsUUID, Matches, MinLength } from 'class-validator';
+import { IsDefined, IsEmail, IsString, IsUUID, Matches, MaxLength, MinLength } from 'class-validator';
 
 export default class UpdateUserProfileDto {
   id: string;
@@ -28,6 +28,7 @@ export default class UpdateUserProfileDto {
 
   @IsDefined()
   @IsString()
-  @MinLength(1)
+  @MinLength(2)
+  @MaxLength(50)
   securityQuestionAnswer: string;
 }

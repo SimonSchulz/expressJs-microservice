@@ -1,4 +1,14 @@
-import { IsBoolean, IsDefined, IsEmail, IsString, IsUUID, Matches, IsNotEmpty } from 'class-validator';
+import {
+  IsBoolean,
+  IsDefined,
+  IsEmail,
+  IsString,
+  IsUUID,
+  Matches,
+  IsNotEmpty,
+  MinLength,
+  MaxLength,
+} from 'class-validator';
 
 export class RegistrationDataDto {
   @IsDefined()
@@ -23,6 +33,8 @@ export class RegistrationDataDto {
   @IsDefined()
   @IsString()
   @IsNotEmpty()
+  @MinLength(2)
+  @MaxLength(50)
   securityQuestionAnswer: string;
 
   @IsDefined()
