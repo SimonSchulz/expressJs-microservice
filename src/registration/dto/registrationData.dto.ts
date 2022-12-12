@@ -1,10 +1,20 @@
-import { IsBoolean, IsDefined, IsEmail, IsString, IsUUID, Matches, IsNotEmpty } from 'class-validator';
+import {
+  IsBoolean,
+  IsDefined,
+  IsEmail,
+  IsString,
+  IsUUID,
+  Matches,
+  IsNotEmpty,
+  MinLength,
+  MaxLength,
+} from 'class-validator';
 
 export class RegistrationDataDto {
   @IsDefined()
   @IsNotEmpty()
   @IsString()
-  @Matches(RegExp(/(?=.*[0-9])(?=.*[!@#$%^&*])(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z!@#$%^&*~]{8,}/))
+  @Matches(RegExp(/(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z!@#$%^&*]{8,}/g))
   password: string;
 
   @IsString()
@@ -23,6 +33,8 @@ export class RegistrationDataDto {
   @IsDefined()
   @IsString()
   @IsNotEmpty()
+  @MinLength(2)
+  @MaxLength(50)
   securityQuestionAnswer: string;
 
   @IsDefined()
