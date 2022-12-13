@@ -33,6 +33,7 @@ export enum ErrorMessages {
   INVALID_QUESTION_FORMAT = 'Invalid Question format',
   NOT_VERIFIED = 'User not verified',
   SAME_PASS = 'Received same password',
+  INVALID_ANSWER_FORMAT = 'Invalid answer format',
 }
 
 export const Endpoints = {
