@@ -9,7 +9,7 @@ export default class UpdateUserProfileDto {
 
   @IsDefined()
   @IsString()
-  @Matches(RegExp(/(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z!@#$%^&*]{8,}/g))
+  @Matches(RegExp(/^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z!@#$%^&*]{8,}$/))
   password: string;
 
   @IsDefined()
@@ -23,12 +23,11 @@ export default class UpdateUserProfileDto {
   securityQuestionId: string;
 
   @IsString()
-  @MinLength(1)
+  @Matches(RegExp(/^[0-9a-zA-Z!@#$%^& *]{2,50}$/))
   securityQuestion: string;
 
   @IsDefined()
   @IsString()
-  @MinLength(2)
-  @MaxLength(50)
+  @Matches(RegExp(/^[0-9a-zA-Z!@#$%^& *]{2,50}$/))
   securityQuestionAnswer: string;
 }
