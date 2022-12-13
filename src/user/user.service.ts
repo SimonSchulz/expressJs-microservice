@@ -54,7 +54,10 @@ class UserService {
       secQuestTypes: secQuestTypes,
     };
   }
-  handleError(allCheck) {
+  async handleError(allCheck) {
+    if (allCheck.checkSecQuestionSpaces === true) {
+      return ErrorMessages.INVALID_ANSWER_FORMAT;
+    }
     if (allCheck.passwordCheck === true) {
       return ErrorMessages.SAME_PASS;
     }

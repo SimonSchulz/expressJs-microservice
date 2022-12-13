@@ -39,7 +39,6 @@ export default class RegistrationController {
       const updateData = plainToInstance(UpdateUserProfileDto, req.body);
       updateData.email = updateData.email.toLocaleLowerCase();
       const objToFind = { email: updateData.email };
-
       const user = await this.userService.getUser(objToFind);
       if (!user) {
         return res.status(StatusCodes.NOT_FOUND).json({ msg: ErrorMessages.NOT_FOUND });
