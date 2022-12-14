@@ -37,17 +37,19 @@ class UserService {
   }
 
   async checkAllParams(user, updateData) {
-    const checkSecQuestionSpaces = updateData.securityQuestionAnswer.includes('  ');
+    const checkSecAnswerSpaces = updateData.securityQuestionAnswer.includes('  ');
+    const checkSecQuestionSpaces = updateData.securityQuestion.includes('  ');
     const checkPasswords = await this.checkUserPassword(user, updateData.password);
     const checkVerifStatus = await this.checkUserVerification(user);
     const newPassword = await this.genHashPassword(updateData.password);
     const secQuestAnswer = await this.genHashPassword(updateData.securityQuestionAnswer);
     const secQuestTypes = await this.checkSecQuestionData(updateData);
-    if (!checkPasswords && checkVerifStatus && secQuestTypes && !checkSecQuestionSpaces)
+    if (!checkPasswords && checkVerifStatus && secQuestTypes && !checkSecQuestionSpaces && !checkSecAnswerSpaces)
       return { checks: true, newPassword: newPassword, secQuestAnswer: secQuestAnswer };
     return {
       checks: false,
       checkSecQuestionSpaces: checkSecQuestionSpaces,
+      checkSecAnswerSpaces: checkSecAnswerSpaces,
       newPassword: newPassword,
       passwordCheck: checkPasswords,
       verifCheck: checkVerifStatus,
@@ -56,6 +58,9 @@ class UserService {
   }
   async handleError(allCheck) {
     if (allCheck.checkSecQuestionSpaces === true) {
+      return ErrorMessages.INVALID_QUESTION_FORMAT;
+    }
+    if (allCheck.checkSecAnswerSpaces === true) {
       return ErrorMessages.INVALID_ANSWER_FORMAT;
     }
     if (allCheck.passwordCheck === true) {
