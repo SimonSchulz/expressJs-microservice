@@ -6,15 +6,15 @@ import { plainToInstance } from 'class-transformer';
 
 import { Endpoints } from './constants';
 
-export const requestValidationMiddleware = (req: Request, res: Response, next: NextFunction) => {
+export const requestValidationMiddleware = async (req: Request, res: Response, next: NextFunction) => {
   const data = formatDataToDto(req);
-  validate(data, { skipMissingProperties: true }).then((errors) => {
+  await validate(data, { skipMissingProperties: true }).then((errors) => {
     if (errors.length > 0) {
       let errorTexts = [];
       for (const errorItem of errors) {
         errorTexts = errorTexts.concat(errorItem.constraints);
       }
-      res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(errorTexts);
+      res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(errorTexts);
       return;
     } else {
       next();

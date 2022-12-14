@@ -2,41 +2,49 @@
 /* eslint-disable no-console */
 import { getRepository } from 'typeorm';
 import VerificationEntity from '../entities/verification.entity';
+import Client from '../entities/client.entity';
 
 class SecurityService {
-  public async sendCode(mobilePhone, codeExpiration: Date, lastSentSmsTime: Date) {
+  public async sendCode(email, codeExpiration: Date, lastSentEmailTime: Date) {
     const verificationCode = process.env.VERIFICATION_CODE;
+    const existedEmail = await getRepository(VerificationEntity).findOne({ email });
 
-    const existedPhone = await getRepository(VerificationEntity).findOne({ mobilePhone });
-
-    if (!existedPhone) {
-      const id = await getRepository(VerificationEntity).insert({
-        mobilePhone,
+    if (!existedEmail) {
+      await getRepository(VerificationEntity).insert({
+        email,
         verificationCode,
         codeExpiration,
-        lastSentSmsTime,
+        lastSentEmailTime,
       });
-
-      return id.identifiers[0].id;
+    } else {
+      await getRepository(VerificationEntity).update(
+        { email },
+        { verificationCode, codeExpiration, lastSentEmailTime }
+      );
     }
+    const data = await getRepository(VerificationEntity).findOne({ email });
 
-    await getRepository(VerificationEntity).update(
-      { mobilePhone },
-      { verificationCode, codeExpiration, lastSentSmsTime }
-    );
-
-    const { id } = await getRepository(VerificationEntity).findOne({ mobilePhone });
-
-    return id;
+    return data;
   }
 
-  public async getClientDataByParam(param: object) {
+  public async getVerifDataByParam(param: object) {
     return await getRepository(VerificationEntity).findOne(param);
   }
+  public async removeVerifRecord(param: object) {
+    return await getRepository(VerificationEntity).delete(param);
+  }
 
-  public async updateByClientId(id: string, newClientData: object) {
+  public async updateUserByParam(param, newClientData: object) {
+    await getRepository(Client).update(
+      param,
+
+      newClientData
+    );
+  }
+
+  public async updateByParam(param, newClientData: object) {
     await getRepository(VerificationEntity).update(
-      { id },
+      param,
 
       newClientData
     );

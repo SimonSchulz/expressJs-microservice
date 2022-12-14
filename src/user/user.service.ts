@@ -5,7 +5,8 @@ import { SecurityQuestionsTypes } from '../utils/helpers/securityQuestionsTypes'
 import SecurityQuestionEntity from '../entities/security-question.entity';
 import VerificationEntity from '../entities/verification.entity';
 import { ClientVerifStatus } from '../utils/helpers/ClientVerifStatus';
-import { ClientStatus, ErrorMessages } from '../utils/helpers/constants';
+import { ErrorMessages } from '../utils/helpers/constants';
+import { ClientStatus } from '../utils/helpers/ClientStatus';
 
 class UserService {
   async getUser(param: object) {
@@ -26,39 +27,52 @@ class UserService {
   public async updateUserData(clientId: number, objData: object) {
     await getRepository(Client).update({ clientId }, objData);
   }
+
+  public async updateUserStatus(email) {
+    await getRepository(Client).update({ email }, { clientStatus: ClientStatus.REGISTERED });
+  }
+
   public async insertRefreshToken(id: number, refreshToken: string) {
     await getRepository(Client).save({ refreshToken });
   }
 
   async checkAllParams(user, updateData) {
+    const checkSecQuestionSpaces = updateData.securityQuestionAnswer.includes('  ');
     const checkPasswords = await this.checkUserPassword(user, updateData.password);
     const checkVerifStatus = await this.checkUserVerification(user);
     const newPassword = await this.genHashPassword(updateData.password);
+    const secQuestAnswer = await this.genHashPassword(updateData.securityQuestionAnswer);
     const secQuestTypes = await this.checkSecQuestionData(updateData);
-    if (!checkPasswords && checkVerifStatus && secQuestTypes) return { checks: true, newPassword: newPassword };
+    if (!checkPasswords && checkVerifStatus && secQuestTypes && !checkSecQuestionSpaces)
+      return { checks: true, newPassword: newPassword, secQuestAnswer: secQuestAnswer };
     return {
       checks: false,
+      checkSecQuestionSpaces: checkSecQuestionSpaces,
       newPassword: newPassword,
       passwordCheck: checkPasswords,
       verifCheck: checkVerifStatus,
       secQuestTypes: secQuestTypes,
     };
   }
-  handleError(allCheck) {
-    if (allCheck.passwordCheck) {
+  async handleError(allCheck) {
+    if (allCheck.checkSecQuestionSpaces === true) {
+      return ErrorMessages.INVALID_ANSWER_FORMAT;
+    }
+    if (allCheck.passwordCheck === true) {
       return ErrorMessages.SAME_PASS;
     }
-    if (!allCheck.verifCheck) {
+    if (allCheck.verifCheck === false) {
       return ErrorMessages.NOT_VERIFIED;
     }
-    if (!allCheck.secQuestTypes) {
+    if (allCheck.secQuestTypes === false) {
       return ErrorMessages.INVALID_QUESTION_FORMAT;
     }
   }
-  async checkUserVerification(user) {
-    const verifData = await getRepository(VerificationEntity).findOne({ mobilePhone: user.mobilePhone });
 
-    if (verifData && verifData.clientVerifStatus && verifData.clientVerifStatus === ClientVerifStatus.ACTIVE) {
+  async checkUserVerification(user) {
+    const verifData = await getRepository(VerificationEntity).findOne({ email: user.email.toLowerCase() });
+
+    if (verifData && verifData.clientVerifStatus === ClientVerifStatus.ACTIVE) {
       return true;
     }
     return false;
@@ -86,6 +100,9 @@ class UserService {
     }
     return false;
   }
+  async checkSecQuestionId(id) {
+    return await getRepository(SecurityQuestionEntity).findOne({ id });
+  }
   async checkUserPassword(user, newPassword) {
     const check = await bcrypt.compareSync(newPassword, user.password);
     return check;
@@ -96,38 +113,26 @@ class UserService {
     return bcrypt.hash(password, salt);
   }
   async createUser(registrationData) {
-    if (registrationData) {
-      const user = await getRepository(Client).findOne({ mobilePhone: registrationData.mobilePhone });
+    const date = new Date(Date.now());
 
-      if (!user) {
-        const date = new Date(Date.now());
+    registrationData.password = await this.genHashPassword(registrationData.password);
+    registrationData.securityQuestionAnswer = await this.genHashPassword(registrationData.securityQuestionAnswer);
 
-        registrationData.password = await this.genHashPassword(registrationData.password);
-        registrationData.securityQuestionAnswer = await this.genHashPassword(registrationData.securityQuestionAnswer);
-
-        await getRepository(Client).insert({
-          mobilePhone: registrationData.mobilePhone,
-          password: registrationData.password,
-          securityQuestion: registrationData.securityQuestion,
-          securityQuestionId: registrationData.securityQuestionId,
-          securityQuestionType: registrationData.securityQuestionType,
-          securityQuestionAnswer: registrationData.securityQuestionAnswer,
-          clientStatus: ClientStatus.ACTIVE,
-          email: registrationData.email,
-          firstName: registrationData.firstName,
-          middleName: registrationData.middleName,
-          lastName: registrationData.lastName,
-          passportId: registrationData.passportNumber,
-          countryOfResidence: registrationData.countryOfResidence,
-          accesionDate: date,
-          registrationDate: date,
-        });
-
-        return true;
-      } else {
-        return false;
-      }
-    }
+    return await getRepository(Client).insert({
+      password: registrationData.password,
+      securityQuestion: registrationData.securityQuestion.toLowerCase(),
+      securityQuestionId: registrationData.securityQuestionId,
+      securityQuestionType: registrationData.securityQuestionType,
+      securityQuestionAnswer: registrationData.securityQuestionAnswer,
+      clientStatus: ClientStatus.REGISTERED,
+      email: registrationData.email.toLowerCase(),
+      firstName: registrationData.firstName,
+      lastName: registrationData.lastName,
+      passportId: registrationData.passportNumber,
+      isResident: registrationData.isResident,
+      accesionDate: date,
+      registrationDate: date,
+    });
   }
 }
 

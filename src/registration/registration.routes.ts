@@ -20,7 +20,7 @@ class RegistrationRoutes {
   }
 
   private initRoutes() {
-    this.router.get('/registration', requestValidationMiddleware, this.registrationController.checkPhoneStatus);
+    this.router.get('/registration', requestValidationMiddleware, this.registrationController.checkEmailStatus);
     this.router.get(
       '/registration/security-questions',
       requestValidationMiddleware,
@@ -28,8 +28,6 @@ class RegistrationRoutes {
     );
     this.router.patch(
       '/registration/user-profile',
-      requestValidationMiddleware,
-
       requestValidationMiddleware,
       this.registrationController.updateUserProfile
     );

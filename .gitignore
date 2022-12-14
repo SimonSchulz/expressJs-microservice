@@ -1,4 +1,6 @@
 /node_modules
 /static
 .env
+.DS_Store
+**/.DS_Store
 __dev

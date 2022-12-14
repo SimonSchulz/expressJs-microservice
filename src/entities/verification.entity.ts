@@ -23,10 +23,10 @@ export default class VerificationEntity {
   @Column({ nullable: true, default: 0 })
   invalidAttempts: number;
 
-  @Column({ nullable: false })
+  @Column({ nullable: true })
   mobilePhone: string;
 
-  @Column({ nullable: true })
+  @Column({ nullable: false })
   email: string;
 
   @Column({ nullable: true, length: 6 })
@@ -48,5 +48,5 @@ export default class VerificationEntity {
     type: 'timestamptz',
     nullable: true,
   })
-  lastSentSmsTime: Date;
+  lastSentEmailTime: Date;
 }

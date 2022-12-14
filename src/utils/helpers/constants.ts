@@ -1,5 +1,9 @@
 import { UpdateUserPasswordDto } from '../../login/dto/UpdateUserPassword.dto';
+import { RegistrationInputDto } from '../../registration/dto/registration.input.dto';
 import { MobilePhoneDto } from '../../registration/dto/mobilePhone.dto';
+import { EmailDto } from '../../registration/dto/email.dto';
+import { PassportIdDto } from '../../registration/dto/passportId.dto';
+import { PasswordDto } from '../../registration/dto/password.dto';
 import { RegistrationDataDto } from '../../registration/dto/registrationData.dto';
 import UpdateUserProfileDto from '../../registration/dto/updateData.dto';
 import { VerificationDto } from '../../security/dto/verificationDto';
@@ -7,6 +11,7 @@ import SendUserDataDto from '../../user/information/dto/getUserInformation.dto';
 import ChangeUserSettingsDto from '../../user/settings/dto/userSettings.dto';
 import { smsNotificationDto } from '../../user/settings/notifications/dto/notifications.dto';
 import sendNotificationSettingsDto from '../../user/settings/notifications/dto/sendNotificationDto';
+import { LoginDataDto } from '../../login/dto/logindata.dto';
 
 export enum ClientStatus {
   ACTIVE = 'active',
@@ -28,15 +33,19 @@ export enum ErrorMessages {
   INVALID_QUESTION_FORMAT = 'Invalid Question format',
   NOT_VERIFIED = 'User not verified',
   SAME_PASS = 'Received same password',
+  INVALID_ANSWER_FORMAT = 'Invalid answer format',
 }
 
 export const Endpoints = {
-  '/registration': MobilePhoneDto,
+  '/registration': RegistrationInputDto,
   '/registration/user-profile': UpdateUserProfileDto,
   '/registration/user-profile/new': RegistrationDataDto,
   '/auth/user/settings/all': ChangeUserSettingsDto,
-  '/security/session': MobilePhoneDto,
+  '/security/session': EmailDto,
+  '/security/session/newpasswordotp': PassportIdDto,
+  '/security/session/newpassword': PasswordDto,
   '/security/session/verification': VerificationDto,
+  '/login': LoginDataDto,
   '/login/password': UpdateUserPasswordDto,
   '/auth/information': SendUserDataDto,
   '/auth/user/settings/notifications/all': sendNotificationSettingsDto,
@@ -48,10 +57,14 @@ export const SecurityQuestions = [
   { question: 'Favorite book' },
   { question: 'Favourite dish' },
   { question: 'Choose your favorite color' },
-  { question: 'Write your question' },
 ];
 
 export enum loginTypes {
-  mobilePhone = 'MOBILE_PHONE',
-  passport = 'PASSPORT_NUMBER',
+  email = 'email',
+  passportId = 'passportId',
+}
+
+export enum emailService {
+  subject = 'Your one time code',
+  text = 'Hello!, your one time code is ',
 }

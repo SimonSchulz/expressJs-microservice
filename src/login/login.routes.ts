@@ -24,9 +24,9 @@ class LoginRoutes {
   }
 
   private initRoutes() {
-    this.router.post('/login/', this.loginController.login);
-    this.router.patch('/login/password', this.loginController.updateUserPassword);
-    this.router.get('/login/token/', this.loginController.reLogin);
+    this.router.post('/login', requestValidationMiddleware, this.loginController.login);
+    this.router.get('/login/token', this.loginController.reLogin);
+    //this.router.patch('/login/password', requestValidationMiddleware, this.loginController.updateUserPassword);
   }
 }
 
