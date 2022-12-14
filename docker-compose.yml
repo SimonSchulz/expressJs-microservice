@@ -20,20 +20,6 @@ services:
     networks:
       - nodanorm_new
 
-  front:
-    container_name: $PROJECT
-    env_file:
-      - .env
-    build:
-      context: .
-    image: $AND_DOCKER_REGISTRY_NAME/$PROJECT:$CI_COMMIT_BRANCH
-    ports:
-      - 3002:8080
-    restart: always
-    logging: *default-logging
-    networks:
-      - nodanorm_new
-
 volumes:
   nodanorm-postgres:
 
