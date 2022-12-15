@@ -49,10 +49,6 @@ export default class LoginController {
           ? await this.userService.getUser({ email: login.toLowerCase() })
           : await this.userService.getUser({ passportId: login });
 
-      if (!data) {
-        return res.status(StatusCodes.BAD_REQUEST).json({ msg: messages.USER_DOESNT_EXIST });
-      }
-
       const isValidPassword = bcrypt.compareSync(password, data.password);
 
       if (!isValidPassword) {
