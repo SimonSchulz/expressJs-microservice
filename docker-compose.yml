@@ -21,7 +21,7 @@ services:
       - nodanorm_new
 
   front:
-    container_name: $PROJECT
+    container_name: $PROJECT-$CI_COMMIT_BRANCH
     env_file:
       - .env
     build:
