@@ -63,4 +63,9 @@ export default class TokenController {
       throw Error('Incorrect token');
     }
   }
+
+  public async getSavedRefreshToken(clientId: number){
+    return (await this.userService.getUser({clientId})).refreshToken
+  }
+  
 }
