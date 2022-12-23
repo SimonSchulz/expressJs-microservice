@@ -46,7 +46,7 @@ export default class TokenController {
     }
   }
 
-  public async saveToken(clientId: number, refreshToken: string) {
+  public async saveToken(clientId: number, refreshToken?: string) {
     const tokenData = await this.userService.getUser({ clientId });
 
     if (tokenData) {
@@ -67,5 +67,9 @@ export default class TokenController {
   public async getSavedRefreshToken(clientId: number){
     return (await this.userService.getUser({clientId})).refreshToken
   }
-  
+
+  public async revokeRefreshToken(clientId: number){
+    return await this.saveToken(clientId, null)    
+  }
+
 }
