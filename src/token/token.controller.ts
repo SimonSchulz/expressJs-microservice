@@ -2,7 +2,8 @@ import jwt from 'jsonwebtoken';
 import UserService from '../user/user.service';
 import { Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
-
+import { Token, SignedToken } from '.';
+import Client from '../entities/client.entity';
 export default class TokenController {
   constructor(private userService: UserService) {
     this.userService = new UserService();
@@ -36,11 +37,15 @@ export default class TokenController {
     }
   }
 
-  public async validateRefreshToken(token, res: Response) {
+  public async validateRefreshToken(token: SignedToken, res: Response) {
     try {
-      const userData = jwt.verify(token, process.env.JWT_REFRESH_SECRET);
+      const tokenData: Token = jwt.verify(token, process.env.JWT_REFRESH_SECRET);
+      const userData: Client = await this.userService.getUser({ clientId: tokenData.userId });
 
-      return userData;
+      if (userData.refreshToken !== token) {
+        throw new Error('Not the last refresh token is provided or refresh token has been revoked.');
+      }
+      return tokenData;
     } catch (e) {
       res.status(StatusCodes.UNAUTHORIZED);
     }
@@ -64,12 +69,11 @@ export default class TokenController {
     }
   }
 
-  public async getSavedRefreshToken(clientId: number){
-    return (await this.userService.getUser({clientId})).refreshToken
+  public async getSavedRefreshToken(clientId: number) {
+    return (await this.userService.getUser({ clientId })).refreshToken;
   }
 
-  public async revokeRefreshToken(clientId: number){
-    return await this.saveToken(clientId, null)    
+  public async revokeRefreshToken(clientId: number) {
+    return await this.saveToken(clientId, null);
   }
-
 }
