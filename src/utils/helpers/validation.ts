@@ -3,6 +3,7 @@ import { validate } from 'class-validator';
 import { NextFunction, Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import { plainToInstance } from 'class-transformer';
+import UserService from '../../user/user.service';
 
 import { Endpoints } from './constants';
 
@@ -20,6 +21,24 @@ export const requestValidationMiddleware = async (req: Request, res: Response, n
       next();
     }
   });
+};
+
+
+export const sequrityQuestionMiddleware = async (req: Request, res: Response, next: NextFunction) => {
+  const data: any = formatDataToDto(req);
+  const userService = new UserService();
+  const user = await userService.getUser(data.clientId);
+  if (
+    user.securityQuestionLastInvalidAttempt &&
+    +user.securityQuestionAttempts < +process.env.MAX_SECURITY_QUESTIONS_TRIES &&
+    Date.now() - (+user.securityQuestionLastInvalidAttempt) > +process.env.MILLISECONDS_PER_DAY 
+  ) 
+  {
+    await userService.updateUserData(data.clientId, { 
+      securityQuestionAttempts: process.env.MAX_SECURITY_QUESTIONS_TRIES,
+    });
+  }
+  next();
 };
 
 function formatDataToDto(req: Request) {

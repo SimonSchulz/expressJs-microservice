@@ -27,13 +27,13 @@ class SecurityRoutes {
       this.securityController.checkVerificationCode
     );
     this.router.post(
-      '/security/session/newpasswordotp/', 
-      requestValidationMiddleware, 
+      '/security/session/newpasswordotp/',
+      requestValidationMiddleware,
       this.securityController.sendVerificationCodeUpdatePassword
     );
     this.router.patch(
-      '/security/session/updatepassword/', 
-      requestValidationMiddleware, 
+      '/security/session/updatepassword/',
+      requestValidationMiddleware,
       this.securityController.updatePassword
     );
   }

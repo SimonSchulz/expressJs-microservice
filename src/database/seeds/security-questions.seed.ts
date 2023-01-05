@@ -11,4 +11,3 @@ export default class CreateQuestions implements Seeder {
     await connection.createQueryBuilder().insert().into(SequrityQuestionEntity).values(SecurityQuestions).execute();
   }
 }
-

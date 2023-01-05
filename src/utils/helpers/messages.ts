@@ -7,6 +7,7 @@ export const messages = {
   USER_DOESNT_EXIST: "User doesn't exist",
   COOLDOWN: 'You just sended code, try again later',
   USER_NOT_AUTHORIZED: 'Not authorized',
+  CLIENT_BLOCKED_SECURITY_QUESTION: 'You was blocked, you can try again after 24 hours.',
   ERROR: 'Error',
   SAME_EMAIL: 'same email address',
   SAME_PHONE: 'same phone number',

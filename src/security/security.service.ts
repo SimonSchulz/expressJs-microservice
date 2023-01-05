@@ -35,19 +35,11 @@ class SecurityService {
   }
 
   public async updateUserByParam(param, newClientData: object) {
-    await getRepository(Client).update(
-      param,
-
-      newClientData
-    );
+    await getRepository(Client).update(param, newClientData);
   }
 
   public async updateByParam(param, newClientData: object) {
-    await getRepository(VerificationEntity).update(
-      param,
-
-      newClientData
-    );
+    await getRepository(VerificationEntity).update(param, newClientData);
   }
 
   public async checkCode(smsId: string) {

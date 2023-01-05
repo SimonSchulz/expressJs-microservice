@@ -67,6 +67,12 @@ export default class Client {
   @Column({ length: 100, nullable: true })
   securityQuestionAnswer: string;
 
+  @Column({ nullable: true, default: null })
+  securityQuestionAttempts: string;
+
+  @Column({ nullable: true })
+  securityQuestionLastInvalidAttempt: Date;
+
   @Column({ length: 50, nullable: true, default: null })
   email: string;
 

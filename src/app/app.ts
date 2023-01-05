@@ -3,7 +3,7 @@ import bodyParser from 'body-parser';
 import cors from 'cors';
 import SecurityRoutes from '../security/security.routes';
 import RegistrationRoutes from '../registration/registration.routes';
-import UserSettingsRoutes from '../user/settings/userSetting.routes';
+import UserSettingsRoutes from '../user/settings/userSettings.routes';
 import UserInformationRoutes from '../user/information/userInformation.routes';
 import NotificationsRoutes from '../user/settings/notifications/notifications.routes';
 import cookieParser from 'cookie-parser';
