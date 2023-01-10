@@ -9,23 +9,26 @@ class UserInformationController {
   }
   public sendUserData = async (req: Request, res: Response) => {
     try {
-      const clientId = req.query;
-      const user = await this.userService.getUser(clientId);
-      if (!user) return res.status(StatusCodes.NOT_FOUND).json({ msg: messages.USER_DOESNT_EXIST });
-      const sendData = {
+      const passportId = req.query;
+      const user = await this.userService.getUser(passportId);
+      if (!user) {
+        return res.status(StatusCodes.NOT_FOUND).json({ msg: messages.USER_DOESNT_EXIST });
+      }
+
+      const personalInfo = {
         firstName: user.firstName,
 
         lastName: user.lastName,
 
-        middleName: user.middleName ? user.middleName : null,
-
         mobilePhone: user.mobilePhone,
 
-        email: user.email ? user.email : null,
+        email: user.email,
 
-        passportNumber: user.passportId ? user.passportId : null,
+        passportNumber: user.passportId,
+
+        isResident: user.isResident,
       };
-      return res.status(StatusCodes.OK).json({ userData: sendData });
+      return res.status(StatusCodes.OK).json({ userData: personalInfo });
     } catch (err) {
       return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ message: messages.ERROR });
     }

@@ -1,7 +1,7 @@
-import { IsDefined, IsUUID } from 'class-validator';
+import { IsDefined, MinLength } from 'class-validator';
 
 export default class SendUserDataDto {
   @IsDefined()
-  @IsUUID()
-  clientId: string;
+  @MinLength(6)
+  passportId: string;
 }
