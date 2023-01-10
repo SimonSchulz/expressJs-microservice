@@ -14,11 +14,18 @@ export class RegistrationDataDto {
   @IsDefined()
   @IsNotEmpty()
   @IsString()
-  @Matches(RegExp(/(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z!@#$%^&*]{8,}/g))
+  @Matches(
+    RegExp(/^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z\!\"\$\&\'\(\)\*\+\,\-\.\:\;\=\[\\\]\^\_\`\{\|\}\~]{8,20}$/)
+  )
   password: string;
 
   @IsString()
   @IsNotEmpty()
+  @MinLength(2)
+  @MaxLength(50)
+  @Matches(
+    RegExp(/^[0-9a-zA-Z\!\"\$\&\'\(\)\*\+\,\-\.\:\;\=\[\\\]\^\_\`\{\|\}\~]+(?:\s[0-9a-zA-Z\!\"\$\&\'\(\)\*\+\,\-\.\:\;\=\[\\\]\^\_\`\{\|\}\~]+)*$/)
+  )
   securityQuestion: string;
 
   @IsString()
@@ -35,6 +42,9 @@ export class RegistrationDataDto {
   @IsNotEmpty()
   @MinLength(2)
   @MaxLength(50)
+  @Matches(
+    RegExp(/^[0-9a-zA-Z\!\"\$\&\'\(\)\*\+\,\-\.\:\;\=\[\\\]\^\_\`\{\|\}\~]+(?:\s[0-9a-zA-Z\!\"\$\&\'\(\)\*\+\,\-\.\:\;\=\[\\\]\^\_\`\{\|\}\~]+)*$/)
+  )
   securityQuestionAnswer: string;
 
   @IsDefined()
@@ -45,11 +55,15 @@ export class RegistrationDataDto {
   @IsDefined()
   @IsString()
   @IsNotEmpty()
+  @MaxLength(50)
+  @Matches(RegExp(/(?=.*[A-Z])(?=.*[a-z])[a-zA-Z'\s\-]+$/))
   firstName: string;
 
   @IsDefined()
   @IsString()
   @IsNotEmpty()
+  @MaxLength(50)
+  @Matches(RegExp(/(?=.*[A-Z])(?=.*[a-z])[a-zA-Z'\s\-]+$/))
   lastName: string;
 
   @IsDefined()
