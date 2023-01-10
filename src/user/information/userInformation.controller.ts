@@ -24,6 +24,8 @@ class UserInformationController {
         email: user.email ? user.email : null,
 
         passportNumber: user.passportId ? user.passportId : null,
+
+        isResident: user.isResident,
       };
       return res.status(StatusCodes.OK).json({ userData: sendData });
     } catch (err) {
