@@ -30,9 +30,6 @@ export class RegistrationDataDto {
   @IsNotEmpty()
   securityQuestionId: string;
 
-  @IsString()  
-  securityQuestionAttempts:string;
-
   @IsDefined()
   @IsString()
   @IsNotEmpty()
