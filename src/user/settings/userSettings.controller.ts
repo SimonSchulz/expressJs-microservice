@@ -22,13 +22,10 @@ class UserSettingsController {
     const newHashPass = await this.userService.genHashPassword(updateData.newPassword);
     const newPassCheck = await this.userService.checkUserPassword(user, newHashPass);
 
-    if (newPassCheck) {
-      return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: messages.SAME_PASSWORD });
-    }
     if (passCheck && !newPassCheck) {
       return res.status(StatusCodes.OK).json({ msg: messages.SUCCESS });
     } else {
-      return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: messages.ERROR });
+      return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: messages.INVALID_PASSWORD });
     }
   };
 
