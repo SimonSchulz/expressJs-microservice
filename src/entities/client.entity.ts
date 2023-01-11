@@ -81,4 +81,7 @@ export default class Client {
 
   @Column({ nullable: true })
   refreshToken: string;
+
+  @Column({ default: false })
+  isBlocked: boolean;
 }

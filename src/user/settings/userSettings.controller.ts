@@ -1,9 +1,8 @@
-import e, { Request, Response } from 'express';
+import { Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import TokenController from '../../token/token.controller';
 import { messages } from '../../utils/helpers/messages';
 import UserService from '../user.service';
-import { ClientStatus } from '../../utils/helpers/ClientStatus';
 
 class UserSettingsController {
   constructor(private userService: UserService, private tokenController: TokenController) {
@@ -34,18 +33,27 @@ class UserSettingsController {
   };
 
   public checkSecurityQuestion = async (req: Request, res: Response) => {
-    const updateData = req.body;
+    const data = req.body;
     const errorMessages = [];
-    const securityQuestionCheck = await this.userService.checkSecQuestionData(updateData);
-    const user = await this.userService.getUser(updateData.clientId);
+    const user = await this.userService.getUser(data.clientId);
+    const securityQuestionCheck = await this.userService.checkSecurityQuestionAnswer(user.securityQuestionAnswer, data.securityQuestionAnswer);
+    const securityQuestionTypeCheck = await this.userService.checkSecQuestionData(data);
+
+    if (!securityQuestionTypeCheck) {
+      return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: messages.SEC_QUIESTION_TYPE });
+    }
 
     if (!user) {
       return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: messages.USER_NOT_FOUND });
     }
 
-   if (!securityQuestionCheck){
+    if(user.isBlocked) {
+      return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: messages.CLIENT_STILL_BLOCKED });
+    }
+
+    if (!securityQuestionCheck ){
       if (+user.securityQuestionAttempts > 0) {
-        await this.userService.updateUserData(updateData.clientId, { 
+        await this.userService.updateUserData(data.clientId, { 
           securityQuestionAttempts: +user.securityQuestionAttempts - 1,
           securityQuestionLastInvalidAttempt: new Date()
         });
@@ -53,8 +61,8 @@ class UserSettingsController {
           `Left ${+user.securityQuestionAttempts - 1} ${+user.securityQuestionAttempts - 1 === 1 ? 'attempt' : 'attempts'}`
           );
       }
-      if (+user.securityQuestionAttempts === 1 && user.clientStatus !== ClientStatus.BLOCKED) {
-        await this.userService.updateUserData(updateData.clientId, { clientStatus: ClientStatus.BLOCKED })
+      if (+user.securityQuestionAttempts === 1 && !user.isBlocked) {
+        await this.userService.updateUserData(data.clientId, { isBlocked: true })
         errorMessages.push(messages.CLIENT_BLOCKED_SECURITY_QUESTION);
       }
       errorMessages.push(messages.INVALID_SECURITY_DATA);
@@ -64,7 +72,7 @@ class UserSettingsController {
       return res.status(StatusCodes.BAD_REQUEST).json({ errorMessages: errorMessages });
     } else {
         try {
-          await this.userService.updateUserData(updateData.clientId, { securityQuestionAttempts: process.env.MAX_SECURITY_QUESTIONS_TRIES });
+          await this.userService.updateUserData(data.clientId, { securityQuestionAttempts: process.env.MAX_SECURITY_QUESTIONS_TRIES });
           return res.status(StatusCodes.OK).json({ msg: messages.SUCCESS });
         } catch (error) {
             return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: messages.ERROR });
@@ -97,7 +105,5 @@ class UserSettingsController {
     }
   }
 }
-
-
 
 export default UserSettingsController;

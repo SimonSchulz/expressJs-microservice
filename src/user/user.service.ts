@@ -108,6 +108,9 @@ class UserService {
   async checkSecQuestionId(id) {
     return await getRepository(SecurityQuestionEntity).findOne({ id });
   }
+  async checkSecurityQuestionAnswer(userSecQuestion, secQuestion) {
+    return await bcrypt.compareSync(secQuestion, userSecQuestion);
+  }
   async checkUserPassword(user, newPassword) {
     const check = await bcrypt.compareSync(newPassword, user.password);
     return check;
