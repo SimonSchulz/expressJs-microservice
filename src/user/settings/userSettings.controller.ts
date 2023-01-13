@@ -80,12 +80,10 @@ class UserSettingsController {
       return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: messages.PASSWORD_IS_INVALID });
     }
 
-    await this.changeUserData(req, res, user);
+    await this.changeUserData(req, res, user, { clientId: updateData.clientId, password: updateData.password });
   }
 
-  private changeUserData = async (req: Request, res: Response, user: Client) => {
-    const updateData = req.body;
-    
+  private changeUserData = async (req: Request, res: Response, user: Client, updateData) => {
     try {
         await this.userService.updateUserData(updateData.clientId, updateData);
         return res.status(StatusCodes.OK).json({ msg: messages.SUCCESS });
