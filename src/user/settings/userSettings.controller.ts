@@ -75,17 +75,17 @@ class UserSettingsController {
     const user = await this.userService.getUser(updateData.clientId);
     
     if (updateData.password) {
-      updateData.password = await this.userService.genHashPassword(updateData.password);
+      user.password = await this.userService.genHashPassword(updateData.password);
     } else {
       return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: messages.PASSWORD_IS_INVALID });
     }
 
-    await this.changeUserData(req, res, user, { clientId: updateData.clientId, password: updateData.password });
+    await this.changeUserData(req, res, user);
   }
 
-  private changeUserData = async (req: Request, res: Response, user: Client, updateData) => {
+  private changeUserData = async (req: Request, res: Response, user: Client) => {
     try {
-        await this.userService.updateUserData(updateData.clientId, updateData);
+        await this.userService.updateUserData(user.clientId, user);
         return res.status(StatusCodes.OK).json({ msg: messages.SUCCESS });
       } catch (error) {
           return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: messages.ERROR });
