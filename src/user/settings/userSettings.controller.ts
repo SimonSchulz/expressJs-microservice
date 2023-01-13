@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
+import Client from '../../entities/client.entity';
 import TokenController from '../../token/token.controller';
 import { messages } from '../../utils/helpers/messages';
 import UserService from '../user.service';
@@ -13,10 +14,6 @@ class UserSettingsController {
   public checkUserPasswords = async (req: Request, res: Response) => {
     const updateData = req.body;
     const user = await this.userService.getUser(updateData.clientId)
-
-    if (!user) {
-      return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: messages.USER_NOT_FOUND });
-    }
 
     const passCheck = await this.userService.checkUserPassword(user, updateData.password);
     const newHashPass = await this.userService.genHashPassword(updateData.newPassword);
@@ -38,10 +35,6 @@ class UserSettingsController {
 
     if (!securityQuestionTypeCheck) {
       return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: messages.SEC_QUIESTION_TYPE });
-    }
-
-    if (!user) {
-      return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: messages.USER_NOT_FOUND });
     }
 
     if(user.isBlocked) {
@@ -77,30 +70,29 @@ class UserSettingsController {
     }
   };
 
-  public changeUserData = async (req: Request, res: Response) => {
+  public changeUserPassword = async (req: Request, res: Response) => {
     const updateData = req.body;
-    const errorMessages = [];
     const user = await this.userService.getUser(updateData.clientId);
-
+    
     if (updateData.password) {
       updateData.password = await this.userService.genHashPassword(updateData.password);
+    } else {
+      return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: messages.PASSWORD_IS_INVALID });
     }
 
-    if (!user) {
-      errorMessages.push(messages.USER_DOESNT_EXIST);
-    } 
+    await this.changeUserData(req, res, user);
+  }
 
-    if (errorMessages.length > 0) {
-      return res.status(StatusCodes.BAD_REQUEST).json({ errorMessages: errorMessages });
-    } else {
-        try {
-          await this.userService.updateUserData(updateData.clientId, updateData);
-          return res.status(StatusCodes.OK).json({ msg: messages.SUCCESS });
-        } catch (error) {
-            return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: messages.ERROR });
-        }
+  private changeUserData = async (req: Request, res: Response, user: Client) => {
+    const updateData = req.body;
+    
+    try {
+        await this.userService.updateUserData(updateData.clientId, updateData);
+        return res.status(StatusCodes.OK).json({ msg: messages.SUCCESS });
+      } catch (error) {
+          return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: messages.ERROR });
+      }
     }
   }
-}
 
 export default UserSettingsController;

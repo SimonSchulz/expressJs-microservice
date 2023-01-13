@@ -31,11 +31,11 @@ class UserSettingsRoutes {
       requestValidationMiddleware,
       this.userSettingsController.checkUserPasswords
     );
-    this.router.post(
-      '/auth/user/settings/all',
+    this.router.put(
+      '/auth/user/settings/password',
       sequrityQuestionMiddleware,
       requestValidationMiddleware,
-      this.userSettingsController.changeUserData
+      this.userSettingsController.changeUserPassword
     );
   }
 }

@@ -4,6 +4,7 @@ import { NextFunction, Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import { plainToInstance } from 'class-transformer';
 import UserService from '../../user/user.service';
+import { messages } from '../../utils/helpers/messages';
 
 import { Endpoints } from './constants';
 
@@ -28,6 +29,11 @@ export const sequrityQuestionMiddleware = async (req: Request, res: Response, ne
   const data: any = formatDataToDto(req);
   const userService = new UserService();
   const user = await userService.getUser(data.clientId);
+
+  if (!user) {
+   return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: messages.USER_DOESNT_EXIST });
+  }
+  
   if (
     user.securityQuestionLastInvalidAttempt &&
     +user.securityQuestionAttempts < +process.env.MAX_SECURITY_QUESTIONS_TRIES &&
