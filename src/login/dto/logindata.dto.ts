@@ -1,4 +1,4 @@
-import { IsDefined, IsString, Matches, IsNotEmpty } from 'class-validator';
+import { IsDefined, IsString, Matches, IsNotEmpty, MinLength } from 'class-validator';
 
 export class LoginDataDto {
   @IsDefined()
@@ -8,11 +8,14 @@ export class LoginDataDto {
   @IsDefined()
   @IsString()
   @IsNotEmpty()
+  @MinLength(2)
   login: string;
 
   @IsDefined()
   @IsString()
   @IsNotEmpty()
-  @Matches(RegExp(/(?=.*[0-9])(?=.*[!@#$%^&*])(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z!@#$%^&*~]{8,}/))
+  @Matches(
+    RegExp(/^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z\!\"\$\&\'\(\)\*\+\,\-\.\:\;\=\[\\\]\^\_\`\{\|\}\~]{8,20}$/)
+  )
   password: string;
 }
