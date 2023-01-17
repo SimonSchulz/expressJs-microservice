@@ -25,8 +25,8 @@ define(Client, () => {
   ]);
   client.securityQuestionType = faker.helpers.arrayElement(['preDefined', 'selfDefined']);
   client.securityQuestionAnswer = faker.lorem.words(3);
-  client.securityQuestionAvailableAttempts = faker.datatype.number({ max: 3 });
-  client.securityQuestionIncorrectInputTime = faker.date.past();
+  client.secQuestionInvalidAttempts = faker.datatype.number({ max: 3 });
+  client.lastSecQuestionInvalidAttemptTime = faker.date.past();
   client.email = faker.internet.email();
   client.password = faker.internet.password();
   return client;

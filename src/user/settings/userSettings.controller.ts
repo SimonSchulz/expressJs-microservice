@@ -42,16 +42,16 @@ class UserSettingsController {
     }
 
     if (!securityQuestionCheck ){
-      if (+user.securityQuestionAvailableAttempts > 0) {
+      if (user.secQuestionInvalidAttempts > 0) {
         await this.userService.updateUserData(data.clientId, { 
-          securityQuestionAttempts: +user.securityQuestionAvailableAttempts - 1,
-          securityQuestionLastInvalidAttempt: new Date()
+          secQuestionInvalidAttempts: user.secQuestionInvalidAttempts - 1,
+          lastSecQuestionInvalidAttemptTime: new Date()
         });
         errorMessages.push(
-          `Left ${+user.securityQuestionAvailableAttempts - 1} ${+user.securityQuestionAvailableAttempts - 1 === 1 ? 'attempt' : 'attempts'}`
+          `Left ${user.secQuestionInvalidAttempts - 1} ${user.secQuestionInvalidAttempts - 1 === 1 ? 'attempt' : 'attempts'}`
           );
       }
-      if (+user.securityQuestionAvailableAttempts === 1 && !user.isBlocked) {
+      if (user.secQuestionInvalidAttempts === 1 && !user.isBlocked) {
         await this.userService.updateUserData(data.clientId, { isBlocked: true })
         errorMessages.push(messages.CLIENT_BLOCKED_SECURITY_QUESTION);
       }
@@ -62,7 +62,7 @@ class UserSettingsController {
       return res.status(StatusCodes.BAD_REQUEST).json({ errorMessages: errorMessages });
     } else {
         try {
-          await this.userService.updateUserData(data.clientId, { securityQuestionAttempts: process.env.MAX_SECURITY_QUESTIONS_TRIES });
+          await this.userService.updateUserData(data.clientId, { secQuestionInvalidAttempts: +process.env.MAX_SECURITY_QUESTIONS_TRIES });
           return res.status(StatusCodes.OK).json({ msg: messages.SUCCESS });
         } catch (error) {
             return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: messages.ERROR });
