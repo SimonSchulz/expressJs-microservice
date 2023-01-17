@@ -35,9 +35,9 @@ export const sequrityQuestionMiddleware = async (req: Request, res: Response, ne
   }
   
   if (
-    user.securityQuestionLastInvalidAttempt &&
-    +user.securityQuestionAttempts < +process.env.MAX_SECURITY_QUESTIONS_TRIES &&
-    Date.now() - (+user.securityQuestionLastInvalidAttempt) > +process.env.MILLISECONDS_PER_DAY 
+    user.securityQuestionIncorrectInputTime &&
+    +user.securityQuestionAvailableAttempts < +process.env.MAX_SECURITY_QUESTIONS_TRIES &&
+    Date.now() - (+user.securityQuestionIncorrectInputTime) > +process.env.MILLISECONDS_PER_DAY 
   ) 
   {
     await userService.updateUserData(data.clientId, { 

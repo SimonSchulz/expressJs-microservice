@@ -68,10 +68,10 @@ export default class Client {
   securityQuestionAnswer: string;
 
   @Column({ nullable: true, default: null })
-  securityQuestionAttempts: string;
+  securityQuestionAvailableAttempts: number;
 
   @Column({ nullable: true })
-  securityQuestionLastInvalidAttempt: Date;
+  securityQuestionIncorrectInputTime: Date;
 
   @Column({ length: 50, nullable: true, default: null })
   email: string;
