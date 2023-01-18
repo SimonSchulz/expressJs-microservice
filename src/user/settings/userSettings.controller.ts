@@ -44,7 +44,7 @@ class UserSettingsController {
     if (!securityQuestionCheck ){
       if (user.secQuestionValidAttempts > 0) {
         await this.userService.updateUserData(data.clientId, { 
-          secQuestionInvalidAttempts: user.secQuestionValidAttempts - 1,
+          secQuestionValidAttempts: user.secQuestionValidAttempts - 1,
           lastSecQuestionInvalidAttemptTime: new Date()
         });
         errorMessages.push(
@@ -62,7 +62,7 @@ class UserSettingsController {
       return res.status(StatusCodes.BAD_REQUEST).json({ errorMessages: errorMessages });
     } else {
         try {
-          await this.userService.updateUserData(data.clientId, { secQuestionInvalidAttempts: +process.env.MAX_SECURITY_QUESTIONS_TRIES });
+          await this.userService.updateUserData(data.clientId, { secQuestionValidAttempts: +process.env.MAX_SECURITY_QUESTIONS_TRIES });
           return res.status(StatusCodes.OK).json({ msg: messages.SUCCESS });
         } catch (error) {
             return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: messages.ERROR });
