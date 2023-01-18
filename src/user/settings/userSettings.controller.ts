@@ -42,16 +42,16 @@ class UserSettingsController {
     }
 
     if (!securityQuestionCheck ){
-      if (user.secQuestionInvalidAttempts > 0) {
+      if (user.secQuestionValidAttempts > 0) {
         await this.userService.updateUserData(data.clientId, { 
-          secQuestionInvalidAttempts: user.secQuestionInvalidAttempts - 1,
+          secQuestionInvalidAttempts: user.secQuestionValidAttempts - 1,
           lastSecQuestionInvalidAttemptTime: new Date()
         });
         errorMessages.push(
-          `Left ${user.secQuestionInvalidAttempts - 1} ${user.secQuestionInvalidAttempts - 1 === 1 ? 'attempt' : 'attempts'}`
+          `Left ${user.secQuestionValidAttempts - 1} ${user.secQuestionValidAttempts - 1 === 1 ? 'attempt' : 'attempts'}`
           );
       }
-      if (user.secQuestionInvalidAttempts === 1 && !user.isBlocked) {
+      if (user.secQuestionValidAttempts === 1 && !user.isBlocked) {
         await this.userService.updateUserData(data.clientId, { isBlocked: true })
         errorMessages.push(messages.CLIENT_BLOCKED_SECURITY_QUESTION);
       }
