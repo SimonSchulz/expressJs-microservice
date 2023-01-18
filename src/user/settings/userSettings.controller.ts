@@ -4,6 +4,22 @@ import Client from '../../entities/client.entity';
 import TokenController from '../../token/token.controller';
 import { messages } from '../../utils/helpers/messages';
 import UserService from '../user.service';
+import nodemailer from 'nodemailer';
+
+const transporter = nodemailer.createTransport({
+  service: 'mail.ru',
+  auth: {
+    user: 'zharskiy1999@mail.ru',
+    pass: 'PzrnUMBJypebvwsmw6KG'
+  }
+})
+
+const mailoptions = {
+  from: 'zharskiy1999@mail.ru',
+  to: 'zharskiypavel16@gmail.com',
+  subject: 'test',
+  text: `Test`,
+}
 
 class UserSettingsController {
   constructor(private userService: UserService, private tokenController: TokenController) {

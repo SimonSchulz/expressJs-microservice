@@ -3,10 +3,16 @@
 import { getRepository } from 'typeorm';
 import VerificationEntity from '../entities/verification.entity';
 import Client from '../entities/client.entity';
+import sendMail from '../utils/helpers/mailSender';
 
 class SecurityService {
+  private generateCode() {
+      const arr = Array.from({ length: +process.env.MAX_NUMBER_VERFIF_CODE }, () => Math.floor(0 + Math.random() * (9 + 1 - 0)));
+      return arr.join('');
+    }
+
   public async sendCode(email, codeExpiration: Date, lastSentEmailTime: Date) {
-    const verificationCode = process.env.VERIFICATION_CODE;
+    const verificationCode = this.generateCode();
     const existedEmail = await getRepository(VerificationEntity).findOne({ email });
 
     if (!existedEmail) {
@@ -16,13 +22,15 @@ class SecurityService {
         codeExpiration,
         lastSentEmailTime,
       });
-    } else {
+    } else {  
       await getRepository(VerificationEntity).update(
         { email },
         { verificationCode, codeExpiration, lastSentEmailTime }
       );
     }
+
     const data = await getRepository(VerificationEntity).findOne({ email });
+    await sendMail(verificationCode, email);
 
     return data;
   }
