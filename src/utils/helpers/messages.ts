@@ -6,7 +6,7 @@ export const messages = {
   SUCCESS: 'Success!',
   USER_DOESNT_EXIST: "User doesn't exist",
   COOLDOWN: 'You just sended code, try again later',
-  USER_NOT_AUTHORIZED: 'Not authorized',
+  USER_NOT_AUTHORIZED: 'User do not authorized',
   ERROR: 'Error',
   SAME_EMAIL: 'same email address',
   SAME_PHONE: 'same phone number',
@@ -21,4 +21,6 @@ export const messages = {
   USER_NOT_FOUND: 'User not found',
   USER_IS_BLOCKED: 'User is blocked',
   USER_LOGGED_OUT: 'User logged out',
+  USER_LOGGED_OUT: 'User logged out',
+  PASSPORT_IS_INVALID: 'Passport number is invalid',
 };

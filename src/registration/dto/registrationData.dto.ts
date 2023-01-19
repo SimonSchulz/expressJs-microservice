@@ -71,6 +71,7 @@ export class RegistrationDataDto {
   @Matches(RegExp(/^(?=.{6,20}$)([0-9A-Za-z]{1,}[A-Za-z0-9\-\s]{0,}[0-9A-Za-z]{1,})?$/))
   passportNumber: string;
 
+  @IsDefined()
   @IsBoolean()
   @IsNotEmpty()
   isResident: boolean;
