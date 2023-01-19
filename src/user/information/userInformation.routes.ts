@@ -28,6 +28,11 @@ class UserInformationRoutes {
       checkAccessToken,
       this.userInformationController.sendUserData
     );
+    this.router.post(
+      '/auth/avatar',
+      checkAccessToken,
+      this.userInformationController.uploadAvatar
+    );
   }
 }
 

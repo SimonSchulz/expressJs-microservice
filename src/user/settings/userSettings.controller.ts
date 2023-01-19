@@ -56,6 +56,9 @@ class UserSettingsController {
       }
     }
   };
+
+
+
 }
 
 export default UserSettingsController;

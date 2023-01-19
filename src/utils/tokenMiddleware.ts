@@ -5,6 +5,7 @@ import { messages } from './helpers/messages';
 
 export interface TypedRequestBody extends Request {
   userDecodedData?: any;
+  files?: any;
 }
 
 function checkAccessToken(req: TypedRequestBody, res: Response, next: NextFunction) {
