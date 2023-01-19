@@ -6,8 +6,6 @@ export const messages = {
   SUCCESS: 'Success!',
   USER_DOESNT_EXIST: "User doesn't exist",
   COOLDOWN: 'You just sended code, try again later',
-  USER_NOT_AUTHORIZED: 'Not authorized',
-  CLIENT_BLOCKED_SECURITY_QUESTION: 'You was blocked, you can try again after 24 hours.',
   ERROR: 'Error',
   SAME_EMAIL: 'same email address',
   SAME_PHONE: 'same phone number',
@@ -22,4 +20,8 @@ export const messages = {
   USER_NOT_FOUND: 'User not found',
   USER_IS_BLOCKED: 'User is blocked',
   SEC_QUIESTION_TYPE: 'Wrong question type',
+  CLIENT_BLOCKED_SECURITY_QUESTION: 'You was blocked, you can try again after 24 hours.',
+  USER_LOGGED_OUT: 'User logged out',
+  PASSPORT_IS_INVALID: 'Passport number is invalid',
+
 };
