@@ -88,4 +88,15 @@ export default class LoginController {
       return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: error.message });
     }
   };
+
+  public logout = async (req: Request, res: Response) => {
+    try {
+      const { clientId } = req.body;
+      await this.tokenController.revokeRefreshToken(clientId);
+      return res.status(StatusCodes.OK).json({ msg: messages.USER_LOGGED_OUT });
+    } catch (error) {
+      return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: error.message });
+    }
+  };
+  
 }

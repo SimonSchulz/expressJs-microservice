@@ -20,5 +20,6 @@ export const messages = {
   USER_ALREADY_EXIST: 'User already exists',
   USER_NOT_FOUND: 'User not found',
   USER_IS_BLOCKED: 'User is blocked',
+  USER_LOGGED_OUT: 'User logged out',
   PASSPORT_IS_INVALID: 'Passport number is invalid',
 };

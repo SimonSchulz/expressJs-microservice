@@ -29,7 +29,9 @@ class LoginRoutes {
     this.router.post('/login', requestValidationMiddleware, isBlocked, this.loginController.login);
     this.router.get('/login/token', this.loginController.reLogin);
     //this.router.patch('/login/password', requestValidationMiddleware, this.loginController.updateUserPassword);
+    this.router.get('/logout', this.loginController.logout)
   }
+  
 }
 
 export default LoginRoutes;
