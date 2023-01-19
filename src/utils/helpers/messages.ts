@@ -21,7 +21,7 @@ export const messages = {
   USER_NOT_FOUND: 'User not found',
   USER_IS_BLOCKED: 'User is blocked',
   USER_LOGGED_OUT: 'User logged out',
-  USER_LOGGED_OUT: 'User logged out',
   PASSPORT_IS_INVALID: 'Passport number is invalid',
   CLIENT_BLOCKED_SECURITY_QUESTION: 'You was blocked, you can try again after 24 hours.',
+  SEC_QUIESTION_TYPE: 'Wrong question type',
 };
