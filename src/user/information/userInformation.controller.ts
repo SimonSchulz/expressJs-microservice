@@ -1,12 +1,14 @@
 import { Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import { v4 as uuidv4 } from 'uuid';
+import fs from 'file-system';
 import TokenController from '../../token/token.controller';
 import { messages } from '../../utils/helpers/messages';
 import UserService from '../user.service';
 import { TypedRequestBody } from '../../utils/tokenMiddleware';
 import * as path from 'path';
 import { staticPath } from '../../config';
+import { UploadedFile } from 'express-fileupload';
 
 class UserInformationController {
   constructor(private userService: UserService, private tokenController: TokenController) {
@@ -47,6 +49,24 @@ class UserInformationController {
   public uploadAvatar = async (req: TypedRequestBody, res: Response) => {
     try {
       const file = req.files.file;
+      const clientId = req.userDecodedData.userId;
+      console.log(file);
+      //const user = await this.userService.getUser({ clientId });
+      const avatarName = uuidv4() + '.jpg';
+      //console.log(staticPath);
+      await file.mv(path.join(staticPath, avatarName));
+
+      await this.userService.updateUserData(clientId, { avatar: avatarName });
+
+      return res.status(StatusCodes.OK).json({ msg: 'success' });
+    } catch (error) {
+      return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: 'avatar error' });
+    }
+  };
+
+  public deleteAvatar = async (req: TypedRequestBody, res: Response) => {
+    try {
+      let file = req.files.file as UploadedFile;
       const clientId = req.userDecodedData.userId;
       console.log(file);
       //const user = await this.userService.getUser({ clientId });
