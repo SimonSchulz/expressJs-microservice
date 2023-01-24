@@ -108,6 +108,9 @@ class UserService {
   async checkSecQuestionId(id) {
     return await getRepository(SecurityQuestionEntity).findOne({ id });
   }
+  async checkSecurityQuestionAnswer(userSecQuestion, secQuestion) {
+    return await bcrypt.compareSync(secQuestion, userSecQuestion);
+  }
   async checkUserPassword(user, newPassword) {
     const check = await bcrypt.compareSync(newPassword, user.password);
     return check;
@@ -129,6 +132,7 @@ class UserService {
       securityQuestionId: registrationData.securityQuestionId,
       securityQuestionType: registrationData.securityQuestionType,
       securityQuestionAnswer: registrationData.securityQuestionAnswer,
+      secQuestionValidAttempts: +process.env.MAX_SECURITY_QUESTIONS_TRIES,
       clientStatus: ClientStatus.REGISTERED,
       email: registrationData.email.toLowerCase(),
       firstName: registrationData.firstName,

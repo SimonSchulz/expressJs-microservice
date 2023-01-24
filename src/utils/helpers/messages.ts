@@ -15,6 +15,7 @@ export const messages = {
   INTERNAL_SERVER_ERROR: 'Internal server error',
   INVALID_MOBILE_PHONE: 'Invalid mobile phone',
   SAME_PASSWORD: 'Same password was received',
+  SAME_SEC_QUESTION: 'Same security question received',
   PASSWORD_IS_INVALID: 'Password is invalid',
   SUCCES: 'Success',
   USER_ALREADY_EXIST: 'User already exists',
@@ -22,4 +23,6 @@ export const messages = {
   USER_IS_BLOCKED: 'User is blocked',
   USER_LOGGED_OUT: 'User logged out',
   PASSPORT_IS_INVALID: 'Passport number is invalid',
+  CLIENT_BLOCKED_SECURITY_QUESTION: 'You was blocked, you can try again after 24 hours.',
+  SEC_QUIESTION_TYPE: 'Wrong question type',
 };

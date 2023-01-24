@@ -102,12 +102,12 @@ export default class SecurityController {
         const timeObj = generateTime();
         const data = await this.securityService.sendCode(email, timeObj.codeExpirationTime, timeObj.lastSentEmailTime);
         const { id } = data;
-
+        
         return res.status(StatusCodes.OK).json({ id });
       } else {
         if (timeDiffInMinutes(verificationData.lastSentEmailTime) < +process.env.COOLDOWN_TIME) {
           const blockSecondsLeft = Math.round(
-            30 - (new Date().getTime() - verificationData.lastSentEmailTime.getTime()) / 1000
+            (+process.env.COOLDOWN_TIME * 60) - (new Date().getTime() - verificationData.lastSentEmailTime.getTime()) / 1000
           );
 
           return res
