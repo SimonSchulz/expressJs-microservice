@@ -23,10 +23,11 @@ variables:
 
 .deploy-template:
   stage: deploy
+  environment:
+    name: $CI_COMMIT_BRANCH
   before_script:
     - echo "$AND_DOCKER_REGISTRY_RO_PASS" | docker login -u nexus-ro "$AND_DOCKER_REGISTRY_NAME" --password-stdin
-    - cp $AND_ENV_DEV .env
-    - echo $AND_ENV
+    - cp $AND_ENV .env
   script:
     - docker-compose -f docker-compose.yml stop || true
     - docker system prune -f --filter "label!=keep"
