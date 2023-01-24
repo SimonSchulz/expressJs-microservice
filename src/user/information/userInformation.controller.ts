@@ -1,14 +1,13 @@
 import { Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import { v4 as uuidv4 } from 'uuid';
-import fs from 'file-system';
+import * as fs from 'fs';
 import TokenController from '../../token/token.controller';
 import { messages } from '../../utils/helpers/messages';
 import UserService from '../user.service';
 import { TypedRequestBody } from '../../utils/tokenMiddleware';
 import * as path from 'path';
 import { staticPath } from '../../config';
-import { UploadedFile } from 'express-fileupload';
 
 class UserInformationController {
   constructor(private userService: UserService, private tokenController: TokenController) {
@@ -49,36 +48,55 @@ class UserInformationController {
   public uploadAvatar = async (req: TypedRequestBody, res: Response) => {
     try {
       const file = req.files.file;
+      const fileExtension = req.fileExtension;
       const clientId = req.userDecodedData.userId;
-      console.log(file);
-      //const user = await this.userService.getUser({ clientId });
-      const avatarName = uuidv4() + '.jpg';
-      //console.log(staticPath);
-      await file.mv(path.join(staticPath, avatarName));
+      const avatarName = uuidv4() + '.' + fileExtension;
+      const user = await this.userService.getUser({ clientId });
 
+      if (!user.avatar) {
+        fs.unlinkSync(path.join(staticPath, user.avatar));
+      }
+
+      file.mv(path.join(staticPath, avatarName));
       await this.userService.updateUserData(clientId, { avatar: avatarName });
 
-      return res.status(StatusCodes.OK).json({ msg: 'success' });
+      return res.status(StatusCodes.OK).json({ avatarName });
     } catch (error) {
-      return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: 'avatar error' });
+      return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: error.message });
     }
   };
 
   public deleteAvatar = async (req: TypedRequestBody, res: Response) => {
     try {
-      let file = req.files.file as UploadedFile;
       const clientId = req.userDecodedData.userId;
-      console.log(file);
-      //const user = await this.userService.getUser({ clientId });
-      const avatarName = uuidv4() + '.jpg';
-      //console.log(staticPath);
-      await file.mv(path.join(staticPath, avatarName));
+      const user = await this.userService.getUser({ clientId });
 
-      await this.userService.updateUserData(clientId, { avatar: avatarName });
+      if (!user.avatar) {
+        return res.status(StatusCodes.NOT_FOUND).json({ msg: messages.AVATAR_NOT_FOUND });
+      }
 
-      return res.status(StatusCodes.OK).json({ msg: 'success' });
+      fs.unlinkSync(path.join(staticPath, user.avatar));
+
+      await this.userService.updateUserData(clientId, { avatar: null });
+
+      return res.status(StatusCodes.OK).json({ msg: messages.SUCCESS });
     } catch (error) {
-      return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: 'avatar error' });
+      return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: error.message });
+    }
+  };
+
+  public getAvatar = async (req: TypedRequestBody, res: Response) => {
+    try {
+      const clientId = req.userDecodedData.userId;
+      const { avatar } = await this.userService.getUser({ clientId });
+
+      if (!avatar) {
+        return res.status(StatusCodes.NOT_FOUND).json({ msg: messages.AVATAR_NOT_FOUND });
+      }
+
+      return res.status(StatusCodes.OK).json({ avatar });
+    } catch (error) {
+      return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: error.message });
     }
   };
 }

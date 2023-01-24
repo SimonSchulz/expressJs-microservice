@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import { fileValidator } from '../../middlewares/fileValidator';
 import TokenController from '../../token/token.controller';
 import { requestValidationMiddleware } from '../../utils/helpers/validation';
 import checkAccessToken from '../../utils/tokenMiddleware';
@@ -28,11 +29,8 @@ class UserInformationRoutes {
       checkAccessToken,
       this.userInformationController.sendUserData
     );
-    this.router.post(
-      '/auth/avatar',
-      checkAccessToken,
-      this.userInformationController.uploadAvatar
-    );
+    this.router.post('/auth/avatar', fileValidator, checkAccessToken, this.userInformationController.uploadAvatar);
+    this.router.delete('/auth/avatar', checkAccessToken, this.userInformationController.deleteAvatar);
   }
 }
 

@@ -21,4 +21,6 @@ export const messages = {
   USER_NOT_FOUND: 'User not found',
   USER_IS_BLOCKED: 'User is blocked',
   PASSPORT_IS_INVALID: 'Passport number is invalid',
+  AVATAR_NOT_FOUND: 'Avatar does not exist',
+  INVALID_FILE_EXTENSION: 'Invalid file extension',
 };
