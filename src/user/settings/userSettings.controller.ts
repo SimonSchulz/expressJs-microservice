@@ -83,6 +83,32 @@ class UserSettingsController {
     await this.changeUserData(req, res, user);
   }
 
+  public changeUserEmail = async (req: Request, res: Response) => {
+    const { clientId, email } = req.body;
+    const user = await this.userService.getUser(clientId);
+    
+    if (email) {
+      user.email = await this.userService.genHashPassword(email);
+    } else {
+      return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: messages.EMAIL_IS_INVALID });
+    }
+
+    await this.changeUserData(req, res, user);
+  }
+
+  public changeUserPhone = async (req: Request, res: Response) => {
+    const { clientId, mobilePhone } = req.body;
+    const user = await this.userService.getUser(clientId);
+    
+    if (mobilePhone) {
+      user.mobilePhone = await this.userService.genHashPassword(mobilePhone);
+    } else {
+      return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: messages.INVALID_MOBILE_PHONE });
+    }
+
+    await this.changeUserData(req, res, user);
+  }
+
   private changeUserData = async (req: Request, res: Response, user: Client) => {
     try {
         await this.userService.updateUserData(user.clientId, user);
