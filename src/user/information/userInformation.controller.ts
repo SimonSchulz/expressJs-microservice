@@ -25,7 +25,7 @@ class UserInformationController {
         return res.status(StatusCodes.NOT_FOUND).json({ msg: messages.USER_DOESNT_EXIST });
       }
 
-      const { firstName, lastName, mobilePhone, email, passportId, isResident } = user;
+      const { firstName, lastName, mobilePhone, email, passportId, isResident, avatar } = user;
 
       if (passportNumber !== passportId) {
         return res.status(StatusCodes.BAD_REQUEST).json({ msg: messages.PASSPORT_IS_INVALID });
@@ -38,6 +38,7 @@ class UserInformationController {
         email,
         passportNumber,
         isResident,
+        avatarName: avatar,
       };
       return res.status(StatusCodes.OK).json({ userData: personalInfo });
     } catch (err) {
@@ -48,15 +49,14 @@ class UserInformationController {
   public uploadAvatar = async (req: TypedRequestBody, res: Response) => {
     try {
       const file = req.files.file;
-      //console.log(file)
       const fileExtension = req.fileExtension;
-      //console.log(fileExtension)
       const clientId = req.userDecodedData.userId;
       const avatarName = uuidv4() + '.' + fileExtension;
       const user = await this.userService.getUser({ clientId });
 
-      if (!user.avatar) {
+      if (user.avatar) {
         fs.unlinkSync(path.join(staticPath, user.avatar));
+        await this.userService.updateUserData(clientId, { avatar: null });
       }
 
       file.mv(path.join(staticPath, avatarName));
@@ -96,7 +96,7 @@ class UserInformationController {
         return res.status(StatusCodes.NOT_FOUND).json({ msg: messages.AVATAR_NOT_FOUND });
       }
 
-      return res.status(StatusCodes.OK).json({ avatar });
+      return res.status(StatusCodes.OK).json({ avatarName: avatar });
     } catch (error) {
       return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: error.message });
     }

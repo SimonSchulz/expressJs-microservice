@@ -23,6 +23,7 @@ class NotificationsController {
           smsNotification: user.smsNotification,
           pushNotification: user.pushNotification,
           emailSubscription: user.emailSubscription,
+          avatarName: user.avatar,
         };
         res.status(StatusCodes.OK).json({ userSettings });
       }
