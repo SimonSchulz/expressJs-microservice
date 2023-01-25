@@ -5,7 +5,7 @@ import VerificationEntity from '../entities/verification.entity';
 import Client from '../entities/client.entity';
 
 class SecurityService {
-  public async sendCode(email, codeExpiration: Date, lastSentEmailTime: Date) {
+ public async sendCode(email, codeExpiration: Date, lastSentEmailTime: Date) {
     const verificationCode = process.env.VERIFICATION_CODE;
     const existedEmail = await getRepository(VerificationEntity).findOne({ email });
 
@@ -16,12 +16,13 @@ class SecurityService {
         codeExpiration,
         lastSentEmailTime,
       });
-    } else {
+    } else {  
       await getRepository(VerificationEntity).update(
         { email },
         { verificationCode, codeExpiration, lastSentEmailTime }
       );
     }
+
     const data = await getRepository(VerificationEntity).findOne({ email });
 
     return data;
@@ -35,19 +36,11 @@ class SecurityService {
   }
 
   public async updateUserByParam(param, newClientData: object) {
-    await getRepository(Client).update(
-      param,
-
-      newClientData
-    );
+    await getRepository(Client).update(param, newClientData);
   }
 
   public async updateByParam(param, newClientData: object) {
-    await getRepository(VerificationEntity).update(
-      param,
-
-      newClientData
-    );
+    await getRepository(VerificationEntity).update(param, newClientData);
   }
 
   public async checkCode(smsId: string) {
