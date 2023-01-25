@@ -8,11 +8,8 @@ const allowedFileTypes = ['image/png', 'image/jpeg', 'image/jpg'];
 
 export const fileValidator = async (req: TypedRequestBody, res: Response, next: NextFunction) => {
   try {
-    console.log(req.files)
     const { file } = req.files;
-    
     const fileExtension = file.name.slice(file.name.lastIndexOf('.') + 1);
-    console.log(fileExtension)
 
     if (!allowedFiles.includes(fileExtension) || !allowedFileTypes.includes(file.mimetype)) {
       return res.status(StatusCodes.BAD_REQUEST).json({ msg: messages.INVALID_FILE_EXTENSION });

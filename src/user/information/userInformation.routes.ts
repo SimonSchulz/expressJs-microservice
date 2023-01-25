@@ -31,6 +31,7 @@ class UserInformationRoutes {
     );
     this.router.post('/auth/avatar', fileValidator, checkAccessToken, this.userInformationController.uploadAvatar);
     this.router.delete('/auth/avatar', checkAccessToken, this.userInformationController.deleteAvatar);
+    this.router.get('/auth/avatar', checkAccessToken, this.userInformationController.getAvatar);
   }
 }
 

@@ -48,7 +48,9 @@ class UserInformationController {
   public uploadAvatar = async (req: TypedRequestBody, res: Response) => {
     try {
       const file = req.files.file;
+      //console.log(file)
       const fileExtension = req.fileExtension;
+      //console.log(fileExtension)
       const clientId = req.userDecodedData.userId;
       const avatarName = uuidv4() + '.' + fileExtension;
       const user = await this.userService.getUser({ clientId });
