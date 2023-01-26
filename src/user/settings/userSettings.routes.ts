@@ -31,11 +31,35 @@ class UserSettingsRoutes {
       requestValidationMiddleware,
       this.userSettingsController.checkUserPasswords
     );
+    this.router.patch(
+      '/auth/user/settings/new-security-question',
+      sequrityQuestionMiddleware,
+      requestValidationMiddleware,
+      this.userSettingsController.checkUserSecurityQuestions
+    );
     this.router.put(
       '/auth/user/settings/password',
       sequrityQuestionMiddleware,
       requestValidationMiddleware,
       this.userSettingsController.changeUserPassword
+    );
+    this.router.put(
+      '/auth/user/settings/security-question',
+      sequrityQuestionMiddleware,
+      requestValidationMiddleware,
+      this.userSettingsController.changeUserSecurityQuestion
+    );
+    this.router.put(
+      '/auth/user/settings/email',
+      sequrityQuestionMiddleware,
+      requestValidationMiddleware,
+      this.userSettingsController.changeUserEmail
+    );
+    this.router.put(
+      '/auth/user/settings/mobile-phone',
+      sequrityQuestionMiddleware,
+      requestValidationMiddleware,
+      this.userSettingsController.changeUserPhone
     );
   }
 }

@@ -13,7 +13,7 @@ class UserSettingsController {
 
   public checkUserPasswords = async (req: Request, res: Response) => {
     const updateData = req.body;
-    const user = await this.userService.getUser(updateData.clientId)
+    const user = await this.userService.getUser(updateData.clientId);
 
     const passCheck = await this.userService.checkUserPassword(user, updateData.password);
     const newHashPass = await this.userService.genHashPassword(updateData.newPassword);
@@ -25,6 +25,19 @@ class UserSettingsController {
       return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: messages.INVALID_PASSWORD });
     }
   };
+
+  public checkUserSecurityQuestions = async (req: Request, res: Response) => {
+    const updateData = req.body;
+    const user = await this.userService.getUser(updateData.clientId);
+    const secQuestionCheck = await this.userService.checkSecurityQuestionAnswer(user.securityQuestionAnswer, updateData.securityQuestionAnswer);
+    const newSecQuestionCheck = await this.userService.checkSecurityQuestionAnswer(user.securityQuestionAnswer, updateData.newSecurityQuestionAnswer);
+
+    if (secQuestionCheck && !newSecQuestionCheck) {
+      return res.status(StatusCodes.OK).json({ msg: messages.SUCCESS });
+    } else {
+      return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: messages.INVALID_SECURITY_DATA });
+    }
+  }
 
   public checkSecurityQuestion = async (req: Request, res: Response) => {
     const data = req.body;
@@ -71,13 +84,26 @@ class UserSettingsController {
   };
 
   public changeUserPassword = async (req: Request, res: Response) => {
-    const updateData = req.body;
-    const user = await this.userService.getUser(updateData.clientId);
+    const { clientId, password } = req.body;
+    const user = await this.userService.getUser(clientId);
     
-    if (updateData.password) {
-      user.password = await this.userService.genHashPassword(updateData.password);
+    if (password) {
+      user.password = await this.userService.genHashPassword(password);
     } else {
       return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: messages.PASSWORD_IS_INVALID });
+    }
+
+    await this.changeUserData(req, res, user);
+  }
+
+  public changeUserSecurityQuestion = async (req: Request, res: Response) => {
+    const { clientId, securityQuestionAnswer } = req.body;
+    const user = await this.userService.getUser(clientId);
+
+    if (securityQuestionAnswer) {
+      user.securityQuestionAnswer = await this.userService.genHashPassword(securityQuestionAnswer);
+    } else {
+      return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: messages.INVALID_SECURITY_DATA });
     }
 
     await this.changeUserData(req, res, user);
@@ -88,7 +114,7 @@ class UserSettingsController {
     const user = await this.userService.getUser(clientId);
     
     if (email) {
-      user.email = await this.userService.genHashPassword(email);
+      user.email = email;
     } else {
       return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: messages.EMAIL_IS_INVALID });
     }
@@ -101,7 +127,7 @@ class UserSettingsController {
     const user = await this.userService.getUser(clientId);
     
     if (mobilePhone) {
-      user.mobilePhone = await this.userService.genHashPassword(mobilePhone);
+      user.mobilePhone = mobilePhone;
     } else {
       return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: messages.INVALID_MOBILE_PHONE });
     }
