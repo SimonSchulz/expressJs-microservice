@@ -67,7 +67,7 @@ export default class Client {
   @Column({ length: 100, nullable: true })
   securityQuestionAnswer: string;
 
-  @Column({ nullable: true, default: null })
+  @Column({ nullable: true, default: +process.env.MAX_SECURITY_QUESTIONS_TRIES || 3 })
   secQuestionValidAttempts: number;
 
   @Column({ nullable: true })

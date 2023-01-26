@@ -41,7 +41,7 @@ export const sequrityQuestionMiddleware = async (req: Request, res: Response, ne
   ) 
   {
     await userService.updateUserData(data.clientId, { 
-      secQuestionValidAttempts: process.env.MAX_SECURITY_QUESTIONS_TRIES,
+      secQuestionValidAttempts: +process.env.MAX_SECURITY_QUESTIONS_TRIES,
     });
   }
   next();
