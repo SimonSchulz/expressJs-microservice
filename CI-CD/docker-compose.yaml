@@ -1,0 +1,36 @@
+version: '3.4'
+
+services:
+  user-service:
+    container_name: $PROJECT-$CI_COMMIT_BRANCH
+    env_file: $AND_ENV
+    image: $AND_DOCKER_REGISTRY_NAME/$PROJECT:$CI_COMMIT_BRANCH
+    ports:
+      - $PORT:8080
+    restart: always
+    logging:
+      driver: loki
+      options:
+        loki-url: http://127.0.0.1:3100/loki/api/v1/push
+        max-size: 300m
+    networks:
+      - nodanorm_new
+  
+  postgres:
+    image: 'postgres:12.3'
+    container_name: postgres
+    env_file: $AND_ENV
+    restart: always
+    ports:
+      - 5432:5432
+    volumes:
+      - nodanorm-postgres:/var/lib/postgresql/data
+    networks:
+      - nodanorm_new
+
+volumes:
+  nodanorm-postgres:
+
+networks:
+  nodanorm_new:
+    driver: bridge

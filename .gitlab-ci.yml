@@ -1,52 +1,21 @@
----
 stages:
-  - test
-  - image
+  - sonar
+  - build
   - deploy
+  - cleanup
 
 variables:
   PROJECT: $CI_PROJECT_NAME
+  PORT: 3002
   DOCKER_BUILDKIT: 1
   TRANSFER_METER_FREQUENCY: "2s"
   GIT_DEPTH: 0
 
-#TEMPLATES
-
-.image-template:
-  stage: image 
+sonar:
+  stage: sonar
+  image: sonarsource/sonar-scanner-cli:4.8
   before_script:
-    - echo "$AND_DOCKER_REGISTRY_RW_PASS" | docker login -u nexus "$AND_DOCKER_REGISTRY_NAME" --password-stdin
-  script:
-    - docker build --tag $AND_DOCKER_REGISTRY_NAME/$PROJECT:$CI_COMMIT_BRANCH -f Dockerfile --compress --build-arg BUILDKIT_INLINE_CACHE=1 .
-    - docker push $AND_DOCKER_REGISTRY_NAME/$PROJECT:$CI_COMMIT_BRANCH
-    - docker system prune -f --filter "label!=keep"
-
-.deploy-template:
-  stage: deploy
-  environment:
-    name: $CI_COMMIT_BRANCH
-  before_script:
-    - echo "$AND_DOCKER_REGISTRY_RO_PASS" | docker login -u nexus-ro "$AND_DOCKER_REGISTRY_NAME" --password-stdin
-    - cp $AND_ENV .env
-  script:
-    - docker-compose -f docker-compose.yml stop || true
-    - docker system prune -f --filter "label!=keep"
-    - docker-compose -f docker-compose.yml pull || true
-    - docker-compose -f docker-compose.yml up --force-recreate -d
-
-.test-template:
-  stage: test
-  image: sonarsource/sonar-scanner-cli:4.6
-  variables:
-    SONAR_PROJECT_BASE_DIR: "$CI_PROJECT_DIR"
-    SONAR_USER_HOME: "${CI_PROJECT_DIR}/.sonar" # Defines the location of the analysis task cache
-    GIT_DEPTH: 0 # Tells git to fetch all the branches of the project, required by the analysis task
-  cache:
-    key: $CI_COMMIT_REF_SLUG
-    paths:
-      - .sonar/cache/
-      - coverage/
-  before_script:
+    - apk add --update npm
     - npm install
   script:
     - CI=true && npm run test -- --coverage || true
@@ -57,70 +26,85 @@ variables:
       -Dsonar.links.ci=$CI_PIPELINE_URL
       -Dsonar.login=$SONAR_LOGIN
       -Dsonar.host.url=$SONAR_HOST_URL
+      -Dsonar.javascript.coveragePlugin=lcov
+      -Dsonar.javascript.lcov.reportPaths=./coverage/lcov.info
+      -Dsonar.sources=./src
+      -Dsonar.sourceEncoding=UTF-8
   coverage: /All\sfiles.*?\s+(\d+.\d+)/
   artifacts:
     when: always
     paths:
-      - coverage
+      - $CI_PROJECT_DIR/coverage/*
   allow_failure: true
-  
-#JOBS
-
-test:dev:
-  extends: .test-template
-  tags: [docker]
-  rules:
-    - if: $CI_COMMIT_BRANCH == "dev"
-
-test:prod:
-  extends: .test-template
-  tags: [docker]
   rules:
     - if: $CI_COMMIT_BRANCH == "main"
+    - if: $CI_COMMIT_BRANCH == "test"
+    - if: $CI_COMMIT_BRANCH == "dev"
 
-test:mr:
-  extends: .test-template
-  tags: [docker]
+
+kaniko-build:
+  stage: build
+  image:
+    name: gcr.io/kaniko-project/executor:debug
+    entrypoint: [""]
+  script:
+    - mkdir -p /kaniko/.docker
+    - echo "{\"auths\":{\"${AND_DOCKER_REGISTRY_NAME}\":{\"auth\":\"$(printf "%s:%s" "${AND_REGESTRY_USER_RW}" "${AND_DOCKER_REGISTRY_RW_PASS}" | base64 | tr -d '\n')\"}}}" > /kaniko/.docker/config.json
+    - >-
+      /kaniko/executor
+      --context "${CI_PROJECT_DIR}"
+      --dockerfile "${CI_PROJECT_DIR}/CI-CD/Dockerfile"
+      --destination "${AND_DOCKER_REGISTRY_NAME}/${PROJECT}:${CI_COMMIT_BRANCH}"
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
+    - if: $CI_COMMIT_BRANCH == "test"
+    - if: $CI_COMMIT_BRANCH == "dev"
+
+kaniko-build-mr:
+  stage: build
+  image:
+    name: gcr.io/kaniko-project/executor:debug
+    entrypoint: [""]
+  script:
+    - mkdir -p /kaniko/.docker
+    - echo "{\"auths\":{\"${AND_DOCKER_REGISTRY_NAME}\":{\"auth\":\"$(printf "%s:%s" "${AND_REGESTRY_USER_RW}" "${AND_DOCKER_REGISTRY_RW_PASS}" | base64 | tr -d '\n')\"}}}" > /kaniko/.docker/config.json
+    - >-
+      /kaniko/executor
+      --context "${CI_PROJECT_DIR}"
+      --dockerfile "${CI_PROJECT_DIR}/CI-CD/Dockerfile"
+      --no-push
   rules:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
-      variables:
-        CI_COMMIT_BRANCH: mr
 
-
-image:dev:
-  extends: .image-template
-  tags: [shell-$CI_COMMIT_BRANCH]
-  rules:
-    - if: $CI_COMMIT_BRANCH == "dev"
-
-
-deploy:dev:
-  extends: .deploy-template
-  tags: [shell-$CI_COMMIT_BRANCH]
-  rules:
-    - if: $CI_COMMIT_BRANCH == "dev"
-
-image:prod:
-  extends: .image-template
-  tags: [shell-$CI_COMMIT_BRANCH]
+deploy:
+  stage: deploy
+  environment:
+    name: $CI_COMMIT_BRANCH
+  tags:
+    - shell-$CI_COMMIT_BRANCH
+  variables:
+    COMPOSE_PROJECT_NAME: $PROJECT
+  before_script:
+    - echo "$AND_DOCKER_REGISTRY_RO_PASS" | docker login -u nexus-ro "$AND_DOCKER_REGISTRY" --password-stdin
+  script:
+    - docker stop $PROJECT-$CI_COMMIT_BRANCH || true
+    - docker rm $PROJECT-$CI_COMMIT_BRANCH || true
+    - docker rmi -f $AND_DOCKER_REGISTRY_NAME/$PROJECT:$CI_COMMIT_BRANCH  || true
+    - docker-compose -f CI-CD/docker-compose.yaml pull
+    - docker-compose -f CI-CD/docker-compose.yaml up --force-recreate -d
   rules:
     - if: $CI_COMMIT_BRANCH == "main"
+    - if: $CI_COMMIT_BRANCH == "test"
+    - if: $CI_COMMIT_BRANCH == "dev"
 
-deploy:prod:
-  extends: .deploy-template
-  tags: [shell-$CI_COMMIT_BRANCH]
+cleanup:
+  stage: cleanup
+  tags:
+    - shell-$CI_COMMIT_BRANCH
+  script:
+     - docker system prune -f --filter "label!=keep"
+  when: always
   rules:
     - if: $CI_COMMIT_BRANCH == "main"
-
-image:test:
-  extends: .image-template
-  tags: [shell-$CI_COMMIT_BRANCH]
-  rules:
     - if: $CI_COMMIT_BRANCH == "test"
-
-deploy:test:
-  extends: .deploy-template
-  tags: [shell-$CI_COMMIT_BRANCH]
-  rules:
-    - if: $CI_COMMIT_BRANCH == "test"
-
+    - if: $CI_COMMIT_BRANCH == "dev"
