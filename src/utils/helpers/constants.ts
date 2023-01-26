@@ -7,7 +7,6 @@ import { PasswordDto } from '../../registration/dto/password.dto';
 import { RegistrationDataDto } from '../../registration/dto/registrationData.dto';
 import UpdateUserProfileDto from '../../registration/dto/updateData.dto';
 import { VerificationDto } from '../../security/dto/verificationDto';
-import SendUserDataDto from '../../user/information/dto/getUserInformation.dto';
 import ChangeUserSettingsDto from '../../user/settings/dto/userSettings.dto';
 import { smsNotificationDto } from '../../user/settings/notifications/dto/notifications.dto';
 import sendNotificationSettingsDto from '../../user/settings/notifications/dto/sendNotificationDto';
@@ -47,7 +46,6 @@ export const Endpoints = {
   '/security/session/verification': VerificationDto,
   '/login': LoginDataDto,
   '/login/password': UpdateUserPasswordDto,
-  '/auth/information': SendUserDataDto,
   '/auth/user/settings/notifications/all': sendNotificationSettingsDto,
   '/auth/user/settings/notifications': smsNotificationDto,
 };

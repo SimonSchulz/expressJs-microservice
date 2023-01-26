@@ -18,7 +18,6 @@ class UserInformationController {
   public sendUserData = async (req: TypedRequestBody, res: Response) => {
     try {
       const clientId = req.userDecodedData.userId;
-      const passportNumber = req.query.passportId;
       const user = await this.userService.getUser({ clientId });
 
       if (!user) {
@@ -27,16 +26,12 @@ class UserInformationController {
 
       const { firstName, lastName, mobilePhone, email, passportId, isResident, avatar } = user;
 
-      if (passportNumber !== passportId) {
-        return res.status(StatusCodes.BAD_REQUEST).json({ msg: messages.PASSPORT_IS_INVALID });
-      }
-
       const personalInfo = {
         firstName,
         lastName,
         mobilePhone,
         email,
-        passportNumber,
+        passportNumber: passportId,
         isResident,
         avatarName: avatar,
       };
