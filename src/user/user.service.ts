@@ -132,6 +132,7 @@ class UserService {
       securityQuestionId: registrationData.securityQuestionId,
       securityQuestionType: registrationData.securityQuestionType,
       securityQuestionAnswer: registrationData.securityQuestionAnswer,
+      secQuestionValidAttempts: +process.env.MAX_SECURITY_QUESTIONS_TRIES,
       clientStatus: ClientStatus.REGISTERED,
       email: registrationData.email.toLowerCase(),
       firstName: registrationData.firstName,
