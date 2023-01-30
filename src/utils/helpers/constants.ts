@@ -12,6 +12,8 @@ import ChangeUserSettingsDto from '../../user/settings/dto/userSettings.dto';
 import { smsNotificationDto } from '../../user/settings/notifications/dto/notifications.dto';
 import sendNotificationSettingsDto from '../../user/settings/notifications/dto/sendNotificationDto';
 import { LoginDataDto } from '../../login/dto/logindata.dto';
+import { ChangeMobilePhoneDto } from '../../user/settings/dto/changePhone.dto';
+import { ChangeEmailDto } from '../../user/settings/dto/changeEmail.dto';
 
 export enum ClientStatus {
   ACTIVE = 'active',
@@ -50,6 +52,8 @@ export const Endpoints = {
   '/auth/information': SendUserDataDto,
   '/auth/user/settings/notifications/all': sendNotificationSettingsDto,
   '/auth/user/settings/notifications': smsNotificationDto,
+  '/auth/user/settings/mobile-phone': ChangeMobilePhoneDto,
+  '/auth/user/settings/email': ChangeEmailDto,
 };
 export const SecurityQuestions = [
   { question: `Mother's maiden name` },
