@@ -84,4 +84,7 @@ export default class Client {
 
   @Column({ default: false })
   isBlocked: boolean;
+
+  @Column({ nullable: true })
+  avatar: string;
 }

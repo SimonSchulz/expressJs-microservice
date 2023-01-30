@@ -23,6 +23,8 @@ export const messages = {
   USER_IS_BLOCKED: 'User is blocked',
   USER_LOGGED_OUT: 'User logged out',
   PASSPORT_IS_INVALID: 'Passport number is invalid',
+  AVATAR_NOT_FOUND: 'Avatar does not exist',
+  INVALID_FILE_EXTENSION: 'Invalid file extension',
   CLIENT_BLOCKED_SECURITY_QUESTION: 'You was blocked, you can try again after 24 hours.',
   SEC_QUIESTION_TYPE: 'Wrong question type',
 };

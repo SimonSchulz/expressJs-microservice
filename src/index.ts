@@ -1,9 +1,9 @@
 /* eslint-disable no-console */
-import { config } from 'dotenv';
+import 'dotenv/config';
 import app from './app/app';
 import { createTypeOrmConnection } from './utils/helpers/typeOrmConnection';
 
-config();
+//config();
 
 const appPort = process.env.EXPRESS_PORT;
 
