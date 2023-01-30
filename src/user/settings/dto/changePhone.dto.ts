@@ -1,4 +1,3 @@
-
 import { Length, IsNumberString, IsDefined, IsUUID, IsNotEmpty } from 'class-validator';
 
 export class ChangeMobilePhoneDto {
