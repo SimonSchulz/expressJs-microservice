@@ -1,4 +1,3 @@
-
 import { IsEmail, IsString, IsDefined, IsUUID, IsNotEmpty } from 'class-validator';
 
 export class ChangeEmailDto {
