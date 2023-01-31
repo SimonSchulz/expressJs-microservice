@@ -49,6 +49,18 @@ class UserSettingsRoutes {
       requestValidationMiddleware,
       this.userSettingsController.changeUserSecurityQuestion
     );
+    this.router.put(
+      '/auth/user/settings/email',
+      sequrityQuestionMiddleware,
+      requestValidationMiddleware,
+      this.userSettingsController.changeUserEmail
+    );
+    this.router.put(
+      '/auth/user/settings/mobile-phone',
+      sequrityQuestionMiddleware,
+      requestValidationMiddleware,
+      this.userSettingsController.changeUserPhone
+    );
   }
 }
 

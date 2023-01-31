@@ -4,33 +4,35 @@ export default class ChangeUserSettingsDto {
   @MinLength(11)
   @MaxLength(11)
   @IsNumberString()
-  mobilePhone: string;
+  mobilePhone?: string;
 
   @IsDefined()
   @IsUUID()
-  clientId: string;
+  @IsNumberString()
+  clientId: number;
 
   @IsString()
   @Matches(RegExp(/(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z!@#$%^&*]{8,}/g))
-  password: string;
+  password?: string;
 
   @IsString()
   @Matches(RegExp(/(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z!@#$%^&*]{8,}/g))
-  newPassword: string;
+  newPassword?: string;
 
   @IsString()
-  securityQuestionType: string;
+  securityQuestionType?: string;
 
   @IsString()
   @IsUUID()
-  securityQuestionId: string;
+  securityQuestionId?: string;
 
   @IsString()
-  securityQuestion: string;
+  securityQuestion?: string;
 
   @IsString()
-  securityQuestionAnswer: string;
+  securityQuestionAnswer?: string;
 
   @IsEmail()
-  email: string;
+  @Matches(RegExp(/^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/))
+  email?: string;
 }

@@ -11,6 +11,10 @@ import ChangeUserSettingsDto from '../../user/settings/dto/userSettings.dto';
 import { smsNotificationDto } from '../../user/settings/notifications/dto/notifications.dto';
 import sendNotificationSettingsDto from '../../user/settings/notifications/dto/sendNotificationDto';
 import { LoginDataDto } from '../../login/dto/logindata.dto';
+import { ChangeMobilePhoneDto } from '../../user/settings/dto/changePhone.dto';
+import { ChangeEmailDto } from '../../user/settings/dto/changeEmail.dto';
+import { ChangePasswordDto } from '../../user/settings/dto/changePassword.dto';
+import { ChangeSecurityQuestionDto } from '../../user/settings/dto/changeSecurityQuestion.dto';
 
 export enum ClientStatus {
   ACTIVE = 'active',
@@ -48,7 +52,12 @@ export const Endpoints = {
   '/login/password': UpdateUserPasswordDto,
   '/auth/user/settings/notifications/all': sendNotificationSettingsDto,
   '/auth/user/settings/notifications': smsNotificationDto,
+  '/auth/user/settings/mobile-phone': ChangeMobilePhoneDto,
+  '/auth/user/settings/email': ChangeEmailDto,
+  '/auth/user/settings/password': ChangePasswordDto,
+  '/auth/user/settings/security-question': ChangeSecurityQuestionDto,
 };
+
 export const SecurityQuestions = [
   { question: `Mother's maiden name` },
   { question: 'Childhood best friend name' },

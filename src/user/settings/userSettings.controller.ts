@@ -1,9 +1,9 @@
 import { Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
-import Client from '../../entities/client.entity';
 import TokenController from '../../token/token.controller';
 import { messages } from '../../utils/helpers/messages';
 import UserService from '../user.service';
+import ChangeUserSettingsDto from './dto/userSettings.dto';
 
 class UserSettingsController {
   constructor(private userService: UserService, private tokenController: TokenController) {
@@ -85,31 +85,27 @@ class UserSettingsController {
 
   public changeUserPassword = async (req: Request, res: Response) => {
     const { clientId, password } = req.body;
-    const user = await this.userService.getUser(clientId);
-    
-    if (password) {
-      user.password = await this.userService.genHashPassword(password);
-    } else {
-      return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: messages.PASSWORD_IS_INVALID });
-    }
-
-    await this.changeUserData(req, res, user);
+    const hashPassword = await this.userService.genHashPassword(password);
+    await this.changeUserData(req, res, { clientId, password: hashPassword });
   }
 
   public changeUserSecurityQuestion = async (req: Request, res: Response) => {
     const { clientId, securityQuestionAnswer } = req.body;
-    const user = await this.userService.getUser(clientId);
-
-    if (securityQuestionAnswer) {
-      user.securityQuestionAnswer = await this.userService.genHashPassword(securityQuestionAnswer);
-    } else {
-      return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: messages.INVALID_SECURITY_DATA });
-    }
-
-    await this.changeUserData(req, res, user);
+    const hashSecurityQuestionAnswer = await this.userService.genHashPassword(securityQuestionAnswer);
+    await this.changeUserData(req, res, { clientId, securityQuestionAnswer: hashSecurityQuestionAnswer });
   }
 
-  private changeUserData = async (req: Request, res: Response, user: Client) => {
+  public changeUserEmail = async (req: Request, res: Response) => {
+    const { clientId, email } = req.body;
+    await this.changeUserData(req, res, { clientId, email });
+  }
+
+  public changeUserPhone = async (req: Request, res: Response) => {
+    const { clientId, mobilePhone } = req.body;
+    await this.changeUserData(req, res, { clientId, mobilePhone });
+  }
+
+  private changeUserData = async (req: Request, res: Response, user: ChangeUserSettingsDto) => {
     try {
         await this.userService.updateUserData(user.clientId, user);
         return res.status(StatusCodes.OK).json({ msg: messages.SUCCESS });

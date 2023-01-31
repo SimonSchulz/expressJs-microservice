@@ -17,6 +17,7 @@ export const messages = {
   SAME_PASSWORD: 'Same password was received',
   SAME_SEC_QUESTION: 'Same security question received',
   PASSWORD_IS_INVALID: 'Password is invalid',
+  EMAIL_IS_INVALID: 'Email is invalid',
   SUCCES: 'Success',
   USER_ALREADY_EXIST: 'User already exists',
   USER_NOT_FOUND: 'User not found',
