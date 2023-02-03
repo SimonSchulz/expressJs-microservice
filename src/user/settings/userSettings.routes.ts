@@ -57,8 +57,8 @@ class UserSettingsRoutes {
     );
     this.router.put(
       '/auth/user/settings/mobile-phone',
-      sequrityQuestionMiddleware,
       requestValidationMiddleware,
+      sequrityQuestionMiddleware,
       this.userSettingsController.changeUserPhone
     );
     this.router.put(
