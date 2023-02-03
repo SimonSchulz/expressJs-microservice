@@ -61,6 +61,12 @@ class UserSettingsRoutes {
       requestValidationMiddleware,
       this.userSettingsController.changeUserPhone
     );
+    this.router.put(
+      '/auth/user/settings/deactivate',
+      sequrityQuestionMiddleware,
+      requestValidationMiddleware,
+      this.userSettingsController.deactivateUser
+    );
   }
 }
 
