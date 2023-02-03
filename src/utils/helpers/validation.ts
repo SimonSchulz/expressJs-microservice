@@ -7,6 +7,7 @@ import UserService from '../../user/user.service';
 import { messages } from '../../utils/helpers/messages';
 
 import { Endpoints } from './constants';
+import { timeDiffInHours } from './timeDiff';
 
 export const requestValidationMiddleware = async (req: Request, res: Response, next: NextFunction) => {
   const data = formatDataToDto(req);
@@ -35,10 +36,11 @@ export const sequrityQuestionMiddleware = async (req: Request, res: Response, ne
   if (
     user.lastSecQuestionInvalidAttemptTime &&
     user.secQuestionValidAttempts < +process.env.MAX_SECURITY_QUESTIONS_TRIES &&
-    Date.now() - +user.lastSecQuestionInvalidAttemptTime > +process.env.MILLISECONDS_PER_DAY
-  ) {
+    timeDiffInHours(user.lastSecQuestionInvalidAttemptTime) >= 24
+  ) 
+  {
     await userService.updateUserData(data.clientId, { 
-      secQuestionValidAttempts: process.env.MAX_SECURITY_QUESTIONS_TRIES,
+      secQuestionValidAttempts: +process.env.MAX_SECURITY_QUESTIONS_TRIES,
     });
   }
   next();
