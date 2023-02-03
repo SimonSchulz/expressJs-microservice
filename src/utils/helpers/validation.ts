@@ -37,9 +37,8 @@ export const sequrityQuestionMiddleware = async (req: Request, res: Response, ne
     user.lastSecQuestionInvalidAttemptTime &&
     user.secQuestionValidAttempts < +process.env.MAX_SECURITY_QUESTIONS_TRIES &&
     timeDiffInHours(user.lastSecQuestionInvalidAttemptTime) >= 24
-  ) 
-  {
-    await userService.updateUserData(data.clientId, { 
+  ) {
+    await userService.updateUserData(data.clientId, {
       secQuestionValidAttempts: +process.env.MAX_SECURITY_QUESTIONS_TRIES,
     });
   }
