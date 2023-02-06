@@ -15,6 +15,7 @@ import { ChangeMobilePhoneDto } from '../../user/settings/dto/changePhone.dto';
 import { ChangeEmailDto } from '../../user/settings/dto/changeEmail.dto';
 import { ChangePasswordDto } from '../../user/settings/dto/changePassword.dto';
 import { ChangeSecurityQuestionDto } from '../../user/settings/dto/changeSecurityQuestion.dto';
+import { DeactivateUserDto } from '../../user/settings/dto/deactivateUser.dto';
 
 export enum ClientStatus {
   ACTIVE = 'active',
@@ -56,6 +57,7 @@ export const Endpoints = {
   '/auth/user/settings/email': ChangeEmailDto,
   '/auth/user/settings/password': ChangePasswordDto,
   '/auth/user/settings/security-question': ChangeSecurityQuestionDto,
+  '/auth/user/settings/deactivate': DeactivateUserDto,
 };
 
 export const SecurityQuestions = [
