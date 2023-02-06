@@ -21,44 +21,44 @@ class UserSettingsRoutes {
   private initRoutes() {
     this.router.patch(
       '/auth/user/settings/security-question',
-      sequrityQuestionMiddleware,
       requestValidationMiddleware,
+      sequrityQuestionMiddleware,
       this.userSettingsController.checkSecurityQuestion
     );
     this.router.patch(
       '/auth/user/settings/new-password',
-      sequrityQuestionMiddleware,
       requestValidationMiddleware,
+      sequrityQuestionMiddleware,
       this.userSettingsController.checkUserPasswords
     );
     this.router.patch(
       '/auth/user/settings/new-security-question',
-      sequrityQuestionMiddleware,
       requestValidationMiddleware,
+      sequrityQuestionMiddleware,
       this.userSettingsController.checkUserSecurityQuestions
     );
     this.router.put(
       '/auth/user/settings/password',
-      sequrityQuestionMiddleware,
       requestValidationMiddleware,
+      sequrityQuestionMiddleware,
       this.userSettingsController.changeUserPassword
     );
     this.router.put(
       '/auth/user/settings/security-question',
-      sequrityQuestionMiddleware,
       requestValidationMiddleware,
+      sequrityQuestionMiddleware,
       this.userSettingsController.changeUserSecurityQuestion
     );
     this.router.put(
       '/auth/user/settings/email',
-      sequrityQuestionMiddleware,
       requestValidationMiddleware,
+      sequrityQuestionMiddleware,
       this.userSettingsController.changeUserEmail
     );
     this.router.put(
       '/auth/user/settings/mobile-phone',
-      sequrityQuestionMiddleware,
       requestValidationMiddleware,
+      sequrityQuestionMiddleware,
       this.userSettingsController.changeUserPhone
     );
   }
