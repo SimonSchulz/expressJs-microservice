@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import TokenController from '../../token/token.controller';
 import { messages } from '../../utils/helpers/messages';
+import { TypedRequestBody } from '../../utils/tokenMiddleware';
 import UserService from '../user.service';
 import ChangeUserSettingsDto from './dto/userSettings.dto';
 
@@ -118,8 +119,8 @@ class UserSettingsController {
     await this.changeUserData(req, res, { clientId, mobilePhone });
   };
 
-  public deactivateUser = async (req: Request, res: Response) => {
-    const { clientId } = req.body;
+  public deactivateUser = async (req: TypedRequestBody, res: Response) => {
+    const clientId = req.userDecodedData.userId;
     await this.changeUserData(req, res, { clientId, isDeactivated: true });
   };
 
