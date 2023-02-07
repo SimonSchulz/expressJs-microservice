@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import TokenController from '../../token/token.controller';
 import { requestValidationMiddleware, sequrityQuestionMiddleware } from '../../utils/helpers/validation';
+import checkAccessToken from '../../utils/tokenMiddleware';
 import UserService from '../user.service';
 import UserSettingsController from './userSettings.controller';
 
@@ -19,45 +20,52 @@ class UserSettingsRoutes {
   }
 
   private initRoutes() {
-    this.router.patch(
+    this.router.post(
       '/auth/user/settings/security-question',
       requestValidationMiddleware,
+      checkAccessToken,
       sequrityQuestionMiddleware,
       this.userSettingsController.checkSecurityQuestion
     );
-    this.router.patch(
+    this.router.post(
       '/auth/user/settings/new-password',
       requestValidationMiddleware,
+      checkAccessToken,
       sequrityQuestionMiddleware,
       this.userSettingsController.checkUserPasswords
     );
-    this.router.patch(
+    this.router.post(
       '/auth/user/settings/new-security-question',
       requestValidationMiddleware,
+      checkAccessToken,
       sequrityQuestionMiddleware,
       this.userSettingsController.checkUserSecurityQuestions
     );
-    this.router.put(
+    this.router.patch(
       '/auth/user/settings/password',
       requestValidationMiddleware,
+      checkAccessToken,
       sequrityQuestionMiddleware,
       this.userSettingsController.changeUserPassword
     );
-    this.router.put(
+    this.router.patch(
       '/auth/user/settings/security-question',
       requestValidationMiddleware,
+      checkAccessToken,
       sequrityQuestionMiddleware,
       this.userSettingsController.changeUserSecurityQuestion
     );
-    this.router.put(
+    this.router.patch(
       '/auth/user/settings/email',
       requestValidationMiddleware,
+      checkAccessToken,
       sequrityQuestionMiddleware,
       this.userSettingsController.changeUserEmail
     );
-    this.router.put(
+    this.router.patch(
       '/auth/user/settings/mobile-phone',
       requestValidationMiddleware,
+      checkAccessToken,
       sequrityQuestionMiddleware,
       this.userSettingsController.changeUserPhone
     );
