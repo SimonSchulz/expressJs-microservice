@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import TokenController from '../../token/token.controller';
 import { requestValidationMiddleware, sequrityQuestionMiddleware } from '../../utils/helpers/validation';
+import checkAccessToken from '../../utils/tokenMiddleware';
 import UserService from '../user.service';
 import UserSettingsController from './userSettings.controller';
 
@@ -61,10 +62,11 @@ class UserSettingsRoutes {
       sequrityQuestionMiddleware,
       this.userSettingsController.changeUserPhone
     );
-    this.router.put(
+    this.router.patch(
       '/auth/user/settings/deactivate',
-      sequrityQuestionMiddleware,
       requestValidationMiddleware,
+      checkAccessToken,
+      sequrityQuestionMiddleware,
       this.userSettingsController.deactivateUser
     );
   }
