@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { fileValidator } from '../../middlewares/fileValidator';
 import TokenController from '../../token/token.controller';
-import { requestValidationMiddleware } from '../../utils/helpers/validation';
+import { requestValidationMiddleware } from '../../middlewares/validation';
 import checkAccessToken from '../../utils/tokenMiddleware';
 import UserService from '../user.service';
 import UserInformationController from './userInformation.controller';

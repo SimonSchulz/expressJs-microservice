@@ -3,12 +3,12 @@ import { validate } from 'class-validator';
 import { NextFunction, Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import { plainToInstance } from 'class-transformer';
-import UserService from '../../user/user.service';
-import { messages } from '../../utils/helpers/messages';
+import UserService from '../user/user.service';
+import { messages } from '../utils/helpers/messages';
 
-import { Endpoints } from './constants';
-import { timeDiffInHours } from './timeDiff';
-import { TypedRequestBody } from '../tokenMiddleware';
+import { Endpoints } from '../utils/helpers/constants';
+import { timeDiffInHours } from '../utils/helpers/timeDiff';
+import { TypedRequestBody } from '../utils/tokenMiddleware';
 
 export const requestValidationMiddleware = async (req: Request, res: Response, next: NextFunction) => {
   const data = formatDataToDto(req);
@@ -27,7 +27,6 @@ export const requestValidationMiddleware = async (req: Request, res: Response, n
 };
 
 export const sequrityQuestionMiddleware = async (req: TypedRequestBody, res: Response, next: NextFunction) => {
-  const data: any = formatDataToDto(req);
   const clientId = req.userDecodedData.userId;
   const userService = new UserService();
   const user = await userService.getUser(clientId);

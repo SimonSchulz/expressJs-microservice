@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { requestValidationMiddleware } from '../utils/helpers/validation';
+import { requestValidationMiddleware } from '../middlewares/validation';
 import SecurityController from './security.controller';
 import SecurityService from './security.service';
 import UserService from '../user/user.service';
