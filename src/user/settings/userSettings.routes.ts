@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import TokenController from '../../token/token.controller';
 import { requestValidationMiddleware, sequrityQuestionMiddleware } from '../../utils/helpers/validation';
+import checkAccessToken from '../../utils/tokenMiddleware';
 import UserService from '../user.service';
 import UserSettingsController from './userSettings.controller';
 
@@ -19,13 +20,20 @@ class UserSettingsRoutes {
   }
 
   private initRoutes() {
-    this.router.patch(
+    this.router.get(
       '/auth/user/settings/security-question',
+      checkAccessToken,
       sequrityQuestionMiddleware,
+      this.userSettingsController.getSecQuestion
+    );
+    this.router.post(
+      '/auth/user/settings/security-question',
       requestValidationMiddleware,
+      checkAccessToken,
+      sequrityQuestionMiddleware,
       this.userSettingsController.checkSecurityQuestion
     );
-    this.router.patch(
+    this.router.post(
       '/auth/user/settings/new-password',
       sequrityQuestionMiddleware,
       requestValidationMiddleware,
