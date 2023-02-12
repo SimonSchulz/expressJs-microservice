@@ -20,6 +20,12 @@ class UserSettingsRoutes {
   }
 
   private initRoutes() {
+    this.router.get(
+      '/auth/user/settings/security-question',
+      checkAccessToken,
+      sequrityQuestionMiddleware,
+      this.userSettingsController.getSecQuestion
+    );
     this.router.post(
       '/auth/user/settings/security-question',
       requestValidationMiddleware,

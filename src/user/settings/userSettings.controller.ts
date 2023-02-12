@@ -12,6 +12,15 @@ class UserSettingsController {
     this.tokenController = new TokenController(this.userService);
   }
 
+  public getSecQuestion = async (req: TypedRequestBody, res: Response) => {
+    const clientId = req.userDecodedData.userId;
+    const user = await this.userService.getUser({ clientId });
+    return res.status(StatusCodes.OK).json({
+      securityQuestion: user.securityQuestion,
+      seqQuestionValidAttempts: user.secQuestionValidAttempts,
+    });
+  };
+
   public checkUserPasswords = async (req: TypedRequestBody, res: Response) => {
     const updateData = req.body;
     const clientId = req.userDecodedData.userId;
