@@ -56,14 +56,11 @@ class UserSettingsController {
       user.securityQuestionAnswer,
       data.securityQuestionAnswer
     );
-    const securityQuestionTypeCheck = await this.userService.checkSecQuestionData(data);
-
-    if (!securityQuestionTypeCheck) {
-      return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: messages.SEC_QUIESTION_TYPE });
-    }
 
     if (user.isBlocked) {
-      return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: messages.CLIENT_STILL_BLOCKED });
+      return res
+        .status(StatusCodes.INTERNAL_SERVER_ERROR)
+        .json({ msg: messages.CLIENT_STILL_BLOCKED, isBlocked: user.isBlocked });
     }
 
     if (!securityQuestionCheck) {
@@ -80,13 +77,18 @@ class UserSettingsController {
       }
       if (user.secQuestionValidAttempts === 1 && !user.isBlocked) {
         await this.userService.updateUserData(clientId, { isBlocked: true });
+        user.isBlocked = true;
         errorMessages.push(messages.CLIENT_BLOCKED_SECURITY_QUESTION);
       }
       errorMessages.push(messages.INVALID_SECURITY_DATA);
     }
 
     if (errorMessages.length > 0) {
-      return res.status(StatusCodes.BAD_REQUEST).json({ errorMessages: errorMessages });
+      return res.status(StatusCodes.BAD_REQUEST).json({
+        errorMessages: errorMessages,
+        validAttempts: user.secQuestionValidAttempts - 1,
+        isBlocked: user.isBlocked,
+      });
     } else {
       try {
         await this.userService.updateUserData(clientId, {
@@ -94,7 +96,9 @@ class UserSettingsController {
         });
         return res.status(StatusCodes.OK).json({ msg: messages.SUCCESS });
       } catch (error) {
-        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: messages.ERROR });
+        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+          msg: messages.ERROR,
+        });
       }
     }
   };
@@ -113,16 +117,10 @@ class UserSettingsController {
     await this.changeUserData(req, res, { clientId, securityQuestionAnswer: hashSecurityQuestionAnswer });
   };
 
-  public changeUserEmail = async (req: TypedRequestBody, res: Response) => {
-    const { email } = req.body;
+  public changeUserContacts = async (req: TypedRequestBody, res: Response) => {
+    const { email, mobilePhone } = req.body;
     const clientId = req.userDecodedData.userId;
-    await this.changeUserData(req, res, { clientId, email });
-  };
-
-  public changeUserPhone = async (req: TypedRequestBody, res: Response) => {
-    const { mobilePhone } = req.body;
-    const clientId = req.userDecodedData.userId;
-    await this.changeUserData(req, res, { clientId, mobilePhone });
+    await this.changeUserData(req, res, { clientId, email, mobilePhone });
   };
 
   private changeUserData = async (req: TypedRequestBody, res: Response, user: ChangeUserSettingsDto) => {

@@ -56,18 +56,11 @@ class UserSettingsRoutes {
       this.userSettingsController.changeUserSecurityQuestion
     );
     this.router.patch(
-      '/auth/user/settings/email',
+      '/auth/user/settings/contacts',
       requestValidationMiddleware,
       checkAccessToken,
       sequrityQuestionMiddleware,
-      this.userSettingsController.changeUserEmail
-    );
-    this.router.patch(
-      '/auth/user/settings/mobile-phone',
-      requestValidationMiddleware,
-      checkAccessToken,
-      sequrityQuestionMiddleware,
-      this.userSettingsController.changeUserPhone
+      this.userSettingsController.changeUserContacts
     );
   }
 }
