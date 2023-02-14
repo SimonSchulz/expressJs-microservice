@@ -8,6 +8,8 @@ services:
     ports:
       - $PORT:8080
     restart: always
+    volume:
+      - nodanorm-static:/app/src/static
     logging:
       driver: loki
       options:
@@ -30,6 +32,7 @@ services:
 
 volumes:
   nodanorm-postgres:
+  nodanorm-static:
 
 networks:
   nodanorm_new:
