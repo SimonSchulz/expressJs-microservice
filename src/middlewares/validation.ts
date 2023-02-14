@@ -3,11 +3,12 @@ import { validate } from 'class-validator';
 import { NextFunction, Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import { plainToInstance } from 'class-transformer';
-import UserService from '../../user/user.service';
-import { messages } from '../../utils/helpers/messages';
+import UserService from '../user/user.service';
+import { messages } from '../utils/helpers/messages';
 
-import { Endpoints } from './constants';
-import { timeDiffInHours } from './timeDiff';
+import { Endpoints } from '../utils/helpers/constants';
+import { timeDiffInHours } from '../utils/helpers/timeDiff';
+import { TypedRequestBody } from '../utils/tokenMiddleware';
 
 export const requestValidationMiddleware = async (req: Request, res: Response, next: NextFunction) => {
   const data = formatDataToDto(req);
@@ -25,10 +26,10 @@ export const requestValidationMiddleware = async (req: Request, res: Response, n
   });
 };
 
-export const sequrityQuestionMiddleware = async (req: Request, res: Response, next: NextFunction) => {
-  const data: any = formatDataToDto(req);
+export const sequrityQuestionMiddleware = async (req: TypedRequestBody, res: Response, next: NextFunction) => {
+  const clientId = req.userDecodedData.userId;
   const userService = new UserService();
-  const user = await userService.getUser(data.clientId);
+  const user = await userService.getUser(clientId);
 
   if (!user) {
     return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: messages.USER_DOESNT_EXIST });
@@ -38,7 +39,7 @@ export const sequrityQuestionMiddleware = async (req: Request, res: Response, ne
     user.secQuestionValidAttempts < +process.env.MAX_SECURITY_QUESTIONS_TRIES &&
     timeDiffInHours(user.lastSecQuestionInvalidAttemptTime) >= 24
   ) {
-    await userService.updateUserData(data.clientId, {
+    await userService.updateUserData(clientId, {
       secQuestionValidAttempts: +process.env.MAX_SECURITY_QUESTIONS_TRIES,
     });
   }

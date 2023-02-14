@@ -1,4 +1,4 @@
-import { requestValidationMiddleware } from './../../../utils/helpers/validation';
+import { requestValidationMiddleware } from '../../../middlewares/validation';
 import { Router } from 'express';
 import TokenController from '../../../token/token.controller';
 import UserService from '../../user.service';
