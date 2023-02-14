@@ -1,4 +1,14 @@
-import { IsDefined, IsEmail, IsNumberString, IsString, IsUUID, Matches, MaxLength, MinLength } from 'class-validator';
+import {
+  IsBoolean,
+  IsDefined,
+  IsEmail,
+  IsNumberString,
+  IsString,
+  IsUUID,
+  Matches,
+  MaxLength,
+  MinLength,
+} from 'class-validator';
 
 export default class ChangeUserSettingsDto {
   @MinLength(11)
@@ -31,6 +41,9 @@ export default class ChangeUserSettingsDto {
 
   @IsString()
   securityQuestionAnswer?: string;
+
+  @IsBoolean()
+  isDeactivated?: true;
 
   @IsEmail()
   @Matches(RegExp(/^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/))

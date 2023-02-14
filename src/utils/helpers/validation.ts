@@ -25,23 +25,20 @@ export const requestValidationMiddleware = async (req: Request, res: Response, n
   });
 };
 
-
 export const sequrityQuestionMiddleware = async (req: Request, res: Response, next: NextFunction) => {
   const data: any = formatDataToDto(req);
   const userService = new UserService();
   const user = await userService.getUser(data.clientId);
 
   if (!user) {
-   return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: messages.USER_DOESNT_EXIST });
+    return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: messages.USER_DOESNT_EXIST });
   }
-  
   if (
     user.lastSecQuestionInvalidAttemptTime &&
     user.secQuestionValidAttempts < +process.env.MAX_SECURITY_QUESTIONS_TRIES &&
     timeDiffInHours(user.lastSecQuestionInvalidAttemptTime) >= 24
-  ) 
-  {
-    await userService.updateUserData(data.clientId, { 
+  ) {
+    await userService.updateUserData(data.clientId, {
       secQuestionValidAttempts: +process.env.MAX_SECURITY_QUESTIONS_TRIES,
     });
   }
