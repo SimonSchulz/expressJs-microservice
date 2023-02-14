@@ -132,6 +132,11 @@ class UserSettingsController {
     await this.changeUserData(req, res, { clientId, email, mobilePhone });
   };
 
+  public deactivateUser = async (req: TypedRequestBody, res: Response) => {
+    const clientId = req.userDecodedData.userId;
+    await this.changeUserData(req, res, { clientId, isDeactivated: true });
+  };
+
   private changeUserData = async (req: TypedRequestBody, res: Response, user: ChangeUserSettingsDto) => {
     try {
       await this.userService.updateUserData(user.clientId, user);

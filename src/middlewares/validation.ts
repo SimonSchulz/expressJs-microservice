@@ -34,7 +34,6 @@ export const sequrityQuestionMiddleware = async (req: TypedRequestBody, res: Res
   if (!user) {
     return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: messages.USER_DOESNT_EXIST });
   }
-
   if (
     user.lastSecQuestionInvalidAttemptTime &&
     user.secQuestionValidAttempts < +process.env.MAX_SECURITY_QUESTIONS_TRIES &&

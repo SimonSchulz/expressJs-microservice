@@ -68,6 +68,13 @@ class UserSettingsRoutes {
       sequrityQuestionMiddleware,
       this.userSettingsController.changeUserContacts
     );
+    this.router.patch(
+      '/auth/user/settings/deactivate',
+      requestValidationMiddleware,
+      checkAccessToken,
+      sequrityQuestionMiddleware,
+      this.userSettingsController.deactivateUser
+    );
   }
 }
 

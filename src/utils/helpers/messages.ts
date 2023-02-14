@@ -28,4 +28,5 @@ export const messages = {
   INVALID_FILE_EXTENSION: 'Invalid file extension',
   CLIENT_BLOCKED_SECURITY_QUESTION: 'You was blocked, you can try again after 24 hours.',
   SEC_QUIESTION_TYPE: 'Wrong question type',
+  CLIENT_IS_DEACTIVATED: 'User is deactivated',
 };
