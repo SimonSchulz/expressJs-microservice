@@ -74,6 +74,14 @@ class UserService {
     }
   }
 
+  async checkUserEmail(email) {
+    return getRepository(Client).findOne({ email });
+  }
+
+  async checkUserMobilePhone(mobilePhone) {
+    return getRepository(Client).findOne({ mobilePhone });
+  }
+
   async checkUserVerification(user) {
     const verifData = await getRepository(VerificationEntity).findOne({ email: user.email.toLowerCase() });
 

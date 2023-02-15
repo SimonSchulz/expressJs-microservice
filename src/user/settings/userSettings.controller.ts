@@ -129,7 +129,23 @@ class UserSettingsController {
   public changeUserContacts = async (req: TypedRequestBody, res: Response) => {
     const { email, mobilePhone } = req.body;
     const clientId = req.userDecodedData.userId;
-    await this.changeUserData(req, res, { clientId, email, mobilePhone });
+    const user = await this.userService.getUser(clientId);
+    const checkEmail = await this.userService.checkUserEmail(email);
+    const checkMobilePhone = await this.userService.checkUserMobilePhone(email);
+
+    if (checkEmail) {
+      return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: messages.EMAIL_IS_EXIST });
+    }
+
+    if (checkMobilePhone) {
+      return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: messages.MOBILE_PHONE_IS_EXIST });
+    }
+
+    await this.changeUserData(req, res, {
+      clientId,
+      email: email || user.email,
+      mobilePhone: mobilePhone || user.mobilePhone,
+    });
   };
 
   public deactivateUser = async (req: TypedRequestBody, res: Response) => {
