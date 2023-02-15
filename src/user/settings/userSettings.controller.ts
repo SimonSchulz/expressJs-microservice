@@ -129,9 +129,9 @@ class UserSettingsController {
   public changeUserContacts = async (req: TypedRequestBody, res: Response) => {
     const { email, mobilePhone } = req.body;
     const clientId = req.userDecodedData.userId;
-    const user = await this.userService.getUser(clientId);
-    const checkEmail = await this.userService.checkUserEmail(email);
-    const checkMobilePhone = await this.userService.checkUserMobilePhone(email);
+    const user = await this.userService.getUser({ clientId });
+    const checkEmail = await this.userService.getUser({ email });
+    const checkMobilePhone = await this.userService.getUser({ mobilePhone });
 
     if (checkEmail) {
       return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: messages.EMAIL_IS_EXIST });
