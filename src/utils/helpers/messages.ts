@@ -29,4 +29,6 @@ export const messages = {
   CLIENT_BLOCKED_SECURITY_QUESTION: 'You was blocked, you can try again after 24 hours.',
   SEC_QUIESTION_TYPE: 'Wrong question type',
   CLIENT_IS_DEACTIVATED: 'User is deactivated',
+  EMAIL_IS_EXIST: 'Email is already exist',
+  MOBILE_PHONE_IS_EXIST: 'Mobile phone is already exist',
 };
