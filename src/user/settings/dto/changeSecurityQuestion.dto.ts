@@ -5,4 +5,12 @@ export class ChangeSecurityQuestionDto {
   @IsString()
   @IsNotEmpty()
   securityQuestionAnswer: string;
+
+  @IsString()
+  @IsNotEmpty()
+  securityQuestion: string;
+
+  @IsString()
+  @IsNotEmpty()
+  securityQuestionId: string;
 }
