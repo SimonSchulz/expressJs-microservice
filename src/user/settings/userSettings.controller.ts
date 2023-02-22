@@ -144,7 +144,7 @@ class UserSettingsController {
       await this.changeUserData(req, res, {
         clientId,
         securityQuestionAnswer: hashSecurityQuestionAnswer,
-        securityQuestionId: updateData.secQuestionId,
+        securityQuestionId: updateData.securityQuestionId,
         securityQuestion: null,
         securityQuestionType: 'preDefined',
       });
