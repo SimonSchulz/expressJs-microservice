@@ -36,6 +36,10 @@ class UserService {
     await getRepository(Client).save({ refreshToken });
   }
 
+  public async getSecurityQuestions() {
+    return await getRepository(SecurityQuestionEntity).find();
+  }
+
   async checkAllParams(user, updateData) {
     const checkSecAnswerSpaces = updateData.securityQuestionAnswer.includes('  ');
     const checkSecQuestionSpaces = updateData.securityQuestion.includes('  ');

@@ -21,6 +21,11 @@ class UserSettingsController {
     });
   };
 
+  public getSecQuestions = async (req: TypedRequestBody, res: Response) => {
+    const questions = await this.userService.getSecurityQuestions();
+    return res.status(StatusCodes.OK).json({ questions });
+  };
+
   public checkUserPasswords = async (req: TypedRequestBody, res: Response) => {
     const updateData = req.body;
     const clientId = req.userDecodedData.userId;
@@ -120,10 +125,30 @@ class UserSettingsController {
   };
 
   public changeUserSecurityQuestion = async (req: TypedRequestBody, res: Response) => {
-    const { securityQuestionAnswer } = req.body;
+    const updateData = req.body;
     const clientId = req.userDecodedData.userId;
-    const hashSecurityQuestionAnswer = await this.userService.genHashPassword(securityQuestionAnswer);
-    await this.changeUserData(req, res, { clientId, securityQuestionAnswer: hashSecurityQuestionAnswer });
+    const hashSecurityQuestionAnswer = await this.userService.genHashPassword(updateData.securityQuestionAnswer);
+
+    if (updateData.securityQuestionId && updateData.securityQuestion) {
+      return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: messages.INVALID_SECURITY_DATA });
+    }
+    if (updateData.securityQuestion && !updateData.securityQuestionId) {
+      await this.changeUserData(req, res, {
+        clientId,
+        securityQuestionAnswer: hashSecurityQuestionAnswer,
+        securityQuestion: updateData.securityQuestion,
+        securityQuestionId: null,
+        securityQuestionType: 'selfDefined',
+      });
+    } else {
+      await this.changeUserData(req, res, {
+        clientId,
+        securityQuestionAnswer: hashSecurityQuestionAnswer,
+        securityQuestionId: updateData.secQuestionId,
+        securityQuestion: null,
+        securityQuestionType: 'preDefined',
+      });
+    }
   };
 
   public changeUserContacts = async (req: TypedRequestBody, res: Response) => {

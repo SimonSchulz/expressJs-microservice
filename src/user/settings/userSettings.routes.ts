@@ -26,6 +26,12 @@ class UserSettingsRoutes {
       sequrityQuestionMiddleware,
       this.userSettingsController.getSecQuestion
     );
+    this.router.get(
+      '/auth/user/settings/security-questions',
+      checkAccessToken,
+      sequrityQuestionMiddleware,
+      this.userSettingsController.getSecQuestions
+    );
     this.router.post(
       '/auth/user/settings/security-question',
       requestValidationMiddleware,
