@@ -5,16 +5,26 @@ export const notifications = [
     isViewed: false,
     timestamp: 1677689974223,
     content: [
-      { type: 'image', imageName: 'education' },
-      { type: 'title', text: 'News and marketing information' },
-      { type: 'timestamp', timestamp: 1677689974223 },
+      { id: 'content1', type: 'image', imageName: 'education' },
+      { id: 'content2', type: 'timestamp', timestamp: 1677689974223 },
       {
+        id: 'content3',
+        type: 'title',
+        text: 'News and marketing information',
+      },
+      {
+        id: 'content4',
         type: 'paragraph',
         text: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.",
       },
-      { type: 'subParagraph', text: 'It has survived not only ' },
-      { type: 'link', text: 'five centuries', url: '#' },
       {
+        id: 'content5',
+        type: 'subParagraph',
+        text: 'It has survived not only ',
+      },
+      { id: 'content6', type: 'link', text: 'five centuries', url: '#' },
+      {
+        id: 'content7',
         type: 'subParagraph',
         text: ', but also the leap into electronic typesetting, remaining essentially unchanged.',
       },
@@ -26,16 +36,26 @@ export const notifications = [
     isViewed: false,
     timestamp: 1677689764223,
     content: [
-      { type: 'image', imageName: 'education' },
-      { type: 'title', text: 'News and marketing information' },
-      { type: 'timestamp', timestamp: 1677688964223 },
+      { id: 'content1', type: 'image', imageName: 'education' },
+      { id: 'content2', type: 'timestamp', timestamp: 1677688964223 },
       {
+        id: 'content3',
+        type: 'title',
+        text: 'News and marketing information',
+      },
+      {
+        id: 'content4',
         type: 'paragraph',
         text: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.",
       },
-      { type: 'subParagraph', text: 'It has survived not only ' },
-      { type: 'link', text: 'five centuries', url: '#' },
       {
+        id: 'content5',
+        type: 'subParagraph',
+        text: 'It has survived not only ',
+      },
+      { id: 'content6', type: 'link', text: 'five centuries', url: '#' },
+      {
+        id: 'content7',
         type: 'subParagraph',
         text: ', but also the leap into electronic typesetting, remaining essentially unchanged.',
       },
