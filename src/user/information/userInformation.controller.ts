@@ -8,9 +8,10 @@ import UserService from '../user.service';
 import { TypedRequestBody } from '../../utils/tokenMiddleware';
 import * as path from 'path';
 import { staticPath } from '../../config';
+import { notifications } from './mock-data';
 
 class UserInformationController {
-  constructor(private userService: UserService, private tokenController: TokenController) {
+  constructor(private readonly userService: UserService, private tokenController: TokenController) {
     this.userService = new UserService();
     this.tokenController = new TokenController(this.userService);
   }
@@ -96,6 +97,12 @@ class UserInformationController {
       return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: error.message });
     }
   };
+  public getNotifications = async (req: TypedRequestBody, res: Response) => {
+    try {
+      return res.status(StatusCodes.OK).json({ notifications });
+    } catch (error) {
+      return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: error.message });
+    }
+  };
 }
-
 export default UserInformationController;

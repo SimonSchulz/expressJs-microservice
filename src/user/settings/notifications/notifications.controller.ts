@@ -5,7 +5,7 @@ import { StatusCodes } from 'http-status-codes';
 import { messages } from '../../../utils/helpers/messages';
 
 class NotificationsController {
-  constructor(private userService: UserService, private tokenController: TokenController) {
+  constructor(private readonly userService: UserService, private tokenController: TokenController) {
     this.userService = new UserService();
     this.tokenController = new TokenController(this.userService);
   }
