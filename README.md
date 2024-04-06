@@ -1,12 +1,3 @@
-# RN-play-New user microservice
-
-### Установка:
-
-> - npm install -g **ts-node**
-> - npm install
-
-### Что ставилось и зачем:
-
 - [eslint](https://eslint.org/docs/user-guide/getting-started 'eslint')
   > Следит за тем, что бы все писали код в едином стандарте
 - [prettier](https://prettier.io/ 'prettier')
@@ -81,27 +72,6 @@ package.json
 > конфигурация переменных окружения
 > Переменные .env для User Service
 
-- EXPRESS_PORT=8080
-  AUTH=yes
-  POSTGRES_USER=nodanorm
-  POSTGRES_PASSWORD=nodanormpass
-  POSTGRES_DB=NodanormDB
-  POSTGRES_PORT=5432
-  POSTGRES_HOST=localhost
-  VERIFICATION_CODE='111325'
-  CODE_EXPIRATION_TIME=10
-  SMS_BLOCK_EXPIRATION=1
-  USER_BLOCK_EXPIRATION=1
-  MAX_CODE_TRIES=5
-  MAX_SECURITY_QUESTIONS_TRIES=3
-  MILLISECONDS_PER_DAY=86400000
-  COOLDOWN_TIME=1
-  JWT_ACCESS_SECRET=SECRET_KEY_NODANORM
-  JWT_REFRESH_SECRET=SECRET_KEY_NODANORM
-  JWT_ACCESS_EXPIRES_IN=7m
-  JWT_REFRESH_EXPIRES_IN=7d
--
-
 ### команды:
 
 `npm run tsc` - транспилирует TypeScript в JS,
@@ -118,12 +88,3 @@ package.json
 Эта же команда запускается при попытке коммита и прерывает коммит если обнаружены ошибки. Поэтому команда обязательна к запуску перед любым коммитом.
 
 `docker-compose -f .\docker-compose.dev.yml up -d` - создает базу данных для микросервиса(Выполнить команду для работы с БД при инициализации проекта).
-
-### после клона репозитория:
-
-> изменить имя файла "dot.env" на ".env" и изменить содержимое на вышеуказанные переменные
-> иметь установленную систему для работы с БД например PG Admin.
-> Создать с помощью PSQL Shell роль nodanorm с паролем из ЕНВ переменных с супер юзером,создать БД NodanormDB,РЕГИСТР ОБЯЗАТЕЛЕН!
-> Запустить проект с помощью npm run dev
-> Если запустилось проверить БД с помощью установленной системы контроля БД.
-> Если бд работает нормально запустить скрипт npm run seed:run,для заполнения таблицы security-questions.
